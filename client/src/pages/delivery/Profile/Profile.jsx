@@ -1,13 +1,12 @@
-import Navbar from '../../components/common/Navbar';
-import ProfileAvatar from './../../components/common/ProfileAvatar';
-import UserDetails from './../../components/common/UserDetails';
-import EditProfileActions from '../../components/common/EditProfileActions';
+import Navbar from '../../../components/common/Navbar/Navbar';
+import ProfileActions from '../../../components/common/ProfileActions/ProfileActions';
+import ProfileAvatar from '../../../components/common/ProfileAvatar/ProfileAvatar';
+import UserDetails from '../../../components/common/UserDetails/UserDetails';
 
 export default function Profile() {
   return (
     <>
       <Navbar />
-
       <div className="max-w-3xl mx-auto px-4 py-8">
 
         {/* Profile Avatar */}
@@ -20,7 +19,7 @@ export default function Profile() {
 
         {/* Action Buttons */}
         <div className="mt-10 flex justify-center space-x-6">
-          <EditProfileActions />
+          <ProfileActions />
         </div>
       </div>
     </>
