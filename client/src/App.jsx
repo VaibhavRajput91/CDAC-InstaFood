@@ -10,6 +10,7 @@ import OrderCard from './components/delivery/OrderCard/OrderCard'
 import ClockButton from './components/delivery/ClockButton/ClockButton';
 import CustomerMenu from './pages/customer/CustomerMenu/CustomerMenu'
 import Admin from './pages/admin/Admin'
+import CustomerOrderSummary from './pages/customer/CustomerOrderSummary/CustomerOrderSummary'
 
 function App() {
 
@@ -17,7 +18,8 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Navbar />} />
-        <Route path="/customer/dashboard" element={<Dashboard />} />
+        <Route path="/customer/menu" element={<CustomerMenu />} />
+        <Route path="/customer/order-summary" element={<CustomerOrderSummary />} />
         <Route path="/admin/*" element={<Admin />} />
 
       </Routes>
