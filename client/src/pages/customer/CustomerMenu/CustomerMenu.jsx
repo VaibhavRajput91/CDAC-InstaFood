@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './CustomerMenu.css';
 import CustomerNavbar from '../../../components/customer/CustomerNavbar/CustomerNavbar';
 
@@ -49,6 +50,7 @@ const DISHES = [
 
 function CustomerMenu() {
   const [cart, setCart] = useState({});
+  const navigate = useNavigate();
 
   const getQuantity = (id) => cart[id] || 0;
 
@@ -136,7 +138,15 @@ function CustomerMenu() {
             <div className="text-gray-600">
                <span className="font-bold text-gray-900">{Object.values(cart).reduce((a, b) => a + b, 0)}</span> Items added
             </div>
-            <button className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-orange-500/30 transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+            <button 
+              onClick={() => {
+                const orderItems = DISHES.filter(dish => cart[dish.id]).map(dish => ({
+                  ...dish,
+                  quantity: cart[dish.id]
+                }));
+                navigate('/customer/order-summary', { state: { orderItems } });
+              }}
+              className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-orange-500/30 transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
               Checkout
             </button>
           </div>
