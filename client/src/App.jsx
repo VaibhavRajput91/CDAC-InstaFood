@@ -17,6 +17,7 @@ function App() {
       <Routes>
       <Route path="/" element={<Navbar />} /> 
       <Route path="/customer/dashboard" element={<Dashboard />} />
+      <Route path="/admin/*" element={<Admin />} />
 
       </Routes>
       <ToastContainer />
