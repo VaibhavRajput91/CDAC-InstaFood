@@ -7,7 +7,7 @@
 //     ResponsiveContainer
 // } from "recharts";
 
-function Home() {
+function Dashboard() {
 
     // const pieData = [
     //     { name: "Food Orders", value: 400 },
@@ -107,4 +107,4 @@ function Home() {
     );
 }
 
-export default Home
+export default Dashboard
