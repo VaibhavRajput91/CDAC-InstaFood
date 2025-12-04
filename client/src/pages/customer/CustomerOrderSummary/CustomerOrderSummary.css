@@ -1,0 +1,7 @@
+/* CustomerOrderSummary.css */
+
+/* Custom decorative styles can be added here */
+.order-summary-card {
+    /* Example of a custom class if needed, though Tailwind is primarily used */
+    transition: all 0.3s ease;
+}
