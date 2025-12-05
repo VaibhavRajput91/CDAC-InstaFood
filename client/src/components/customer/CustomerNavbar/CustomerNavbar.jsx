@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 function CustomerNavbar() {
   const navLinks = [
     { name: 'Home', path: '/' },
-    { name: 'Orders', path: '/orders' },
+    { name: 'Orders', path: '/customer/orders' },
     { name: 'Profile', path: '/profile' },
     { name: 'ContactUS', path: '/contact' },
   ];

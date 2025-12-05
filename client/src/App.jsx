@@ -11,6 +11,7 @@ import ClockButton from './components/delivery/ClockButton/ClockButton';
 import CustomerMenu from './pages/customer/CustomerMenu/CustomerMenu'
 import Admin from './pages/admin/Admin'
 import CustomerOrderSummary from './pages/customer/CustomerOrderSummary/CustomerOrderSummary'
+import CustomerOrders from './pages/customer/CustomerOrders/CustomerOrders'
 
 function App() {
 
@@ -19,6 +20,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Navbar />} />
         <Route path="/customer/menu" element={<CustomerMenu />} />
+        <Route path="/customer/order-summary" element={<CustomerOrderSummary />} />
+        <Route path="/customer/orders" element={<CustomerOrders />} />
         <Route path="/customer/dashboard" element={<Dashboard />} />
         <Route path="/admin/*" element={<Admin />} />
 
