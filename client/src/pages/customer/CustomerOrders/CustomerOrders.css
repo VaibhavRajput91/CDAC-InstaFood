@@ -1,0 +1,23 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.customer-orders-page {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Custom scrollbar for webkit browsers if needed, though usually global */
+.order-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.order-card:hover {
+    transform: translateY(-4px);
+}
