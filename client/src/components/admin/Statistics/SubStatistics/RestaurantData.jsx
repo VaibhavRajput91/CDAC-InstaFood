@@ -1,4 +1,4 @@
-function CustomerData() {
+function RestaurantData() {
     return (
         <div>
             <div className="w-[95%] mx-auto mt-6">
@@ -6,10 +6,10 @@ function CustomerData() {
                 {/* Button Boxes */}
                 <div className="flex justify-center gap-6">
                     <div className="px-6 py-3 border-2 border-black rounded-md font-semibold cursor-pointer hover:bg-gray-100">
-                        Total Customers
+                        Total Restaurants
                     </div>
                     <div className="px-6 py-3 border-2 border-black rounded-md font-semibold cursor-pointer hover:bg-gray-100">
-                        Weekly New Customers
+                        Weekly New Restaurants
                     </div>
                 </div>
 
@@ -23,4 +23,4 @@ function CustomerData() {
     )
 }
 
-export default CustomerData
+export default RestaurantData
