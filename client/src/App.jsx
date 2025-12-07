@@ -12,6 +12,7 @@ import CustomerMenu from './pages/customer/CustomerMenu/CustomerMenu'
 import Admin from './pages/admin/Admin'
 import CustomerOrderSummary from './pages/customer/CustomerOrderSummary/CustomerOrderSummary'
 import CustomerOrders from './pages/customer/CustomerOrders/CustomerOrders'
+import Delivery from './pages/delivery/Delivery'
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
         <Route path="/customer/orders" element={<CustomerOrders />} />
         <Route path="/customer/dashboard" element={<Dashboard />} />
         <Route path="/admin/*" element={<Admin />} />
+        <Route path="/delivery/*" element={<Delivery />} />
 
       </Routes>
       <ToastContainer />

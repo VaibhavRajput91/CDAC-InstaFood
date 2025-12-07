@@ -6,7 +6,6 @@ import UserDetails from '../../../components/common/UserDetails/UserDetails';
 export default function Profile() {
   return (
     <>
-      <Navbar />
       <div className="max-w-3xl mx-auto px-4 py-8">
 
         {/* Profile Avatar */}
