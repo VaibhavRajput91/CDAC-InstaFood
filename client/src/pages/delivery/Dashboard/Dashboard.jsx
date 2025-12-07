@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Navbar from '../../../components/common/Navbar/Navbar'
 import StatusBadge from "../../../components/delivery/StatusBadge/StatusBadge";
 import OrderCard from "../../../components/delivery/OrderCard/OrderCard";
 import ClockButton from "../../../components/delivery/ClockButton/ClockButton";
@@ -21,8 +20,6 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-
-      <Navbar />
 
       <div className="w-full px-6">
         {/* Floating Badge */}
