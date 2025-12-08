@@ -4,12 +4,12 @@ export default function UserDetails() {
 
       <div className="p-4 border rounded-lg shadow-sm bg-white">
         <p className="text-sm text-gray-500">Full Name</p>
-        <p className="text-lg font-semibold">JOhn Doe</p>
+        <p className="text-lg font-semibold">Digvijay Singh</p>
       </div>
 
       <div className="p-4 border rounded-lg shadow-sm bg-white">
         <p className="text-sm text-gray-500">Email</p>
-        <p className="text-lg font-semibold">johndoe@email.com</p>
+        <p className="text-lg font-semibold">diguu@email.com</p>
       </div>
 
       <div className="p-4 border rounded-lg shadow-sm bg-white">
