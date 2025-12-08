@@ -13,6 +13,8 @@ import Admin from './pages/admin/Admin'
 import CustomerOrderSummary from './pages/customer/CustomerOrderSummary/CustomerOrderSummary'
 import CustomerOrders from './pages/customer/CustomerOrders/CustomerOrders'
 import Delivery from './pages/delivery/Delivery'
+import CustomerProfile from './pages/customer/CustomerProfile/CustomerProfile'
+import CustomerEditProfile from './pages/customer/CustomerEditProfile/CustomerEditProfile'
 
 function App() {
 
@@ -23,6 +25,8 @@ function App() {
         <Route path="/customer/menu" element={<CustomerMenu />} />
         <Route path="/customer/order-summary" element={<CustomerOrderSummary />} />
         <Route path="/customer/orders" element={<CustomerOrders />} />
+        <Route path="/customer/profile" element={<CustomerProfile />} />
+        <Route path="/customer/edit-profile" element={<CustomerEditProfile />} />
         <Route path="/customer/dashboard" element={<Dashboard />} />
         <Route path="/admin/*" element={<Admin />} />
         <Route path="/delivery/*" element={<Delivery />} />

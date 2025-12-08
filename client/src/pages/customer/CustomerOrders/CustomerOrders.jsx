@@ -86,7 +86,7 @@ function CustomerOrders() {
   };
 
   return (
-    <div className="customer-orders-page bg-gray-50 min-h-screen">
+    <div className="customer-orders-page bg-orange-50 min-h-screen">
       <CustomerNavbar />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -96,7 +96,7 @@ function CustomerOrders() {
           {sortedOrders.map((order) => (
             <div 
               key={order.id} 
-              className="order-card bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer overflow-hidden border border-gray-100"
+              className="order-card bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer overflow-hidden border border-orange-100"
               onClick={() => handleOrderClick(order.id)}
             >
               <div className="relative h-48">
@@ -122,7 +122,7 @@ function CustomerOrders() {
                     {order.items.join(', ')}
                 </p>
 
-                <div className="pt-4 border-t border-gray-100 flex justify-between items-center text-sm">
+                <div className="pt-4 border-t border-orange-100 flex justify-between items-center text-sm">
                     <span className="text-gray-500">Total Bill</span>
                     <span className="font-bold text-gray-900">₹{order.total}</span>
                 </div>
