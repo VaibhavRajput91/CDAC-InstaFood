@@ -2,7 +2,7 @@ import React from 'react'
 import Navbar from '../../../components/common/Navbar/Navbar'
 function Apply() {
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
+    <div className="min-h-screen bg-gray-100">
   <Navbar />
 
   
