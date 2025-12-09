@@ -1,17 +1,13 @@
 import './App.css'
 import { ToastContainer } from 'react-toastify'
-import Navbar from './components/common/Navbar/Navbar'
-import Dashboard from './pages/customer/Dashboard/Dashboard'
 import { Route, Routes } from 'react-router-dom'
-import CustomerMenu from './pages/customer/CustomerMenu/CustomerMenu'
 import Admin from './pages/admin/Admin'
-import CustomerOrderSummary from './pages/customer/CustomerOrderSummary/CustomerOrderSummary'
-import CustomerOrders from './pages/customer/CustomerOrders/CustomerOrders'
 import Delivery from './pages/delivery/Delivery'
-import CustomerProfile from './pages/customer/CustomerProfile/CustomerProfile'
-import CustomerEditProfile from './pages/customer/CustomerEditProfile/CustomerEditProfile'
 import Register from './pages/common/Register/Register'
 import Login from './pages/common/Login/Login'
+import Restaurant from './pages/restaurant/Restaurant'
+import Customer from './pages/customer/Customer'
+import ContactUs from './pages/common/ContactUs/ContactUs'
 
 
 function App() {
@@ -21,16 +17,11 @@ function App() {
       <Routes>
         <Route path="/" element={<Login/>} />
         <Route path="/register" element={<Register/>} />
-        <Route path="/customer/menu" element={<CustomerMenu />} />
-        <Route path="/customer/order-summary" element={<CustomerOrderSummary />} />
-        <Route path="/customer/orders" element={<CustomerOrders />} />
-        <Route path="/customer/profile" element={<CustomerProfile />} />
-        <Route path="/customer/edit-profile" element={<CustomerEditProfile />} />
-        <Route path="/customer/dashboard" element={<Dashboard />} />
+        <Route path="/customer/*" element={<Customer />} />
         <Route path="/admin/*" element={<Admin />} />
         <Route path="/delivery/*" element={<Delivery />} />
-        
-
+        <Route path="/restaurant/*" element={<Restaurant />} />
+        <Route path="/contact-us" element={<ContactUs />} />
       </Routes>
       <ToastContainer />
     </>

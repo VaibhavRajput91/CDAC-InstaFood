@@ -1,5 +1,4 @@
 import React from 'react'
-import { Outlet, Route } from "react-router-dom";
 import Navbar from '../../components/common/Navbar/Navbar';
 import Wallet from './Wallet/Wallet';
 import Dashboard from "./Dashboard/Dashboard";
@@ -22,6 +21,7 @@ function Delivery() {
         <Route path="/order-history" element={<OrderHistory />} />
         <Route path="/order-details" element={<OrderDetails />} />
         <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/contact-us" element={<ContactUs />} />
       </Routes>
 
       {/* Other pages will render here */}

@@ -3,10 +3,10 @@ import { NavLink } from 'react-router-dom';
 
 function CustomerNavbar() {
   const navLinks = [
-    { name: 'Home', path: '/customer/dashboard' },
+    { name: 'Home', path: '/customer/' },
     { name: 'Orders', path: '/customer/orders' },
     { name: 'Profile', path: '/customer/profile' },
-    { name: 'ContactUS', path: '/contact' },
+    { name: 'ContactUS', path: '/contact-us' },
   ];
 
   return (
