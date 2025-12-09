@@ -102,7 +102,7 @@ function ManageMenu() {
 
     {/* ADD DISH BUTTON */}
     <div className="text-center mt-10">
-      <button onClick={() => navigate("/addDish")} className="px-6 py-3 bg-blue-600 text-white text-lg font-semibold rounded-xl hover:bg-blue-700 shadow-md">
+      <button onClick={() => navigate("/restaurant/add-dish")} className="px-6 py-3 bg-blue-600 text-white text-lg font-semibold rounded-xl hover:bg-blue-700 shadow-md">
         Add New Dish
       </button>
     </div>

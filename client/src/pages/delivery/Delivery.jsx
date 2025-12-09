@@ -24,10 +24,10 @@ function Delivery() {
         <Route path="/contact-us" element={<ContactUs />} />
       </Routes>
 
-      {/* Other pages will render here */}
+      {/* Other pages will render here
       <div className="flex-1 overflow-y-auto bg-gray-100 p-4">
         <ContactUs />
-      </div>
+      </div> */}
     </div>
   )
 }

@@ -1,9 +1,9 @@
 import React from 'react'
-import { useState } from 'react'
+// import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 function Navbar() {
-    const [isOpen, setIsOpen] = useState(false)
+    // const [isOpen, setIsOpen] = useState(false)
 
   return (
     <>
@@ -19,9 +19,9 @@ function Navbar() {
           {/* Desktop Menu */}
           {/* We can add more links accordingly or maybe use conditional rendering to display different navbar for different user roles */}
           <ul className="hidden md:flex space-x-8 text-white">
-            <li><Link to="/home" className="hover:text-gray-900">Home</Link></li>
-            <li><Link to="/orders" className="hover:text-gray-900">Orders</Link></li>
-            <li><Link to="/profile" className="hover:text-gray-900">Profile</Link></li>
+            <li><Link to="/delivery" className="hover:text-gray-900">Home</Link></li>
+            <li><Link to="/delivery/order-history" className="hover:text-gray-900">Orders</Link></li>
+            <li><Link to="/delivery/profile" className="hover:text-gray-900">Profile</Link></li>
             <li><Link to="/contact-us" className="hover:text-gray-900">Contact Us</Link></li>
           </ul>
 
