@@ -13,8 +13,8 @@ import AddDish from './AddDish/AddDish';
 
 function Restaurant() {
   return (
-    <div className="w-full h-screen flex flex-col">
-      {/* <Navbar /> */}
+    <div>
+    
 
       <Routes>
         <Route path="/" element={<RestaurantDashboard />} />
@@ -28,10 +28,7 @@ function Restaurant() {
         <Route path="/add-dish" element={<AddDish />} />
       </Routes>
 
-      {/* Other pages will render here */}
-      <div className="flex-1 overflow-y-auto bg-gray-100 p-4">
-        {/* <ContactUs /> */}
-      </div>
+      
     </div>
   )
 }
