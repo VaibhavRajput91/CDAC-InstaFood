@@ -29,7 +29,7 @@ function RestaurantProfile() {
                       Revenue
                     </button>
 
-                    <button  onClick={() => navigate('/restaurant/editprofile')}className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700">
+                    <button  onClick={() => navigate('/restaurant/edit-profile')}className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700">
                       Edit Profile
                     </button>
 
