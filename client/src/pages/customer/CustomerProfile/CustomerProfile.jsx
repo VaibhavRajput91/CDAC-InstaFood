@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from '../../../components/common/Navbar/Navbar';
+import CustomerNavbar from '../../../components/customer/CustomerNavbar/CustomerNavbar';
 import ProfileAvatar from '../../../components/common/ProfileAvatar/ProfileAvatar';
 import UserDetails from '../../../components/common/UserDetails/UserDetails';
 import { useNavigate } from 'react-router-dom';
@@ -9,11 +9,11 @@ function CustomerProfile() {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <Navbar />
+        <div className="min-h-screen bg-orange-50">
+            <CustomerNavbar />
             <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-                <div className="bg-white shadow rounded-lg overflow-hidden">
-                    <div className="bg-white p-6 flex flex-col items-center border-b border-gray-200">
+                <div className="bg-white shadow rounded-lg overflow-hidden border border-orange-100">
+                    <div className="bg-white p-6 flex flex-col items-center border-b border-orange-200">
                          <div className="mb-4">
                             <ProfileAvatar />
                         </div>

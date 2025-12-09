@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../../../components/common/Navbar/Navbar';
+import CustomerNavbar from '../../../components/customer/CustomerNavbar/CustomerNavbar';
 import ProfileAvatar from '../../../components/common/ProfileAvatar/ProfileAvatar';
 // import './CustomerEditProfile.css'; // Uncomment if custom CSS is needed
 
@@ -9,8 +9,8 @@ function CustomerEditProfile() {
 
   // Initial state with dummy data
   const [formData, setFormData] = useState({
-    fullName: 'John Doe',
-    email: 'johndoe@email.com',
+    fullName: 'Digvijay Singh',
+    email: 'Diguu@email.com',
     phone: '9876543210',
     city: 'Pune',
     address: 'Sunbeam Infotech Pvt. Ltd.'
@@ -33,13 +33,13 @@ function CustomerEditProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
+    <div className="min-h-screen bg-orange-50">
+      <CustomerNavbar />
       <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-        <div className="bg-white shadow rounded-lg overflow-hidden">
+        <div className="bg-white shadow rounded-lg overflow-hidden border border-orange-100">
           
           {/* Header Section with Avatar */}
-          <div className="bg-white p-6 flex flex-col items-center border-b border-gray-200">
+          <div className="bg-white p-6 flex flex-col items-center border-b border-orange-200">
              <div className="mb-4">
                 <ProfileAvatar />
             </div>
@@ -52,7 +52,7 @@ function CustomerEditProfile() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                 {/* Full Name */}
-                <div className="p-4 border rounded-lg shadow-sm bg-white">
+                <div className="p-4 border border-orange-100 rounded-lg shadow-sm bg-white">
                   <label htmlFor="fullName" className="block text-sm font-medium text-gray-500 mb-1">Full Name</label>
                   <input
                     type="text"
@@ -61,12 +61,12 @@ function CustomerEditProfile() {
                     value={formData.fullName}
                     onChange={handleChange}
                     required
-                    className="w-full text-lg font-semibold border-b-2 border-gray-200 focus:border-black outline-none transition-colors"
+                    className="w-full text-lg font-semibold border-b-2 border-orange-200 focus:border-black outline-none transition-colors"
                   />
                 </div>
 
                 {/* Email (Read-Only) */}
-                <div className="p-4 border rounded-lg shadow-sm bg-gray-50">
+                <div className="p-4 border border-orange-100 rounded-lg shadow-sm bg-orange-50">
                   <label htmlFor="email" className="block text-sm font-medium text-gray-500 mb-1">Email</label>
                   <input
                     type="email"
@@ -79,7 +79,7 @@ function CustomerEditProfile() {
                 </div>
 
                 {/* Phone */}
-                <div className="p-4 border rounded-lg shadow-sm bg-white">
+                <div className="p-4 border border-orange-100 rounded-lg shadow-sm bg-white">
                   <label htmlFor="phone" className="block text-sm font-medium text-gray-500 mb-1">Phone</label>
                   <input
                     type="tel"
@@ -90,12 +90,12 @@ function CustomerEditProfile() {
                     required
                     pattern="[0-9]{10}"
                     title="Please enter a valid 10-digit phone number"
-                    className="w-full text-lg font-semibold border-b-2 border-gray-200 focus:border-black outline-none transition-colors"
+                    className="w-full text-lg font-semibold border-b-2 border-orange-200 focus:border-black outline-none transition-colors"
                   />
                 </div>
 
                 {/* City */}
-                <div className="p-4 border rounded-lg shadow-sm bg-white">
+                <div className="p-4 border border-orange-100 rounded-lg shadow-sm bg-white">
                   <label htmlFor="city" className="block text-sm font-medium text-gray-500 mb-1">City</label>
                   <input
                     type="text"
@@ -104,12 +104,12 @@ function CustomerEditProfile() {
                     value={formData.city}
                     onChange={handleChange}
                     required
-                    className="w-full text-lg font-semibold border-b-2 border-gray-200 focus:border-black outline-none transition-colors"
+                    className="w-full text-lg font-semibold border-b-2 border-orange-200 focus:border-black outline-none transition-colors"
                   />
                 </div>
 
                 {/* Address */}
-                <div className="p-4 border rounded-lg shadow-sm bg-white md:col-span-2">
+                <div className="p-4 border border-orange-100 rounded-lg shadow-sm bg-white md:col-span-2">
                   <label htmlFor="address" className="block text-sm font-medium text-gray-500 mb-1">Address</label>
                    <textarea
                     id="address"
@@ -118,7 +118,7 @@ function CustomerEditProfile() {
                     onChange={handleChange}
                     required
                     rows="3"
-                    className="w-full text-lg font-semibold border-b-2 border-gray-200 focus:border-black outline-none transition-colors resize-none"
+                    className="w-full text-lg font-semibold border-b-2 border-orange-200 focus:border-black outline-none transition-colors resize-none"
                   ></textarea>
                 </div>
 
