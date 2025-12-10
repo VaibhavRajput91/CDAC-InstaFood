@@ -128,7 +128,7 @@ function CustomerEditProfile() {
               <div className="mt-8 flex justify-between md:justify-center gap-4">
                 <button
                   type="button"
-                  onClick={() => navigate('/profile')}
+                  onClick={() => navigate('/customer/profile')}
                   className="bg-white text-black border border-black px-6 py-2 rounded-md hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                 >
                   Back to Profile
