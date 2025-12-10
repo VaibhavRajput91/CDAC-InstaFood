@@ -23,7 +23,7 @@ function Login() {
   };
 
   const handleRegister = () => {
-    navigate('/customer/register'); 
+    navigate('/register'); 
   };
 
   return (
