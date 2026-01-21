@@ -2,6 +2,8 @@ package com.backend.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -89,10 +91,107 @@ public class DeliveryController {
 		}
 	}
 	
-//	@GetMapping("/")
-//	public  ResponseEntity<?> editProfile(){
-//		
-//	}
+	@PutMapping("/edit-details")
+	public  ResponseEntity<?> editProfile(@RequestBody demo demo_dto_to_update_details){
+		System.out.println("In Put Edit-Details");
+		try {
+			return ResponseEntity.ok("to change the user details");
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body("Error");
+		}
+	}
+	
+	
+	@GetMapping("/orders")
+	public ResponseEntity<?> orders(@RequestParam String status){
+		System.out.println("In Get Orders");
+		try{
+			return ResponseEntity.ok("list of "+status+" orders with small detail");
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body("Error");
+		}
+	}
+	
+	@GetMapping("/orders/order-details")
+	public ResponseEntity<?> orders(@RequestParam int id){
+		System.out.println("In Get Orders/order-details");
+		try{
+			return ResponseEntity.ok("complete order details with id="+id);
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body("Error");
+		}
+	}
+	
+	@GetMapping("/dashboard/summary")
+	public ResponseEntity<?> dashboardSummary(){
+		System.out.println("In Get dashboard/summary");
+		try {
+			return ResponseEntity.ok("top half of the dashboard page(earnings, order, wallet, stats, etc)");
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body("Error");
+		}
+	}
+	
+	@GetMapping("/status")
+	public ResponseEntity<?> status(){
+		System.out.println("In Get status");
+		try {
+			return ResponseEntity.ok("delivery partner online or not");
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body("Error");
+		}
+	}
+	
+	@PatchMapping("/status")
+	public ResponseEntity<?> statusUpadate(@RequestBody demo demo_dto_to_update_status){
+		System.out.println("In Patch status update");
+		try {
+			return ResponseEntity.ok("update online status");
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body("Error");
+		}
+	}
+	
+	
+	@GetMapping("/orders/available")
+	public ResponseEntity<?> ordersAvailable(@RequestParam int since){
+		System.out.println("In Get orders-available");
+		try {
+			return ResponseEntity.ok("(auto-refresh)list of currently placed orders under "+since+" ms");
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body("Error");
+		}
+	}
+	
+	
+	@PostMapping("/orders/accept/{orderId}")
+	public ResponseEntity<?> orderAccept(@PathVariable int orderId, @RequestBody demo demo_dto_for_order){
+		System.out.println("In Get order-accept");
+		try {
+			return ResponseEntity.ok("accepted an order with orderId="+orderId);
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body("Error");
+		}
+	}
+	
+	
+	//delivery/notifications/unread-count (maintain notification count) {optional}
 	
 	
 	
