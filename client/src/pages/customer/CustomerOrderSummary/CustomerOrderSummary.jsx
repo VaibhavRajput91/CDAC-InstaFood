@@ -14,7 +14,7 @@ const MOCK_ADDRESS = {
 function CustomerOrderSummary() {
   const location = useLocation();
   
-  // Initialize state directly from location to avoid useEffect sync state update warning
+  
   const [orderItems] = useState(location.state?.orderItems || []);
   const [address] = useState(MOCK_ADDRESS); 
 

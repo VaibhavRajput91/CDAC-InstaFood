@@ -26,7 +26,7 @@ function Register() {
   };
 
   const handleLoginRedirect = () => {
-    navigate('/customer/login');
+    navigate('/');
   };
 
   return (

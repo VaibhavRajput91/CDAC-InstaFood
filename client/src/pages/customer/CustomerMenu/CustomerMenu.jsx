@@ -78,19 +78,19 @@ function CustomerMenu() {
       <div className="py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
         
-        {/* Header */}
+        
         <div className="bg-white rounded-xl shadow-sm border border-orange-100 p-4 mb-6 text-center relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-red-500"></div>
           <h1 className="text-2xl font-bold text-gray-900">Restaurant Name</h1>
           <p className="text-orange-600 mt-1 font-medium text-sm">Delicious food delivered to you</p>
         </div>
 
-        {/* Menu Items Grid */}
+        {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-20">
           {DISHES.map((dish) => (
             <div key={dish.id} className="bg-white border border-orange-100 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-300 flex flex-row items-center gap-3 group">
               
-              {/* Dish Image/Placeholder */}
+              {/* Dish Image */}
               <div className="h-16 w-16 flex-shrink-0 rounded-md bg-orange-100 flex items-center justify-center text-orange-500 text-xs font-bold overflow-hidden group-hover:scale-105 transition-transform duration-300">
                 {dish.image ? (
                   <img src={dish.image} alt={dish.name} className="h-full w-full object-cover" />

@@ -1,12 +1,12 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import CustomerNavbar from '../../../components/customer/CustomerNavbar/CustomerNavbar';
 import './CustomerOrders.css';
 
 function CustomerOrders() {
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
-  // Mock Data for Orders
+  
   const orders = [
     {
       id: 'ORD-12345',
@@ -50,7 +50,7 @@ function CustomerOrders() {
     }
   ];
 
-  // Sort orders: 'In Transit' and 'Processing' first
+  // Sort orders according to status
   const statusPriority = {
     'In Transit': 1,
     'Processing': 2,
@@ -64,11 +64,11 @@ function CustomerOrders() {
     return priorityA - priorityB;
   });
 
-  const handleOrderClick = (orderId) => {
-    // Navigate to detailed order view (to be implemented later or use existing placeholder)
-    console.log(`Navigating to details for order: ${orderId}`);
-    navigate(`/orders/${orderId}`);
-  };
+  // const handleOrderClick = (orderId) => {
+  //   // Navigate to detailed order view (to be implemented later )
+  //   console.log(`Navigating to details for order: ${orderId}`);
+  //   navigate(`/orders/${orderId}`);
+  // };
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -97,7 +97,7 @@ function CustomerOrders() {
             <div 
               key={order.id} 
               className="order-card bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer overflow-hidden border border-orange-100"
-              onClick={() => handleOrderClick(order.id)}
+              // onClick={() => handleOrderClick(order.id)}
             >
               <div className="relative h-48">
                 <img 
