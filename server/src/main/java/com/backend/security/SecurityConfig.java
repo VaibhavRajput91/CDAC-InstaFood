@@ -1,10 +1,11 @@
 package com.backend.security;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,12 +22,14 @@ import lombok.AllArgsConstructor;
 @EnableWebSecurity
 @Configuration
 @AllArgsConstructor
-@EnableMethodSecurity
 public class SecurityConfig {
 	
 	
-	
+	@Autowired
 	private final JwtFilter jwtFilter;
+	
+	@Autowired
+	private final CustomUserDetailsServiceImpl customUserDetailsService;
 	
 	
 	@Bean
@@ -35,8 +38,11 @@ public class SecurityConfig {
 	}
 	
 	@Bean
-	AuthenticationManager authenticationmanager(AuthenticationConfiguration mgr) throws Exception {
-		return mgr.getAuthenticationManager();
+	AuthenticationManager authenticationmanager(HttpSecurity http) throws Exception {
+		AuthenticationManagerBuilder authManagerBuilder=
+				http.getSharedObject(AuthenticationManagerBuilder.class);
+		authManagerBuilder.userDetailsService(customUserDetailsService);
+		return authManagerBuilder.build();
 	}
 	@Bean
 	SecurityFilterChain authorizeRequests(HttpSecurity http) throws Exception {
