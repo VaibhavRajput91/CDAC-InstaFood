@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.backend.dto.AuthenticationRequest;
+import com.backend.dto.AuthenticationResponse;
 import com.backend.dto.UserRequestDTO;
 import com.backend.dto.UserResponseDTO;
 import com.backend.entity.User;
@@ -21,33 +23,38 @@ public class UserServiceImpl implements UserService {
 
     
 
-	@Autowired
+	
 	private final UserRepository userRepository;
-	@Autowired
+	
 	private final ModelMapper modelMapper;
-	@Autowired
-	private final SecurityConfig securityConfig;
+	
+	private final PasswordEncoder passwordEncoder;
 
    
 	@Override
 	public User getCustomerById(Long userId) {
-		User user = userRepository.findUserById(userId)
+		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("Invalid User ID !!"));
 		return user;
 	}
 	@Override
-	public UserResponseDTO registerCustomer(UserRequestDTO userReq) {
+	public UserResponseDTO registerUser(UserRequestDTO userReq) {
 		
 		if(userRepository.existsByEmail(userReq.getEmail()))
 		{
 			throw new RuntimeException("Email Already Exist");
 		}
-		userReq.setPassword(
-				securityConfig.passwordEncoder().encode(userReq.getPassword())
-				);
 		User newUser = modelMapper.map(userReq,User.class);
+		newUser.setPassword(
+				passwordEncoder.encode(userReq.getPassword())
+				);
 		newUser = userRepository.save(newUser);
 		return modelMapper.map(newUser, UserResponseDTO.class);
+	}
+	@Override
+	public AuthenticationResponse loadUser(AuthenticationRequest authUser) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 
