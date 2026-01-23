@@ -31,12 +31,7 @@ public class UserServiceImpl implements UserService {
 	private final PasswordEncoder passwordEncoder;
 
    
-	@Override
-	public User getCustomerById(Long userId) {
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("Invalid User ID !!"));
-		return user;
-	}
+	
 	@Override
 	public UserResponseDTO registerUser(UserRequestDTO userReq) {
 		
