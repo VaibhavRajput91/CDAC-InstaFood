@@ -1,8 +1,14 @@
 package com.backend.entity;
 
-import java.time.LocalDate;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.UserDetails;
+
+
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -27,7 +33,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString(exclude = {"password"})
-public class User extends BaseEntity{
+public class User extends BaseEntity implements UserDetails{
 	@Column(name="first_name", length = 30, nullable=false)
 	private String firstName;
 	
@@ -46,6 +52,20 @@ public class User extends BaseEntity{
 	@Column(nullable=false)
 	@Enumerated(EnumType.STRING)
 	private UserRole role;
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(this.role.name());
+		return authorities;
+	}
+
+	@Override
+	public String getUsername() {
+		
+		return this.email;
+	}
+	
+
 	
 	
 	
