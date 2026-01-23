@@ -8,7 +8,7 @@ import com.backend.entity.User;
 
 public interface UserService {
 	
-	User getCustomerById(Long userId);
+	
 	UserResponseDTO registerUser(UserRequestDTO userReq);
 	AuthenticationResponse loadUser(AuthenticationRequest authUser);
 	
