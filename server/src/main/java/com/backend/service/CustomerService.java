@@ -6,5 +6,6 @@ import com.backend.entity.User;
 public interface CustomerService {
 	
 	UserProfileDTO getCustomerById(Long userId);
+	
 
 }

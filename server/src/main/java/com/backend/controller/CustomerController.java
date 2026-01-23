@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.service.CustomerService;
+import com.backend.service.OrderService;
 
 import lombok.AllArgsConstructor;
 
@@ -18,11 +19,20 @@ public class CustomerController {
 	
 	
 	private final CustomerService customerService;
+	private final OrderService orderService;
 	@GetMapping("/profile/{userId}")
 	public ResponseEntity<?> getCustomerDetails(@PathVariable Long userId)
 	{
 		System.out.println("In getCustomerDetails ");
 		return ResponseEntity.ok(customerService.getCustomerById(userId));
+		
+		
+	}
+	@GetMapping("/order/{userId}")
+	public ResponseEntity<?> getAllOrdersByCustomer(@PathVariable Long userId)
+	{
+		System.out.println("getAllOrdersByCustomer");
+		return ResponseEntity.ok(orderService.getAllOrdersByCustomer(userId));
 		
 		
 	}
