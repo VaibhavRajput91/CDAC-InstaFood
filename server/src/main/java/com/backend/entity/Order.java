@@ -1,12 +1,19 @@
 package com.backend.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,8 +41,18 @@ public class Order extends BaseEntity {
 	@JoinColumn(name="delivery_partner_id", nullable=false)
 	private DeliveryPartner deliveryPartner;
 	
+	@OneToMany(
+	        mappedBy = "order",
+	        cascade = CascadeType.ALL,
+	        orphanRemoval = true
+	    )
+	private Set<OrderItem> orderItems = new HashSet<>();
+	
 	@Column(name="total_amount", nullable=false)
 	private double totalAmount;
+	
+	@OneToOne(mappedBy = "order", fetch = FetchType.LAZY)
+    private DeliveryLog deliveryPartnerLog;
 	
 	@Column(name="order_status")
 	@Enumerated(EnumType.STRING)

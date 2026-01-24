@@ -21,7 +21,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
-public class Category {
+public class Category extends BaseEntity {
 	@Column(length=100, unique=true, nullable=false)
 	private String name;
 	

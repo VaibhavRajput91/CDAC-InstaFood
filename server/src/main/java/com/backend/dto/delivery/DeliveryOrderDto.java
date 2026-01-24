@@ -13,11 +13,11 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderDto {
-	private int orderId;
+public class DeliveryOrderDto {
+	private Long orderId;
 	private String restaurantName;
 	private String restaurantAddress;
-	private double total_amount;
+	private double totalAmount;
 	private int items;
 	private DeliveryStatus deliveryStatus;
 }
