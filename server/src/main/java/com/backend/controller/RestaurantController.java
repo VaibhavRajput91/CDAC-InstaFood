@@ -1,5 +1,6 @@
 package com.backend.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -7,26 +8,42 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.models.responses.ApiResponse;
+import com.backend.dto.*;
+import com.backend.service.RestaurantService;
 
 @RestController
 @RequestMapping("/restaurant")
 public class RestaurantController {
+	
+	private final RestaurantService restaurantService;
+	
+	
 	
 	// dashboard page
 	
 	
 	// apply page
 	
+	public RestaurantController(RestaurantService restaurantService) {
+		this.restaurantService=restaurantService;
+	}
+
+
 	@PostMapping("/apply")
-	public ResponseEntity<?> apply(@RequestBody String restroData){
-		return ResponseEntity.status(HttpStatus.CREATED)
-				.body("Restraunt application submitted.");
+	public ResponseEntity<?> apply(@RequestBody RestaurantApplyDTO applyDTO){
+		System.out.println("In Post of Restaurant/Apply");
+		try {
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body(restaurantService.restaurantApply(applyDTO));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
 	}
 	
 	
