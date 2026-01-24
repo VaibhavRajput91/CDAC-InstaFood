@@ -94,16 +94,16 @@ public class RestaurantController {
 	
 	// restaurant profile page and edit profile page
 	
-	@GetMapping("/profile")
-	public ResponseEntity<?> getRestaurantDetails(){
+	@GetMapping("/profile/restaurantId")
+	public ResponseEntity<?> getRestaurantDetails(@RequestParam Long restaurantId){
 		return ResponseEntity.status(HttpStatus.OK)
-				.body("Name, address, menu, etc details of restaurant");
+				.body(restaurantService.getRestaurantDetailsById(restaurantId));
 	}
 	
-	@PatchMapping("/profile")
-	public ResponseEntity<?> updateRestaurantDetails(){
+	@PatchMapping("/profile/restaurantId")
+	public ResponseEntity<?> updateRestaurantDetails(@RequestParam Long restaurantId,@RequestBody RestaurantUpdateDTO updatedRestaurantDetails){
 		return ResponseEntity.status(HttpStatus.OK)
-				.body("Restaurant updated Successfully");
+				.body(restaurantService.updateRestaurantDetails(restaurantId, updatedRestaurantDetails));
 	}
 	
 	// orders page
