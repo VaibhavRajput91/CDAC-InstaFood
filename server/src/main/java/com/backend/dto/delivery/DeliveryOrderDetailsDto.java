@@ -1,8 +1,9 @@
 package com.backend.dto.delivery;
 
-import java.util.List;
+import java.util.Set;
 
 import com.backend.entity.OrderItem;
+import com.backend.entity.Restaurant;
 import com.backend.entity.User;
 
 import lombok.AllArgsConstructor;
@@ -21,15 +22,18 @@ public class DeliveryOrderDetailsDto {
 	private String pickup;
 	// customer address(complete)
 	private String drop;
-	// customer details (contact)
-	private User customerDetails;
+	// restaurant name
+	private String restaurantName;
+	// customer details
+	private String customerName;
+	private String customerPhone;
 	// order items
-	private List<OrderItem> orderItems;
+	private Set<OrderItemDto> orderItems;
 	
 	
 	public double totalAmount() {
 		double totalAmount = 0.0;
-		for(OrderItem item : orderItems) {
+		for(OrderItemDto item : orderItems) {
 			totalAmount += item.getPrice() * item.getQuantity();
 		}
 		return totalAmount;

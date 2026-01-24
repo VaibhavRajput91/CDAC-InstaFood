@@ -290,35 +290,35 @@ INSERT INTO delivery_logs
 (order_id, delivery_partner_id, delivery_status)
 VALUES
 (1,1,'ASSIGNED'),
-(1,1,'PICKED_UP'),
-(1,1,'DELIVERED'),
-
-(2,2,'ASSIGNED'),
-(2,2,'DELIVERED'),
-
-(3,1,'ASSIGNED'),
+(2,1,'PICKED_UP'),
 (3,1,'DELIVERED'),
 
-(4,3,'ASSIGNED'),
-(4,3,'DELIVERED'),
+(4,2,'ASSIGNED'),
+(5,2,'DELIVERED'),
 
-(5,4,'ASSIGNED'),
-(5,4,'DELIVERED'),
+(6,1,'ASSIGNED'),
+(7,1,'DELIVERED'),
 
-(6,5,'ASSIGNED'),
-(6,5,'DELIVERED'),
+(8,3,'ASSIGNED'),
+(9,3,'DELIVERED'),
 
-(7,6,'ASSIGNED'),
-(7,6,'DELIVERED'),
+(10,4,'ASSIGNED'),
+(11,4,'DELIVERED'),
 
-(8,7,'ASSIGNED'),
-(8,7,'DELIVERED'),
+(13,5,'ASSIGNED'),
+(15,5,'DELIVERED'),
 
-(9,4,'ASSIGNED'),
-(9,4,'DELIVERED'),
+(16,6,'ASSIGNED'),
+(17,6,'DELIVERED');
 
-(10,5,'ASSIGNED'),
-(10,5,'DELIVERED');
+-- (8,7,'ASSIGNED'),
+-- (8,7,'DELIVERED'),
+
+-- (9,4,'ASSIGNED'),
+-- (9,4,'DELIVERED'),
+
+-- (10,5,'ASSIGNED'),
+-- (10,5,'DELIVERED');
 
 
 -- 14. reviews table
