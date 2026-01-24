@@ -87,16 +87,17 @@ public class RestaurantController {
 	
 	// add dish page
 	
-	@GetMapping("/dish")
-	public ResponseEntity<?> getDish(@RequestParam long id){
+	@GetMapping("/dish/menuId/dishId")
+	public ResponseEntity<?> getDish(@RequestParam Long menuId,@RequestParam Long dishId){
 		return ResponseEntity.status(HttpStatus.OK)
-				.body("Dish with id : " + id);
+				.body(restaurantService.getDishDetailsById(menuId,dishId));
 	}
 	
-	@PatchMapping("/dish")
-	public ResponseEntity<?> updateDish(@RequestParam long id){
+	@PatchMapping("/dish/menuId/dishId")
+	public ResponseEntity<?> updateDish(@RequestParam Long menuId,@RequestParam Long dishid,@RequestBody DishUpdateDTO updatedDish){
 		return ResponseEntity.status(HttpStatus.OK)
-				.body("Dish with id : " + id + " updated successfully");
+				.body("Updated dish details for dish id : " + dishid);
+//				.body(restaurantService.updateDishDetails(menuId,dishid, updatedDish));
 	}
 	
 	

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,8 @@ public class RestaurantServiceImpl implements RestaurantService {
 	private final UserRepository userRepository;
 	private final OrderRepository orderRepository;
 	private final AddressRepository addressRepository;
+	private final DishRepository dishRepository;
+	private final MenuRepository menuRepository;
 	
 	
 
@@ -128,4 +131,40 @@ public class RestaurantServiceImpl implements RestaurantService {
 		
 		return restaurantDetails;
 	}
+
+	@Override
+	public DishDetailsDTO getDishDetailsById(Long menuId,Long dishId) {
+		DishDetailsDTO dishDetails = new DishDetailsDTO();
+		Menu menu = menuRepository.findById(menuId)
+				.orElseThrow(() -> new RuntimeException("Menu not found"));
+			List<MenuDish> menudishes = menu.getMenuDishes();
+			for (MenuDish md : menudishes) {
+				if (md.getDish().getId().equals(dishId)) {
+					Dish dish = md.getDish();
+					dishDetails.setId(dish.getId());
+					dishDetails.setName(dish.getName());
+					dishDetails.setDescription(md.getDescription());
+					dishDetails.setPrice(md.getPrice());
+				}
+			}
+			return dishDetails;
+			
+	}
+
+//	@Override
+//	public String updateDishDetails(Long menuId,Long dishId, DishUpdateDTO updatedDishDetails) {
+//		Menu menu = menuRepository.findById(menuId)
+//				.orElseThrow(() -> new RuntimeException("Menu not found"));
+//		List<MenuDish> menudishes = menu.getMenuDishes();
+//		for (MenuDish md : menudishes) {
+//			if (md.getDish().getId().equals(dishId)) {
+//				md.setDescription(updatedDishDetails.getDescription());
+//				md.setPrice(updatedDishDetails.getPrice());
+//				md.getDish().setName(updatedDishDetails.getName());
+//				dishRepository.save(md.getDish());
+//			}
+//		}
+//		return "Dish details updated successfully";
+//	}
+	
 }
