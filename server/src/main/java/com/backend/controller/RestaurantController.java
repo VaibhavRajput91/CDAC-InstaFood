@@ -22,17 +22,11 @@ public class RestaurantController {
 	
 	private final RestaurantService restaurantService;
 	
-	
-	
-	// dashboard page
-	
-	
-	// apply page
-	
 	public RestaurantController(RestaurantService restaurantService) {
 		this.restaurantService=restaurantService;
 	}
-
+	
+	//Apply Page
 
 	@PostMapping("/apply")
 	public ResponseEntity<?> apply(@RequestBody RestaurantApplyDTO applyDTO){
@@ -49,11 +43,20 @@ public class RestaurantController {
 	
 	// menu page
 	
-	@GetMapping("/menu/stats")
-	public ResponseEntity<?> getStats(){
-		return ResponseEntity.status(HttpStatus.OK)
-				.body("Orders:400, Revenue:40000, Rating:4.4");
+	@GetMapping("/menu/statics")
+	public ResponseEntity<?> getStats(@RequestParam Long id){
+		System.out.println("In Get of Restaurant/Menu/Stats");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(restaurantService.restaurantStatics(id));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
 	}
+
+	
+	
 	
 	@GetMapping("/menu/dishes")
 	public ResponseEntity<?> getDishes(){
