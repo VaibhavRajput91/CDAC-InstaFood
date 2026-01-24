@@ -45,6 +45,9 @@ public class MenuDish{
 	@Column(nullable=false)
 	private double price;
 	
+	@Column(name="is_available",nullable=false)
+	private boolean isAvailable=true;
+	
 	@CreationTimestamp
     private Timestamp createdAt;
 
