@@ -1,5 +1,6 @@
 package com.backend.service.customer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,38 +34,41 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	private final DishRepository dishRepository;
 	
 	@Override
-	public OrdersByCustomerDTO getAllOrdersByCustomer(Long customerId) {
+	public List<OrdersByCustomerDTO> getAllOrdersByCustomer(Long customerId) {
 		
-		OrdersByCustomerDTO ordersByCustomer = new OrdersByCustomerDTO();
+		List<OrdersByCustomerDTO> ordersByCustomer = new ArrayList<>();
 		Map<String, Integer> dishesWithQuantities = new HashMap<>();
 		User customer = userRepository.findById(customerId)
 				.orElseThrow(()->new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "User Not Found"
             ));
-		Order currentOrder = orderRepository.findByCustomer(customer)
+		List<Order> currentOrder = orderRepository.findByCustomer(customer)
 				.orElseThrow(()->new ResponseStatusException(
 				HttpStatus.NOT_FOUND,
 				"No Orders Found for this Customer"
 			));
-		ordersByCustomer.setOrderDate(currentOrder.getCreatedOn());
-		ordersByCustomer.setRestaurantName(currentOrder.getRestaurant().getRestaurantName());
-		ordersByCustomer.setDeliveryName(currentOrder.getDeliveryPartner().getUser().getFirstName() 
+		for(Order order : currentOrder) {
+			OrdersByCustomerDTO singleOrder = new OrdersByCustomerDTO();
+			singleOrder.setOrderDate(order.getCreatedOn());
+			singleOrder.setRestaurantName(order.getRestaurant().getRestaurantName());
+			singleOrder.setDeliveryName(order.getDeliveryPartner().getUser().getFirstName() 
 				+ " " + 
-				currentOrder.getDeliveryPartner().getUser().getLastName());
-		ordersByCustomer.setOrderStatus(currentOrder.getOrderStatus());
-		ordersByCustomer.setTotalAmount(currentOrder.getTotalAmount());
-		List<OrderItem> orderItems = orderItemRepository.findByOrderId(currentOrder.getId())
+				order.getDeliveryPartner().getUser().getLastName());
+			singleOrder.setOrderStatus(order.getOrderStatus());
+			singleOrder.setTotalAmount(order.getTotalAmount());
+		List<OrderItem> orderItems = orderItemRepository.findByOrderId(order.getId())
 				.orElseThrow(()->new ResponseStatusException(
 				HttpStatus.NOT_FOUND,
 				"No Order Items Found for this Order"
 			));
+		
 		for(OrderItem item : orderItems) {
 			dishesWithQuantities.put(item.getDish().getName(), item.getQuantity());
 		}
-		ordersByCustomer.setDishesWithQuantities(dishesWithQuantities);
-		
-		
+		singleOrder.setDishesWithQuantities(dishesWithQuantities);
+		ordersByCustomer.add(singleOrder);
+		}
 		return ordersByCustomer;
 	}
 
