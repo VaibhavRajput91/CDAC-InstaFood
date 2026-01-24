@@ -100,10 +100,10 @@ public class RestaurantController {
 				.body("Name, address, menu, etc details of restaurant");
 	}
 	
-	@PatchMapping("/profile")
-	public ResponseEntity<?> updateRestaurantDetails(){
+	@PatchMapping("/profile/restaurantId")
+	public ResponseEntity<?> updateRestaurantDetails(@RequestParam Long restaurantId,@RequestBody RestaurantUpdateDTO updatedRestaurantDetails){
 		return ResponseEntity.status(HttpStatus.OK)
-				.body("Restaurant updated Successfully");
+				.body(restaurantService.updateRestaurantDetails(restaurantId, updatedRestaurantDetails));
 	}
 	
 	// orders page
