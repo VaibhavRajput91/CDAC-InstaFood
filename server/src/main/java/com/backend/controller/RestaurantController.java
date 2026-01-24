@@ -55,14 +55,22 @@ public class RestaurantController {
 		}
 	}
 
-	
-	
+	//menu dishes
 	
 	@GetMapping("/menu/dishes")
-	public ResponseEntity<?> getDishes(){
-		return ResponseEntity.status(HttpStatus.OK)
-				.body("dish1, dish2, dish3 ....");
+	public ResponseEntity<?> getDishes(@RequestParam Long id){
+		System.out.println("In Get of Restaurant/Menu/Dishes");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(restaurantService.getMenuDishes(id));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
 	}
+	
+	
+	
 	
 	@PutMapping("/menu/toggle-dish")
 	public ResponseEntity<?> toggleDishAvailability(@RequestParam long id){

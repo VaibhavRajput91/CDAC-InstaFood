@@ -8,13 +8,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.backend.dto.RestaurantApiResponseDTO;
-import com.backend.dto.RestaurantApplyDTO;
-import com.backend.dto.RestaurantDetailsDTO;
-import com.backend.dto.RestaurantOrdersDTO;
-import com.backend.dto.RestaurantStaticsDTO;
-import com.backend.dto.RestaurantStaticsProjectionDTO;
-import com.backend.dto.RestaurantUpdateDTO;
+import com.backend.dto.*;
 import com.backend.entity.*;
 import com.backend.repository.*;
 
@@ -56,6 +50,12 @@ public class RestaurantServiceImpl implements RestaurantService {
 		RestaurantStaticsProjectionDTO stats=restaurantRepository.reviews(id);
 		return new RestaurantStaticsDTO(stats.getTotalOrders(), stats.getTotalRevenue(),stats.getAverageRating());
 	}
+	
+	@Override
+	public List<RestaurantMenuDishesDTO> getMenuDishes(Long id) {
+		return restaurantRepository.findMenuDishesByRestaurantId(id);
+	}
+
 
 	
 
