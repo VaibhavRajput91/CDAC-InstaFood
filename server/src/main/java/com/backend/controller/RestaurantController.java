@@ -87,10 +87,10 @@ public class RestaurantController {
 	
 	// add dish page
 	
-	@GetMapping("/dish")
-	public ResponseEntity<?> getDish(@RequestParam long id){
+	@GetMapping("/dish/dishId")
+	public ResponseEntity<?> getDish(@RequestParam Long dishId){
 		return ResponseEntity.status(HttpStatus.OK)
-				.body("Dish with id : " + id);
+				.body(restaurantService.getDishDetailsById(dishId));
 	}
 	
 	@PatchMapping("/dish")

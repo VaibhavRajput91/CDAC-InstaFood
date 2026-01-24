@@ -9,10 +9,8 @@ public interface RestaurantService {
 	RestaurantStaticsDTO restaurantStatics(Long id);
 	List<RestaurantMenuDishesDTO> getMenuDishes(Long id);
 
-	
-	
-	
 	List<RestaurantOrdersDTO> getAllOrdersByRestaurant(Long restaurantId);
 	String updateRestaurantDetails(Long restaurantId ,RestaurantUpdateDTO updatedRestaurantDetails);
 	RestaurantDetailsDTO getRestaurantDetailsById(Long restaurantId);
+	DishDetailsDTO getDishDetailsById(Long dishId);
 }

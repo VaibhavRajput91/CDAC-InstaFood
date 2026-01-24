@@ -23,6 +23,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 	private final UserRepository userRepository;
 	private final OrderRepository orderRepository;
 	private final AddressRepository addressRepository;
+	private final DishRepository dishRepository;
 	
 	
 
@@ -128,4 +129,31 @@ public class RestaurantServiceImpl implements RestaurantService {
 		
 		return restaurantDetails;
 	}
+
+	@Override
+	public DishDetailsDTO getDishDetailsById(Long dishId) {
+		Dish dish = dishRepository.findById(dishId)
+				.orElseThrow(() -> new RuntimeException("Dish not found"));
+		DishDetailsDTO dishDetails = new DishDetailsDTO();
+		dishDetails.setId(dish.getId());
+		dishDetails.setName(dish.getName());
+		dish.getMenuDishes().forEach(md -> {
+			if (md.getDish().getId().equals(dishId)) {
+				dishDetails.setDescription(md.getDescription());
+			}
+		});
+		dish.getMenuDishes().forEach(md -> {
+			if (md.getDish().getId().equals(dishId)) {
+				dishDetails.setPrice(md.getPrice());
+			}
+		});
+		dish.getMenuDishes().forEach(md -> {
+			if (md.getDish().getId().equals(dishId)) {
+				dishDetails.setPrice(md.getPrice());
+			}
+		});
+		
+		return dishDetails;
+		}
+	
 }
