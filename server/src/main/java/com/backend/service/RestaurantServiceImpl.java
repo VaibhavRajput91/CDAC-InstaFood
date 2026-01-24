@@ -1,24 +1,31 @@
 package com.backend.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.backend.dto.RestaurantApiResponseDTO;
 import com.backend.dto.RestaurantApplyDTO;
+import com.backend.dto.RestaurantOrdersDTO;
 import com.backend.entity.*;
 import com.backend.repository.*;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class RestaurantServiceImpl implements RestaurantService {
 	
 	private final RestaurantRepository restaurantRepository;
 	private final UserRepository userRepository;
+	private final OrderRepository orderRepository;
 	
-	public RestaurantServiceImpl(RestaurantRepository restaurantRepository,UserRepository userRepository) {
-        this.restaurantRepository = restaurantRepository;
-        this.userRepository = userRepository;
-    }
+	
 
 	@Override
 	public RestaurantApiResponseDTO restaurantApply(RestaurantApplyDTO applyDTO) {
@@ -37,5 +44,29 @@ public class RestaurantServiceImpl implements RestaurantService {
 		Restaurant saved=restaurantRepository.save(eligibleRestaurant);
 		
 		return new RestaurantApiResponseDTO("Success","Restaurant added with id-"+saved.getId());
+	}
+
+	@Override
+	public List<RestaurantOrdersDTO> getAllOrdersByRestaurant(Long restaurantId) {
+		List<RestaurantOrdersDTO> restaurantOrders= new ArrayList<>();
+		Map<String, Integer> dishesWithQuantities = new HashMap<>();
+		List<Order> orders = orderRepository.findByRestaurantId(restaurantId)
+				.orElseThrow(()-> new RuntimeException("No Orders Found for this Restaurant"));
+		for(Order order : orders) {
+			RestaurantOrdersDTO dto = new RestaurantOrdersDTO();
+			dto.setOrderId(order.getId());
+			dto.setOrderDate(order.getCreatedOn());
+			dto.setCustomerName(order.getCustomer().getFirstName() + " " + order.getCustomer().getLastName());
+			dto.setOrderStatus(order.getOrderStatus());
+			dto.setTotalAmount(order.getTotalAmount());
+			// Assuming order has a method getOrderItems() that returns list of OrderItem
+			order.getOrderItems().forEach(item -> {
+				dishesWithQuantities.put(item.getDish().getName(), item.getQuantity());
+			});
+			dto.setItems(dishesWithQuantities);
+			restaurantOrders.add(dto);
+		}
+		return restaurantOrders;
+
 	}
 }
