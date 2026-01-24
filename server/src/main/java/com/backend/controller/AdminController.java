@@ -10,11 +10,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.dto.demo;
+import com.backend.service.admin.AdminService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/admin")
+@RequiredArgsConstructor
 public class AdminController {
 
+	private final AdminService adminService;
+	
+	@GetMapping("/profile")
+	public ResponseEntity<?> getAdminDetails()
+	{
+		System.out.println("In getAdminDetails");
+
+			return ResponseEntity.ok(adminService.getAdminDetails());
+		
+		
+	}
+	
 	@GetMapping("/dashboard/order-status")
 	public ResponseEntity<?> orderStatus()
 	{
