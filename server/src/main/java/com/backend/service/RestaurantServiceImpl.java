@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.backend.dto.RestaurantApiResponseDTO;
 import com.backend.dto.RestaurantApplyDTO;
 import com.backend.dto.RestaurantOrdersDTO;
+import com.backend.dto.RestaurantStaticsDTO;
+import com.backend.dto.RestaurantStaticsProjectionDTO;
 import com.backend.entity.*;
 import com.backend.repository.*;
 
@@ -31,7 +33,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 	public RestaurantApiResponseDTO restaurantApply(RestaurantApplyDTO applyDTO) {
 		
 		User user=userRepository
-				.findByIdAndRole((long) 3,UserRole.ROLE_RESTAURANT)
+				.findByIdAndRole(applyDTO.getUserId(),UserRole.ROLE_RESTAURANT)
 				.orElseThrow(()-> new RuntimeException("User not found or not a restaurant role"));
 		
 		Restaurant eligibleRestaurant=new Restaurant();
@@ -45,6 +47,14 @@ public class RestaurantServiceImpl implements RestaurantService {
 		
 		return new RestaurantApiResponseDTO("Success","Restaurant added with id-"+saved.getId());
 	}
+	
+	@Override
+	public RestaurantStaticsDTO restaurantStatics(Long id) {
+		RestaurantStaticsProjectionDTO stats=restaurantRepository.reviews(id);
+		return new RestaurantStaticsDTO(stats.getTotalOrders(), stats.getTotalRevenue(),stats.getAverageRating());
+	}
+
+	
 
 	@Override
 	public List<RestaurantOrdersDTO> getAllOrdersByRestaurant(Long restaurantId) {
