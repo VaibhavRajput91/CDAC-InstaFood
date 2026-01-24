@@ -24,7 +24,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 	public RestaurantApiResponseDTO restaurantApply(RestaurantApplyDTO applyDTO) {
 		
 		User user=userRepository
-				.findByIdAndRole((long) 3,UserRole.ROLE_RESTAURANT)
+				.findByIdAndRole(applyDTO.getUserId(),UserRole.ROLE_RESTAURANT)
 				.orElseThrow(()-> new RuntimeException("User not found or not a restaurant role"));
 		
 		Restaurant eligibleRestaurant=new Restaurant();
