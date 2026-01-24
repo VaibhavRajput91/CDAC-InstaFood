@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.dto.demo;
+import com.backend.dto.delivery.DeliveryWalletSummaryDto;
 import com.backend.service.delivery.DeliveryOrderService;
 import com.backend.service.delivery.DeliveryOrderServiceImpl;
+import com.backend.service.delivery.DeliveryWalletService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +26,7 @@ public class DeliveryController {
 	
 	// dependencies
 	private final DeliveryOrderService orderService;
+	private final DeliveryWalletService deliveryWalletService;
 	
 	@PostMapping("/add-partner")
 	public ResponseEntity<?> addPartner(@RequestBody demo demo_dto_form_details){
@@ -38,10 +41,12 @@ public class DeliveryController {
 	}
 	
 	@GetMapping("/wallet/summary")
-	public ResponseEntity<?> walletSummary(){
+	public ResponseEntity<?> walletSummary(@RequestParam Long deliveryPartnerId){
 		System.out.println("In Get wallet/summary");
+		
 		try {
-			return ResponseEntity.ok("Hello");
+			DeliveryWalletSummaryDto walletSummary = deliveryWalletService.getWalletSummary(deliveryPartnerId);
+			return ResponseEntity.status(HttpStatus.OK).body(walletSummary);
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -50,10 +55,10 @@ public class DeliveryController {
 	}
 
 	@GetMapping("/wallet/transactions")
-	public ResponseEntity<?> walletTransactions(@RequestParam int size){
+	public ResponseEntity<?> walletTransactions(@RequestParam Long deliveryPartnerId, @RequestParam int size){
 		System.out.println("In Get wallet/transactions?size");
 		try {
-			return ResponseEntity.ok("view past "+size+" transactions");
+			return ResponseEntity.ok(deliveryWalletService.getTransactions(deliveryPartnerId, size));
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -74,10 +79,10 @@ public class DeliveryController {
 	}
 	
 	@GetMapping("/wallet/earnings-trend")
-	public ResponseEntity<?> walletEarningsTrend(@RequestParam String range){
+	public ResponseEntity<?> walletEarningsTrend(@RequestParam String range, @RequestParam Long deliveryPartnerId){
 		System.out.println("In Get Wallet/Earinings-Trend");
 		try {
-			return ResponseEntity.ok("graph for earnings trend based on "+range);
+			return ResponseEntity.status(HttpStatus.OK).body(deliveryWalletService.getEarningsList(range, deliveryPartnerId));
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
