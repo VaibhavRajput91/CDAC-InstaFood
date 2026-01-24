@@ -44,8 +44,7 @@ public class Order extends BaseEntity {
 	@OneToMany(
 	        mappedBy = "order",
 	        cascade = CascadeType.ALL,
-	        orphanRemoval = true,
-	        fetch=FetchType.EAGER
+	        orphanRemoval = true
 	    )
 	private Set<OrderItem> orderItems = new HashSet<>();
 	
