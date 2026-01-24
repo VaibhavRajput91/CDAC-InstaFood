@@ -1,12 +1,19 @@
 package com.backend.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -17,25 +24,16 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class Dish extends BaseEntity {
-	@ManyToOne
-	@JoinColumn(name="menu_id")
-	private Menu menu;
 	
-	@Column(length=150)
+	@Column(length=150, nullable=false)
 	private String name;
 	
-	private double price;
+	@ManyToMany
+	@JoinTable(name="dish_categories", joinColumns=@JoinColumn(name="dish_id"), inverseJoinColumns=@JoinColumn(name="category_id"))
+	private Set<Category> categories = new HashSet<>();
 	
-	@Column(length=500)
-	private String description;
-	
-	@Column(name="is_veg")
-	private boolean isVeg;
-	
-	@Column(name="has_egg")
-	private boolean hasEgg;
-	
-	@Column(name="is_available")
-	private boolean isAvailable;
+	@OneToMany(mappedBy="dish")
+	private Set<MenuDish> menuDishes;
 }

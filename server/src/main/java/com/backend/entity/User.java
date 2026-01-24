@@ -34,19 +34,19 @@ import lombok.ToString;
 @Setter
 @ToString(exclude = {"password"})
 public class User extends BaseEntity implements UserDetails{
-	@Column(name="first_name", length = 30, nullable=false)
+	@Column(name="first_name", length = 50, nullable=false)
 	private String firstName;
 	
-	@Column(name="last_name", length=30)
+	@Column(name="last_name", length=50)
 	private String lastName;
 	
-	@Column(length=100, unique=true, nullable=false)
+	@Column(length=254, unique=true, nullable=false)
 	private String email;
 	
-	@Column(length=400, nullable=false)
+	@Column(length=255, nullable=false)
 	private String password;
 	
-	@Column(length=14)
+	@Column(length=15)
 	private String phone;
 	
 	@Column(nullable=false)

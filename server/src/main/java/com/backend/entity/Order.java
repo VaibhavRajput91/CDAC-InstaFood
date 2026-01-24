@@ -1,7 +1,5 @@
 package com.backend.entity;
 
-import org.hibernate.annotations.ForeignKey;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -21,20 +20,21 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class Order extends BaseEntity {
 	@ManyToOne
-	@JoinColumn(name="customer_id")
+	@JoinColumn(name="customer_id", nullable=false)
 	private User customer;
 	
 	@ManyToOne
-	@JoinColumn(name="restaurant_id")
+	@JoinColumn(name="restaurant_id", nullable=false)
 	private Restaurant restaurant;
 	
 	@ManyToOne
-	@JoinColumn(name="delivery_partner_id")
+	@JoinColumn(name="delivery_partner_id", nullable=false)
 	private DeliveryPartner deliveryPartner;
 	
-	@Column(name="total_amount")
+	@Column(name="total_amount", nullable=false)
 	private double totalAmount;
 	
 	@Column(name="order_status")
