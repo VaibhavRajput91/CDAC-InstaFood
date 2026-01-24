@@ -16,6 +16,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	Optional<Order> findByCustomer(User customer);
 	Optional<Restaurant> findRestaurantById(Long id); // USED TO SHOW RESTAURANT DETAILS IN ORDER DTO
 	Optional<DeliveryPartner> findDeliveryPartnerById(Long id); // USED TO SHOW DELIVERY PARTNER DETAILS IN ORDER DTO
-	
+	Optional<List<Order>> findByRestaurantId(Long restaurantId); // USED TO GET ALL ORDERS BY A RESTAURANT
 
 }

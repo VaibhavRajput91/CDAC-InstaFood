@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.dto.AuthenticationRequest;
@@ -73,8 +74,8 @@ public class UserController {
 		
 		
 	}
-	@PutMapping("/update/{userId}")
-	public ResponseEntity<?> updateUser(@PathVariable Long userId,@RequestBody UserUpdateDTO user)
+	@PutMapping("/update/userId")
+	public ResponseEntity<?> updateUser(@RequestParam Long userId,@RequestBody UserUpdateDTO user)
 	{
 		System.out.println("In updateUser ");
 		try {
@@ -85,8 +86,8 @@ public class UserController {
 		
 		
 	}
-	@PutMapping("/updatePassword/{userId}")
-	public ResponseEntity<?> updateUserPassword(@PathVariable Long userId,@RequestBody UserPasswordUpdateDTO newCredentials)
+	@PutMapping("/updatePassword/userId")
+	public ResponseEntity<?> updateUserPassword(@RequestParam Long userId,@RequestBody UserPasswordUpdateDTO newCredentials)
 	{
 		System.out.println("In updateUserPassword ");
 		try {

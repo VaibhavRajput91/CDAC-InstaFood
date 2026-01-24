@@ -106,9 +106,9 @@ public class RestaurantController {
 	// orders page
 	
 	@GetMapping("/orders")
-	public ResponseEntity<?> getOrdersList(@RequestParam int size){
+	public ResponseEntity<?> getOrdersList(@RequestParam Long size){
 		return ResponseEntity.status(HttpStatus.OK)
-				.body("order1, order2, order3,.....order20");
+				.body(restaurantService.getAllOrdersByRestaurant(size));
 	}
 	
 }
