@@ -11,11 +11,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 
 import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -48,6 +51,9 @@ public class User extends BaseEntity implements UserDetails{
 	
 	@Column(length=15)
 	private String phone;
+	
+	@OneToOne(mappedBy="user", fetch=FetchType.EAGER)
+	private Address address;
 	
 	@Column(nullable=false)
 	@Enumerated(EnumType.STRING)
