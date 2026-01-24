@@ -1,5 +1,5 @@
 package com.backend.entity;
 
 public enum AvailabilityStatus {
-	AVAILABALE, UNAVAILABLE, INACTIVE
+	AVAILABLE, UNAVAILABLE, INACTIVE
 }

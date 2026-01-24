@@ -1,5 +1,5 @@
 -- ======================
-DROP SCHEMA insta_food_database;
+DROP SCHEMA if exists insta_food_database;
 CREATE SCHEMA IF NOT EXISTS insta_food_database;
 USE insta_food_database;
 -- ======================
@@ -78,7 +78,7 @@ CREATE TABLE dishes (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    INDEX idx_dish_name (name),
+    INDEX idx_dish_name (name)
 );
 
 -- 7. categories table
