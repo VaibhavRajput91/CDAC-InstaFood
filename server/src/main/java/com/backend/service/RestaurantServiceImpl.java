@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.backend.dto.RestaurantApiResponseDTO;
 import com.backend.dto.RestaurantApplyDTO;
+import com.backend.dto.RestaurantDetailsDTO;
 import com.backend.dto.RestaurantOrdersDTO;
 import com.backend.dto.RestaurantStaticsDTO;
 import com.backend.dto.RestaurantStaticsProjectionDTO;
@@ -103,5 +104,28 @@ public class RestaurantServiceImpl implements RestaurantService {
 		
 		
 		return "Restaurant details updated successfully";
+	}
+
+	@Override
+	public RestaurantDetailsDTO getRestaurantDetailsById(Long restaurantId) {
+		Restaurant restaurant = restaurantRepository.findById(restaurantId)
+				.orElseThrow(() -> new RuntimeException("Restaurant not found"));
+		RestaurantDetailsDTO restaurantDetails = new RestaurantDetailsDTO();
+		restaurantDetails.setRestaurantName(restaurant.getRestaurantName());
+		restaurantDetails.setOpeningTime(restaurant.getOpeningTime());
+		restaurantDetails.setClosingTime(restaurant.getClosingTime());
+		restaurantDetails.setPhone(restaurant.getUser().getPhone());
+		restaurantDetails.setFirstName(restaurant.getUser().getFirstName());
+		restaurantDetails.setLastName(restaurant.getUser().getLastName());
+		Address address = restaurant.getUser().getAddress();
+		if (address != null) {
+			restaurantDetails.setLineOne(address.getLineOne());
+			restaurantDetails.setLineTwo(address.getLineTwo());
+			restaurantDetails.setCity(address.getCity());
+			restaurantDetails.setState(address.getState());
+			restaurantDetails.setPostalCode(address.getPostalCode());		
+		}
+		
+		return restaurantDetails;
 	}
 }
