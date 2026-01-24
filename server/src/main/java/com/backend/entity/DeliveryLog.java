@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -19,19 +20,19 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-
+@NoArgsConstructor
 public class DeliveryLog extends BaseEntity {
 	@OneToOne
-	@JoinColumn(name="order_id")
+	@JoinColumn(name="order_id", nullable=false)
 	private Order order;
 	
 	@OneToOne
-	@JoinColumn(name="delivery_partner_id")
+	@JoinColumn(name="delivery_partner_id", nullable=false)
 	private DeliveryPartner deliveryPartner;
 	
 	@Column(name="delivery_status")
 	@Enumerated(EnumType.STRING)
-	private DeliveryStatus deliveryStatus;
+	private DeliveryStatus status;
 	
 	@Column(length=150)
 	private String notes;

@@ -53,6 +53,7 @@ create table delivery_partners(
     license_number varchar(20) not null unique,
     model varchar(50) not null,
     vehicle_type enum('BICYCLE', 'BIKE', 'SCOOTER', 'CAR', 'EV'),
+    status enum('AVAILABLE', 'UNAVAILABLE', 'INACTIVE'),
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp on update current_timestamp,
     
@@ -73,13 +74,11 @@ create table menus(
 -- 6. dishes table
 CREATE TABLE dishes (
     dish_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    restaurant_id BIGINT NOT NULL,
     name VARCHAR(150) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     INDEX idx_dish_name (name),
-    FOREIGN KEY (restaurant_id) REFERENCES restaurants(restaurant_id)
 );
 
 -- 7. categories table

@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -18,21 +19,25 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class Address extends BaseEntity{
 	@OneToOne
 	@JoinColumn(name="user_id")
 	private User user;
 	
-	@Column(name="line_one", length=100, nullable=false)
-	private String lineOne;
-	
-	@Column(name="line_two", length=100, nullable=false)
-	private String lineTwo;
-	
-	@Column(length=20, nullable=false)
+	@Column(length=100, nullable=false)
 	private String city;
 	
-	@Column(length=20, nullable=false)
+	@Column(name="postal_code", length=10, nullable=false)
+	private String postalCode;
+	
+	@Column(name="line_one", length=150, nullable=false)
+	private String lineOne;
+	
+	@Column(name="line_two", length=150)
+	private String lineTwo;
+	
+	@Column(length=100)
 	private String state;
 	
 	
