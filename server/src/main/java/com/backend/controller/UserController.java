@@ -5,16 +5,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-
-
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.dto.AuthenticationRequest;
 import com.backend.dto.AuthenticationResponse;
-import com.backend.dto.UserRequestDTO;
+import com.backend.dto.customer.UserPasswordUpdateDTO;
+import com.backend.dto.customer.UserRequestDTO;
+import com.backend.dto.customer.UserUpdateDTO;
 import com.backend.security.JwtUtil;
 import com.backend.service.UserService;
 
@@ -65,6 +67,30 @@ public class UserController {
 		System.out.println("In registerCustomer ");
 		try {
 		return ResponseEntity.ok(userService.registerUser(user));
+		}catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+		
+		
+	}
+	@PutMapping("/update/{userId}")
+	public ResponseEntity<?> updateUser(@PathVariable Long userId,@RequestBody UserUpdateDTO user)
+	{
+		System.out.println("In updateUser ");
+		try {
+		return ResponseEntity.ok(userService.updateUser(userId, user));
+		}catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+		
+		
+	}
+	@PutMapping("/updatePassword/{userId}")
+	public ResponseEntity<?> updateUserPassword(@PathVariable Long userId,@RequestBody UserPasswordUpdateDTO newCredentials)
+	{
+		System.out.println("In updateUserPassword ");
+		try {
+		return ResponseEntity.ok(userService.updateUserPassword(userId, newCredentials));
 		}catch (RuntimeException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}

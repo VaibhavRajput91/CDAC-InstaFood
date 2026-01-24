@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.backend.service.CustomerService;
-import com.backend.service.OrderService;
+import com.backend.service.customer.CustomerService;
+import com.backend.service.customer.CustomerOrderService;
 
 import lombok.AllArgsConstructor;
 
@@ -19,7 +19,7 @@ public class CustomerController {
 	
 	
 	private final CustomerService customerService;
-	private final OrderService orderService;
+	private final CustomerOrderService orderService;
 	@GetMapping("/profile/{userId}")
 	public ResponseEntity<?> getCustomerDetails(@PathVariable Long userId)
 	{

@@ -1,6 +1,6 @@
-package com.backend.service;
+package com.backend.service.customer;
 
-import com.backend.dto.UserProfileDTO;
+import com.backend.dto.customer.UserProfileDTO;
 import com.backend.entity.User;
 
 public interface CustomerService {
