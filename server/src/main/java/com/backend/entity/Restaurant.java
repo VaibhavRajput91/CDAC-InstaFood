@@ -39,7 +39,5 @@ public class Restaurant extends BaseEntity{
 	
 	@Enumerated(EnumType.STRING)
 	private AvailabilityStatus status;
-	
-	
 
 }
