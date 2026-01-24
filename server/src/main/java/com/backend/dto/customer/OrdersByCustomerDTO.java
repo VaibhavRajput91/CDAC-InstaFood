@@ -1,4 +1,4 @@
-package com.backend.dto;
+package com.backend.dto.customer;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.backend.service;
+package com.backend.service.customer;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.backend.dto.UserProfileDTO;
+import com.backend.dto.customer.UserProfileDTO;
 import com.backend.entity.User;
 import com.backend.entity.UserRole;
 import com.backend.repository.UserRepository;

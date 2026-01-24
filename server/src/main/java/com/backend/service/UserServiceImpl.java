@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service;
 
 import com.backend.dto.AuthenticationRequest;
 import com.backend.dto.AuthenticationResponse;
-import com.backend.dto.UserRequestDTO;
-import com.backend.dto.UserResponseDTO;
+import com.backend.dto.customer.UserPasswordUpdateDTO;
+import com.backend.dto.customer.UserRequestDTO;
+import com.backend.dto.customer.UserResponseDTO;
+import com.backend.dto.customer.UserUpdateDTO;
 import com.backend.entity.User;
 import com.backend.repository.UserRepository;
 import com.backend.security.SecurityConfig;
@@ -51,6 +53,34 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-
+	@Override
+	public UserResponseDTO updateUser(Long id, UserUpdateDTO userReq) {
+		
+			User existingUser = userRepository.findById(id).orElseThrow(
+					()-> new RuntimeException("User Not Found")
+					);
+			modelMapper.map(userReq, existingUser);
+			userRepository.save(existingUser);
+			return modelMapper.map(existingUser, UserResponseDTO.class);
+		
+		
+	}
+	@Override
+	public String updateUserPassword(Long id, UserPasswordUpdateDTO newCred) {
+		
+		User existingUser = userRepository.findById(id).orElseThrow(
+				()-> new RuntimeException("User Not Found")
+				);
+		if(existingUser.getPassword()!=null) {
+			if(!passwordEncoder.matches(newCred.getCurrentPassword(), existingUser.getPassword()))
+			{
+				throw new RuntimeException("Old Password is Incorrect");
+			}
+		}
+		existingUser.setPassword(passwordEncoder.encode(newCred.getNewPassword()));
+		userRepository.save(existingUser);
+		return "Password Updated Successfully";
+		
+	}
+	 
 }
