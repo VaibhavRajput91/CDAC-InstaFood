@@ -44,14 +44,15 @@ public class Order extends BaseEntity {
 	@OneToMany(
 	        mappedBy = "order",
 	        cascade = CascadeType.ALL,
-	        orphanRemoval = true
+	        orphanRemoval = true,
+	        fetch=FetchType.EAGER
 	    )
 	private Set<OrderItem> orderItems = new HashSet<>();
 	
 	@Column(name="total_amount", nullable=false)
 	private double totalAmount;
 	
-	@OneToOne(mappedBy = "order", fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "order", fetch = FetchType.EAGER)
     private DeliveryLog deliveryPartnerLog;
 	
 	@Column(name="order_status")

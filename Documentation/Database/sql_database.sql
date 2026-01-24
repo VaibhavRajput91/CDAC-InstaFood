@@ -172,7 +172,7 @@ create table reviews (
 create table delivery_logs(
 	log_id BIGINT auto_increment primary key,
     delivery_partner_id BIGINT not null,
-    order_id BIGINT not null,
+    order_id BIGINT not null unique,
     delivery_status enum('ASSIGNED', 'PICKED_UP', 'DELIVERED', 'CANCELLED') not null,
     notes varchar(150),
     created_at timestamp default current_timestamp,

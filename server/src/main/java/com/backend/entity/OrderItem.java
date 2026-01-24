@@ -1,5 +1,7 @@
 package com.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,6 +25,7 @@ import lombok.ToString;
 public class OrderItem extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name="order_id", nullable=false)
+	@JsonIgnore
 	private Order order;
 	
 	@ManyToOne

@@ -12,10 +12,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.dto.demo;
+import com.backend.service.delivery.DeliveryOrderService;
+import com.backend.service.delivery.DeliveryOrderServiceImpl;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/delivery")
+@RequiredArgsConstructor 
 public class DeliveryController {
+	
+	// dependencies
+	private final DeliveryOrderService orderService;
 	
 	@PostMapping("/add-partner")
 	public ResponseEntity<?> addPartner(@RequestBody demo demo_dto_form_details){
@@ -33,7 +41,7 @@ public class DeliveryController {
 	public ResponseEntity<?> walletSummary(){
 		System.out.println("In Get wallet/summary");
 		try {
-			return ResponseEntity.ok("display transaction stats{wallet balance}");
+			return ResponseEntity.ok("Hello");
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -105,26 +113,45 @@ public class DeliveryController {
 	
 	
 	@GetMapping("/orders")
-	public ResponseEntity<?> orders(@RequestParam String status){
+	public ResponseEntity<?> orders(@RequestParam Long deliveryPartnerId){
 		System.out.println("In Get Orders");
 		try{
-			return ResponseEntity.ok("list of "+status+" orders with small detail");
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(orderService.getTodayOrdersList(deliveryPartnerId, null));
 		}
 		catch(RuntimeException e) {
+			System.out.print(e.getMessage());
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("Error");
+					.body("error : " + e.getMessage());
 		}
 	}
 	
 	@GetMapping("/orders/order-details")
-	public ResponseEntity<?> orders(@RequestParam int id){
+	public ResponseEntity<?> orderDetails(@RequestParam Long id){
 		System.out.println("In Get Orders/order-details");
 		try{
-			return ResponseEntity.ok("complete order details with id="+id);
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(orderService.getOrderDetails(id));
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("Error");
+					.body("Error : " + e.getMessage());
+		}
+	}
+	
+	@GetMapping("orders/history")
+	public ResponseEntity<?> orderHistory(@RequestParam Long id){
+		System.out.print("In delivery order history");
+		try {
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(orderService.getOrdersHistory(id, 20));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body("Error : " + e.getMessage());
 		}
 	}
 	
