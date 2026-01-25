@@ -11,7 +11,9 @@ import com.backend.dto.customer.UserPasswordUpdateDTO;
 import com.backend.dto.customer.UserRequestDTO;
 import com.backend.dto.customer.UserResponseDTO;
 import com.backend.dto.customer.UserUpdateDTO;
+import com.backend.entity.Address;
 import com.backend.entity.User;
+import com.backend.repository.AddressRepository;
 import com.backend.repository.UserRepository;
 import com.backend.security.SecurityConfig;
 
@@ -31,6 +33,7 @@ public class UserServiceImpl implements UserService {
 	private final ModelMapper modelMapper;
 	
 	private final PasswordEncoder passwordEncoder;
+	private final AddressRepository addressRepository;
 
    
 	
@@ -45,8 +48,13 @@ public class UserServiceImpl implements UserService {
 		newUser.setPassword(
 				passwordEncoder.encode(userReq.getPassword())
 				);
-		newUser = userRepository.save(newUser);
-		return modelMapper.map(newUser, UserResponseDTO.class);
+		Address address = modelMapper.map(userReq, Address.class);
+		address.setUser(newUser);
+		userRepository.save(newUser);
+		addressRepository.save(address);
+		UserResponseDTO responseUser = modelMapper.map(newUser, UserResponseDTO.class);
+		responseUser.setPostalCode(address.getPostalCode());
+		return responseUser;
 	}
 	@Override
 	public AuthenticationResponse loadUser(AuthenticationRequest authUser) {
