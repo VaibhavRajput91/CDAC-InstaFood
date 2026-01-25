@@ -10,19 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.backend.dto.admin.AdminProfileDTO;
-import com.backend.dto.admin.DeliveryApprovalResponseDTO;
-import com.backend.dto.admin.DeliveryPartnerApplicationsDTO;
-import com.backend.dto.admin.DeliveryPartnerDetailsDTO;
-import com.backend.dto.admin.RestaurantApplicationDetailsDTO;
-import com.backend.dto.admin.RestaurantApplicationsDTO;
-import com.backend.dto.admin.RestaurantApprovalResponseDTO;
+import com.backend.dto.admin.*;
 import com.backend.entity.AvailabilityStatus;
 import com.backend.entity.DeliveryPartner;
 import com.backend.entity.Restaurant;
 import com.backend.entity.User;
 import com.backend.entity.UserRole;
 import com.backend.repository.admin.AdminProfileRepository;
+import com.backend.repository.admin.AdminRepositoryForRestaurant;
 import com.backend.repository.admin.DeliveryPartnerApprovalRepository;
 import com.backend.repository.admin.RestaurantApprovalRepository;
 
@@ -37,6 +32,9 @@ public class AdminServiceImpl implements AdminService{
 	
 	private final RestaurantApprovalRepository restaurantApprovalRepository;
 	private final DeliveryPartnerApprovalRepository deliveryPartnerApprovalRepository;
+	
+	private final AdminRepositoryForRestaurant adminRepositoryForRestaurant;
+
 	
 	private final ModelMapper modelMapper;
 
@@ -210,4 +208,27 @@ public class AdminServiceImpl implements AdminService{
 		        "Delivery Partner application rejected"
 		    );
 	}
+	
+	// Statistics of Restaurant
+	
+	@Override
+	public Admin_RestaurantStatisticsDTO getRestaurantsStatistics() {
+		Admin_RestaurantStatisticsDTO dto=new Admin_RestaurantStatisticsDTO();
+		
+		dto.setTotalRestaurants(adminRepositoryForRestaurant.getTotalRestaurants());
+		dto.setWeeklyNewRestaurants(adminRepositoryForRestaurant.getWeeklyNewRestaurants());
+		
+		List<Admin_RestaurantsRankingDTO> ranking = adminRepositoryForRestaurant.getRestaurantRanking()
+		            .stream().map(r -> new Admin_RestaurantsRankingDTO(
+		                    r.getRestaurantId(),
+		                    r.getRanking(),
+		                    r.getName(),
+		                    r.getAverageRating(),
+		                    r.getReviewCount()
+		            )).toList();
+
+		dto.setRestaurantRanking(ranking);
+		return dto;
+	}
+
 }

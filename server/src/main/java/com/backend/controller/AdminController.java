@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.dto.RestaurantApiResponseDTO;
 import com.backend.dto.demo;
-import com.backend.dto.admin.DeliveryPartnerApplicationsDTO;
-import com.backend.dto.admin.RestaurantApplicationsDTO;
+import com.backend.dto.admin.*;
 import com.backend.service.admin.AdminService;
 
 import lombok.RequiredArgsConstructor;
@@ -211,19 +211,22 @@ public class AdminController {
 				  .body("Error");
 	  }
   }
+  
+  //Statistics of Restaurant
   @GetMapping("/statistics/restaurants")
-  public ResponseEntity<?> restaurantData()
-  {
-	  System.out.println("Restaurant Data");
-	  try {
-		    return ResponseEntity.ok("Restaurant Data");
-	  }
-	  catch(RuntimeException e)
-	  {
-		  return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				  .body("Error");
-	  }
-  }
+	public ResponseEntity<?> getStats(){
+		System.out.println("In Get of statistics/restaurants");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(adminService.getRestaurantsStatistics());
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
+	}
+
+  
+  
   @GetMapping("/statistics/delivery-partners")
   public ResponseEntity<?> deliveryPartnerData()
   {
