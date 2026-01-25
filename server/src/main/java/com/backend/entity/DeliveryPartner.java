@@ -6,6 +6,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -23,7 +24,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 public class DeliveryPartner extends BaseEntity{
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinColumn(name="user_id", nullable=false)
 	private User user;
 	
@@ -40,6 +41,4 @@ public class DeliveryPartner extends BaseEntity{
 	@Enumerated(EnumType.STRING)
 	private AvailabilityStatus status;
 	
-	@Enumerated(EnumType.STRING)
-	private KycStatus kycStatus = KycStatus.PENDING;
 }

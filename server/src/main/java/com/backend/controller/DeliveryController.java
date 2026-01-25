@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.dto.demo;
+import com.backend.dto.delivery.DeliveryPartnerApplyDto;
 import com.backend.dto.delivery.DeliveryProfileDto;
 import com.backend.dto.delivery.DeliveryWalletSummaryDto;
+import com.backend.service.delivery.ApplyForDeliveryService;
 import com.backend.service.delivery.DeliveryOrderService;
 import com.backend.service.delivery.DeliveryOrderServiceImpl;
 import com.backend.service.delivery.DeliveryProfileService;
@@ -30,16 +32,18 @@ public class DeliveryController {
 	private final DeliveryOrderService orderService;
 	private final DeliveryWalletService deliveryWalletService;
 	private final DeliveryProfileService deliveryProfileService;
+	private final ApplyForDeliveryService applyForDeliveryService;
 	
 	@PostMapping("/apply")
-	public ResponseEntity<?> addPartner(@RequestBody demo demo_dto_form_details){
+	public ResponseEntity<?> addPartner(@RequestBody DeliveryPartnerApplyDto applyDto, @RequestParam Long userId){
 		System.out.println("In Post add-partner");
 		try {
-			return ResponseEntity.ok("Form Submission");
+			applyForDeliveryService.applyForDeliveryPartner(userId, applyDto);
+			return ResponseEntity.status(HttpStatus.CREATED).body("Applied successfully");
 		}
-		catch(RuntimeException e) {
+		catch(RuntimeException e) { 
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("Error");
+					.body("Error : " + e.getMessage());
 		}
 	}
 	
