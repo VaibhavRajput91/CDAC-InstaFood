@@ -1,5 +1,6 @@
 package com.backend.service.admin;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class AdminServiceImpl implements AdminService{
 	public List<RestaurantApplicationsDTO> getPendingRestaurantApplications() {
 		
 		List<Restaurant> restaurants =
-				restaurantApprovalRepository.findByStatus(AvailabilityStatus.INACTIVE);
+				restaurantApprovalRepository.findByStatus(AvailabilityStatus.PENDING);
 		
         // Convert Entity → DTO (USING FOR LOOP)
         List<RestaurantApplicationsDTO> dtoList = new ArrayList<>();
@@ -72,7 +73,7 @@ public class AdminServiceImpl implements AdminService{
 
 	@Override
 	public RestaurantApplicationDetailsDTO getRestaurantApplicationDetails(Long id) {
-		Restaurant restaurant = restaurantApprovalRepository.findByIdAndStatus(id,AvailabilityStatus.INACTIVE)
+		Restaurant restaurant = restaurantApprovalRepository.findByIdAndStatus(id,AvailabilityStatus.PENDING)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found"));
 
         User user = restaurant.getUser();
@@ -96,7 +97,7 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	public RestaurantApprovalResponseDTO acceptRestaurantAppication(Long id) {
 		Restaurant restaurant = restaurantApprovalRepository
-		        .findByIdAndStatus(id, AvailabilityStatus.INACTIVE)
+		        .findByIdAndStatus(id, AvailabilityStatus.PENDING)
 		        .orElseThrow(() -> new RuntimeException("Restaurant not found"));
 
 		    restaurant.setStatus(AvailabilityStatus.AVAILABLE);
@@ -113,7 +114,7 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	public List<DeliveryPartnerApplicationsDTO> getPendingDeliveryPartnerApplications() {
 		List<DeliveryPartner> applications =
-				deliveryPartnerApprovalRepository.findByStatus(AvailabilityStatus.INACTIVE);
+				deliveryPartnerApprovalRepository.findByStatus(AvailabilityStatus.PENDING);
 		
         // Convert Entity → DTO (USING FOR LOOP)
         List<DeliveryPartnerApplicationsDTO> dtoList = new ArrayList<>();
@@ -131,7 +132,7 @@ public class AdminServiceImpl implements AdminService{
 
 	@Override
 	public DeliveryPartnerDetailsDTO getDeliveryPartnerApplicationDetails(Long id) {
-		DeliveryPartner delivery = deliveryPartnerApprovalRepository.findByIdAndStatus(id,AvailabilityStatus.INACTIVE)
+		DeliveryPartner delivery = deliveryPartnerApprovalRepository.findByIdAndStatus(id,AvailabilityStatus.PENDING)
                 .orElseThrow(() -> new RuntimeException("Delivery Partner not found"));
 
         User user = delivery.getUser();
@@ -155,7 +156,7 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	public DeliveryApprovalResponseDTO acceptDeliveryApplication(Long id) {
 		DeliveryPartner delivery = deliveryPartnerApprovalRepository
-		        .findByIdAndStatus(id, AvailabilityStatus.INACTIVE)
+		        .findByIdAndStatus(id, AvailabilityStatus.PENDING)
 		        .orElseThrow(() -> new RuntimeException("Delivery Partner not found"));
 
 		delivery.setStatus(AvailabilityStatus.AVAILABLE);
@@ -166,6 +167,47 @@ public class AdminServiceImpl implements AdminService{
 		    		delivery.getUser().getFirstName() + " " + delivery.getUser().getLastName(),
 		    		delivery.getStatus(),
 		        "Delivery Partner approved successfully"
+		    );
+	}
+
+	@Override
+	public RestaurantApprovalResponseDTO rejectRestaurant(Long id) {
+		Restaurant restaurant =
+	            restaurantApprovalRepository
+	                .findByIdAndStatus(id, AvailabilityStatus.PENDING)
+	                .orElseThrow(() ->
+	                    new RuntimeException("Restaurant application not found or already processed")
+	                );
+
+	    // Status remains INACTIVE (explicitly setting is optional)
+	     restaurant.setStatus(AvailabilityStatus.REJECTED);
+		 restaurant.setLastUpdated(LocalDateTime.now());
+	    // save is optional but recommended for clarity
+	    restaurantApprovalRepository.save(restaurant);
+
+	    return new RestaurantApprovalResponseDTO(
+	            restaurant.getId(),
+	            restaurant.getRestaurantName(),
+	            restaurant.getStatus(),
+	            "Restaurant application rejected successfully"
+	    );
+	}
+
+	@Override
+	public DeliveryApprovalResponseDTO rejectDeliveryPartner(Long id) {
+		DeliveryPartner delivery = deliveryPartnerApprovalRepository
+		        .findByIdAndStatus(id, AvailabilityStatus.PENDING)
+		        .orElseThrow(() -> new RuntimeException("Delivery Partner not found"));
+
+		       delivery.setStatus(AvailabilityStatus.REJECTED);
+		       delivery.setLastUpdated(LocalDateTime.now());
+		    deliveryPartnerApprovalRepository.save(delivery);
+
+		    return new DeliveryApprovalResponseDTO(
+		    		delivery.getId(),
+		    		delivery.getUser().getFirstName() + " " + delivery.getUser().getLastName(),
+		    		delivery.getStatus(),
+		        "Delivery Partner application rejected"
 		    );
 	}
 }
