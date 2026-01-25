@@ -26,4 +26,6 @@ public interface AdminService {
 	// Statistics of Restaurant
 	Admin_RestaurantStatisticsDTO getRestaurantsStatistics();
 
+	AdminCustomerStatsDTO getCustomerStatsData();
+
 }

@@ -1,5 +1,6 @@
 package com.backend.service.admin;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import com.backend.entity.DeliveryPartner;
 import com.backend.entity.Restaurant;
 import com.backend.entity.User;
 import com.backend.entity.UserRole;
+import com.backend.repository.admin.AdminCustomerStatsRepository;
 import com.backend.repository.admin.AdminProfileRepository;
 import com.backend.repository.admin.AdminRepositoryForRestaurant;
 import com.backend.repository.admin.DeliveryPartnerApprovalRepository;
@@ -32,6 +34,7 @@ public class AdminServiceImpl implements AdminService{
 	
 	private final RestaurantApprovalRepository restaurantApprovalRepository;
 	private final DeliveryPartnerApprovalRepository deliveryPartnerApprovalRepository;
+	private final AdminCustomerStatsRepository customerStatsRepository;
 	
 	private final AdminRepositoryForRestaurant adminRepositoryForRestaurant;
 
@@ -229,6 +232,48 @@ public class AdminServiceImpl implements AdminService{
 
 		dto.setRestaurantRanking(ranking);
 		return dto;
+	}
+
+	@Override
+	public AdminCustomerStatsDTO getCustomerStatsData() {
+		
+		AdminCustomerStatsDTO response = new AdminCustomerStatsDTO();
+
+        //  Total customers
+        long totalCustomers =
+        		customerStatsRepository.countByRole(UserRole.ROLE_CUSTOMER);
+
+        //  Weekly customers (last 7 days)
+        LocalDate oneWeekAgo = LocalDate.now().minusDays(7);
+
+        long weeklyCustomers =
+        		customerStatsRepository.countByRoleAndCreatedOnAfter(
+                        UserRole.ROLE_CUSTOMER,
+                        oneWeekAgo
+                );
+
+        // 3 Customer list
+        List<User> users =
+        		customerStatsRepository.findByRole(UserRole.ROLE_CUSTOMER);
+
+        List<AdminCustomerDTO> customerDTOs = new java.util.ArrayList<>();
+
+        for (User user : users) {
+        	AdminCustomerDTO dto = new AdminCustomerDTO(
+                    user.getId(),
+                    user.getFirstName() + " " + user.getLastName(),
+                    user.getEmail(),
+                    user.getPhone()
+            );
+            customerDTOs.add(dto);
+        }
+
+        response.setTotalCustomers(totalCustomers);
+        response.setWeeklyCustomers(weeklyCustomers);
+        response.setCustomers(customerDTOs);
+
+        return response;
+
 	}
 
 }
