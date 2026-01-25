@@ -1,6 +1,8 @@
 package com.backend.entity;
 
 import java.security.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -49,8 +51,8 @@ public class MenuDish{
 	private boolean isAvailable=true;
 	
 	@CreationTimestamp
-    private Timestamp createdAt;
+    private LocalDate createdAt;
 
     @UpdateTimestamp
-    private Timestamp updatedAt;
+    private LocalDateTime updatedAt;
 }
