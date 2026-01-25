@@ -34,6 +34,20 @@ public class AdminController {
 		
 		
 	}
+	@GetMapping("/dashboard")
+	public ResponseEntity<?> getDashboardDetails()
+	{
+		System.out.println("getDashboardDetails");
+		try {
+			return ResponseEntity.ok(adminService.getTotalOrdersDetails());
+		}
+		catch(RuntimeException e)
+		{
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body("Error");
+		}
+		
+	}
 	
 	@GetMapping("/dashboard/order-status")
 	public ResponseEntity<?> orderStatus()

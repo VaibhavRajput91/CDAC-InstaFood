@@ -2,6 +2,7 @@ package com.backend.service.admin;
 
 import java.util.List;
 
+import com.backend.dto.TotalOrdersDetailsDTO;
 import com.backend.dto.admin.*;
 public interface AdminService {
 
@@ -27,5 +28,7 @@ public interface AdminService {
 	Admin_RestaurantStatisticsDTO getRestaurantsStatistics();
 
 	AdminCustomerStatsDTO getCustomerStatsData();
+	
+	TotalOrdersDetailsDTO getTotalOrdersDetails();
 
 }

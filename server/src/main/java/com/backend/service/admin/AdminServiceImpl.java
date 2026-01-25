@@ -11,12 +11,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.backend.dto.TotalOrdersDetailsDTO;
 import com.backend.dto.admin.*;
 import com.backend.entity.AvailabilityStatus;
 import com.backend.entity.DeliveryPartner;
 import com.backend.entity.Restaurant;
 import com.backend.entity.User;
 import com.backend.entity.UserRole;
+import com.backend.repository.CategoryRepository;
+import com.backend.repository.DishRepository;
+import com.backend.repository.OrderRepository;
 import com.backend.repository.admin.AdminCustomerStatsRepository;
 import com.backend.repository.admin.AdminProfileRepository;
 import com.backend.repository.admin.AdminRepositoryForRestaurant;
@@ -37,6 +41,9 @@ public class AdminServiceImpl implements AdminService{
 	private final AdminCustomerStatsRepository customerStatsRepository;
 	
 	private final AdminRepositoryForRestaurant adminRepositoryForRestaurant;
+	private final OrderRepository orderRepository;
+	private final DishRepository dishRepository;
+	private final CategoryRepository categoryRepository;
 
 	
 	private final ModelMapper modelMapper;
@@ -275,5 +282,13 @@ public class AdminServiceImpl implements AdminService{
         return response;
 
 	}
+	@Override
+	public TotalOrdersDetailsDTO getTotalOrdersDetails() {
+		TotalOrdersDetailsDTO totalOrdersDetailsDTO = orderRepository.getTotalOrderDetailsOfAllCustomers();
+		totalOrdersDetailsDTO.setTotalDishesOffered(dishRepository.getTotalDishesOfAllRestaurants());
+		totalOrdersDetailsDTO.setTotalCategoriesOffered(categoryRepository.getTotalCategoriesOfDishes());
+		return totalOrdersDetailsDTO;
+	}
+
 
 }
