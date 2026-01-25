@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.backend.dto.admin.AdminProfileDTO;
 import com.backend.dto.admin.DeliveryPartnerApplicationsDTO;
+import com.backend.dto.admin.DeliveryPartnerDetailsDTO;
 import com.backend.dto.admin.RestaurantApplicationDetailsDTO;
 import com.backend.dto.admin.RestaurantApplicationsDTO;
 import com.backend.dto.admin.RestaurantApprovalResponseDTO;
@@ -19,5 +20,7 @@ public interface AdminService {
 	RestaurantApprovalResponseDTO acceptRestaurantAppication(Long id);
 
 	List<DeliveryPartnerApplicationsDTO> getPendingDeliveryPartnerApplications();
+
+	DeliveryPartnerDetailsDTO getDeliveryPartnerApplicationDetails(Long id);
 
 }
