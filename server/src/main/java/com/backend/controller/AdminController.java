@@ -115,16 +115,16 @@ public class AdminController {
 	
 	
   @PutMapping("/approvals/restaurants/{id}/approve")
-  public ResponseEntity<?> approveRestaurant(@PathVariable Long id,@RequestBody demo demoDto)
+  public ResponseEntity<?> approveRestaurant(@PathVariable Long id)
   {  
 	  System.out.println("In Put - /approvals/restaurants"); 
   try {
-		 return ResponseEntity.ok("Restaurant Approved Successfully");
-	  }
+	  return ResponseEntity.ok(adminService.acceptRestaurantAppication(id));
+		  }
 	  catch(RuntimeException e)
 	  {
 		  
-		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error");
+		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 	  }
   }
   
