@@ -52,7 +52,7 @@ public class User extends BaseEntity implements UserDetails{
 	@Column(length=15)
 	private String phone;
 	
-	@OneToOne(mappedBy="user", fetch=FetchType.EAGER)
+	@OneToOne(mappedBy="user", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	private Address address;
 	
 	@Column(nullable=false)
