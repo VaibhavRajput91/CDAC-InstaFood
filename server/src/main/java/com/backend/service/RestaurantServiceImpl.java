@@ -66,6 +66,12 @@ public class RestaurantServiceImpl implements RestaurantService {
 		int rowsAffected=restaurantRepository.changeAvailability(dishId);
 		return "Rows Affected : "+rowsAffected;
 	}
+	
+	@Override
+	public String deleteMenuDish(long menuId, long dishId) {
+		int rowsAffected=restaurantRepository.deleteDish(menuId, dishId);
+		return "Rows Affected : "+rowsAffected;
+	}
 
 
 

@@ -85,11 +85,18 @@ public class RestaurantController {
 	
 	
 	
+	// Delete dish using menuId & dishId
 	
-	@DeleteMapping("/menu/delete")
-	public ResponseEntity<?> deleteDish(@RequestParam long id){
-		return ResponseEntity.status(HttpStatus.OK)
-				.body("Deleted dish with id : " + id);
+	@DeleteMapping("/menu/delete-dish")
+	public ResponseEntity<?> deleteDish(@RequestParam Long menuId,@RequestParam Long dishId){
+		System.out.println("In Delete of Menu/Delete");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new RestaurantApiResponseDTO("Success", restaurantService.deleteMenuDish(menuId,dishId)));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
 	}
 	
 	// add dish page
