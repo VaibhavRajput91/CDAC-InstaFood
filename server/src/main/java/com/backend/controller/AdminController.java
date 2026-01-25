@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.dto.demo;
+import com.backend.dto.admin.DeliveryPartnerApplicationsDTO;
 import com.backend.dto.admin.RestaurantApplicationsDTO;
 import com.backend.service.admin.AdminService;
 
@@ -145,12 +146,15 @@ public class AdminController {
   {
 	  System.out.println("In GET delivery partner applications");
 	  try {
-		  return ResponseEntity.ok("Displaying list of application");
+		  List<DeliveryPartnerApplicationsDTO> applications =
+		            adminService.getPendingDeliveryPartnerApplications();
+         
+		     return ResponseEntity.ok(applications);
 	  }
 	  catch(RuntimeException e)
 	  {
           return ResponseEntity.status(HttpStatus.NOT_FOUND)
-        		  .body("Error");
+        		  .body(e.getMessage());
 	  }
   }
   

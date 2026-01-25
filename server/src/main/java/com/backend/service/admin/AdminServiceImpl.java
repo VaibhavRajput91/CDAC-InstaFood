@@ -10,14 +10,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.backend.dto.admin.AdminProfileDTO;
+import com.backend.dto.admin.DeliveryPartnerApplicationsDTO;
 import com.backend.dto.admin.RestaurantApplicationDetailsDTO;
 import com.backend.dto.admin.RestaurantApplicationsDTO;
 import com.backend.dto.admin.RestaurantApprovalResponseDTO;
 import com.backend.entity.AvailabilityStatus;
+import com.backend.entity.DeliveryPartner;
 import com.backend.entity.Restaurant;
 import com.backend.entity.User;
 import com.backend.entity.UserRole;
 import com.backend.repository.admin.AdminProfileRepository;
+import com.backend.repository.admin.DeliveryPartnerApprovalRepository;
 import com.backend.repository.admin.RestaurantApprovalRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,8 @@ public class AdminServiceImpl implements AdminService{
 	private final AdminProfileRepository adminProfileRepository;
 	
 	private final RestaurantApprovalRepository restaurantApprovalRepository;
+	private final DeliveryPartnerApprovalRepository deliveryPartnerApprovalRepository;
+	
 	private final ModelMapper modelMapper;
 
 	@Override
@@ -101,5 +106,24 @@ public class AdminServiceImpl implements AdminService{
 		        restaurant.getStatus(),
 		        "Restaurant approved successfully"
 		    );
+	}
+
+	@Override
+	public List<DeliveryPartnerApplicationsDTO> getPendingDeliveryPartnerApplications() {
+		List<DeliveryPartner> applications =
+				deliveryPartnerApprovalRepository.findByStatus(AvailabilityStatus.INACTIVE);
+		
+        // Convert Entity → DTO (USING FOR LOOP)
+        List<DeliveryPartnerApplicationsDTO> dtoList = new ArrayList<>();
+
+        for (DeliveryPartner delvieryPartner : applications) {
+        	DeliveryPartnerApplicationsDTO deliveryPartnerdto = new DeliveryPartnerApplicationsDTO();
+            deliveryPartnerdto.setId(delvieryPartner.getId());
+            deliveryPartnerdto.setDeliveryPartnerName(delvieryPartner.getUser().getFirstName() +" "+delvieryPartner.getUser().getLastName());
+
+            dtoList.add(deliveryPartnerdto);
+        }
+
+        return dtoList;
 	}
 }
