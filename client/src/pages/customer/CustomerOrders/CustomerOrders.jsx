@@ -1,61 +1,60 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 //import { useNavigate } from 'react-router-dom';
 import CustomerNavbar from '../../../components/customer/CustomerNavbar/CustomerNavbar';
+import { getCustomerOrders } from '../../../services/customer/customerOrders';
 import './CustomerOrders.css';
 
 function CustomerOrders() {
   //const navigate = useNavigate();
 
   
-  const orders = [
-    {
-      id: 'ORD-12345',
-      restaurantName: 'Spicy Delight',
-      status: 'Delivered',
-      image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=500&q=60',
-      items: ['Chicken Biryani', 'Raita'],
-      total: 450,
-    },
-    {
-      id: 'ORD-12346',
-      restaurantName: 'Pizza Paradise',
-      status: 'In Transit',
-      image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=500&q=60',
-      items: ['Pepperoni Pizza', 'Coke'],
-      total: 600,
-    },
-    {
-      id: 'ORD-12347',
-      restaurantName: 'Burger King',
-      status: 'Cancelled',
-      image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=500&q=60',
-      items: ['Whopper Meal'],
-      total: 350,
-    },
-    {
-      id: 'ORD-12348',
-      restaurantName: 'Sushi World',
-      status: 'Processing',
-      image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=500&q=60',
-      items: ['Salmon Roll', 'Miso Soup'],
-      total: 800,
-    },
-     {
-      id: 'ORD-12349',
-      restaurantName: 'Taco Bell',
-      status: 'Delivered',
-      image: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=500&q=60',
-      items: ['Tacos', 'Nachos'],
-      total: 250,
-    }
-  ];
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Sort orders according to status
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const userId = localStorage.getItem('userId') || 2; // Default to 1 if not found
+        const response = await getCustomerOrders(userId);
+        
+        if (response) {
+          // Map API response to UI structure
+          // API returns array of objects: { restaurantName, deliveryName, orderDate, totalAmount, dishesWithQuantities, orderStatus }
+          // We need: { id, restaurantName, status, image, items, total }
+          
+          const mappedOrders = response.map((order, index) => ({
+            id: order.orderId || `ORD-${Date.now()}-${index}`, // Fallback ID
+            restaurantName: order.restaurantName,
+            status: order.orderStatus,
+            image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=500&q=60', // Placeholder
+            items: Object.entries(order.dishesWithQuantities || {}).map(([dish, qty]) => `${qty}x ${dish}`),
+            total: order.totalAmount,
+            date: order.orderDate
+          }));
+
+          // Sort by date (newest first) or status if needed. 
+          // Here keeping the status priority logic or just displaying as is. 
+          // Let's sort by date for now, or just reverse to show newest.
+          setOrders(mappedOrders.reverse());
+        }
+      } catch (error) {
+        console.error("Failed to fetch orders", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  // Sort orders according to status - Optional, can be re-enabled if client wants specific sorting
   const statusPriority = {
-    'In Transit': 1,
-    'Processing': 2,
-    'Delivered': 3,
-    'Cancelled': 4
+    'PLACED': 1,
+    'ACCEPTED': 2,
+    'PREPARING': 3,
+    'OUT_FOR_DELIVERY': 4,
+    'DELIVERED': 5,
+    'CANCELLED': 6
   };
 
   const sortedOrders = [...orders].sort((a, b) => {
@@ -72,13 +71,15 @@ function CustomerOrders() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Delivered':
+      case 'DELIVERED':
         return 'text-green-600 bg-green-100';
-      case 'In Transit':
+      case 'OUT_FOR_DELIVERY':
         return 'text-blue-600 bg-blue-100';
-      case 'Cancelled':
+      case 'CANCELLED':
         return 'text-red-600 bg-red-100';
-      case 'Processing':
+      case 'PLACED':
+      case 'ACCEPTED':
+      case 'PREPARING':
         return 'text-yellow-600 bg-yellow-100';
       default:
         return 'text-gray-600 bg-gray-100';
@@ -92,6 +93,11 @@ function CustomerOrders() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">My Orders</h1>
         
+        {loading ? (
+             <div className="flex justify-center items-center h-64">
+                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+             </div>
+        ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {sortedOrders.map((order) => (
             <div 
@@ -115,7 +121,10 @@ function CustomerOrders() {
               <div className="p-5">
                 <div className="flex justify-between items-start mb-2">
                    <h3 className="text-xl font-bold text-gray-800">{order.restaurantName}</h3>
-                   <span className="text-sm text-gray-500 font-medium">{order.id}</span>
+                   <div className="text-right">
+                     <span className="text-sm text-gray-500 font-medium block">{order.id}</span>
+                     <span className="text-xs text-gray-400">{order.date}</span>
+                   </div>
                 </div>
                 
                 <p className="text-gray-600 text-sm mb-4 line-clamp-1">
@@ -130,6 +139,7 @@ function CustomerOrders() {
             </div>
           ))}
         </div>
+        )}
       </main>
     </div>
   );
