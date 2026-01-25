@@ -1,6 +1,7 @@
 package com.backend.entity;
 
 import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -22,7 +23,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 public class DeliveryPartner extends BaseEntity{
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="user_id", nullable=false)
 	private User user;
 	
@@ -34,8 +35,11 @@ public class DeliveryPartner extends BaseEntity{
 	
 	@Column(name="vehicle_type")
 	@Enumerated(EnumType.STRING)
-	private VehicleType vehicheType;
+	private VehicleType vehicleType;
 	
 	@Enumerated(EnumType.STRING)
 	private AvailabilityStatus status;
+	
+	@Enumerated(EnumType.STRING)
+	private KycStatus kycStatus = KycStatus.PENDING;
 }

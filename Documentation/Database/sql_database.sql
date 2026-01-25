@@ -40,6 +40,7 @@ CREATE TABLE restaurants (
     closing_time time not null,
     opening_time time not null,
     status enum('AVAILABLE', 'UNAVAILABLE', 'INACTIVE'),
+    kyc_status('PENDING', 'APPROVED', 'REJECTED') default 'PENDING',
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp on update current_timestamp,
     
@@ -54,6 +55,7 @@ create table delivery_partners(
     model varchar(50) not null,
     vehicle_type enum('BICYCLE', 'BIKE', 'SCOOTER', 'CAR', 'EV'),
     status enum('AVAILABLE', 'UNAVAILABLE', 'INACTIVE'),
+    kyc_status('PENDING', 'APPROVED', 'REJECTED') default 'PENDING',
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp on update current_timestamp,
     

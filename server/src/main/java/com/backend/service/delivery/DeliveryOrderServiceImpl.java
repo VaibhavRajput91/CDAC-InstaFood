@@ -88,8 +88,8 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
 				OrderItemDto orderItemDto = new OrderItemDto();
 				orderItemDto.setDishId(item.getDish().getId());
 				orderItemDto.setDishName(item.getDish().getName());
-				orderItemDto.setPrice(item.getQuantity());
 				orderItemDto.setPrice(item.getPrice());
+				orderItemDto.setQuantity(item.getQuantity());
 				
 				items.add(orderItemDto);
 			}

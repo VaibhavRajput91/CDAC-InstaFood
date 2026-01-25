@@ -39,5 +39,8 @@ public class Restaurant extends BaseEntity{
 	
 	@Enumerated(EnumType.STRING)
 	private AvailabilityStatus status;
+	
+	@Enumerated(EnumType.STRING)
+	private KycStatus kycStatus = KycStatus.PENDING;
 
 }

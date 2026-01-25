@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.dto.demo;
+import com.backend.dto.delivery.DeliveryProfileDto;
 import com.backend.dto.delivery.DeliveryWalletSummaryDto;
 import com.backend.service.delivery.DeliveryOrderService;
 import com.backend.service.delivery.DeliveryOrderServiceImpl;
+import com.backend.service.delivery.DeliveryProfileService;
 import com.backend.service.delivery.DeliveryWalletService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,8 +29,9 @@ public class DeliveryController {
 	// dependencies
 	private final DeliveryOrderService orderService;
 	private final DeliveryWalletService deliveryWalletService;
+	private final DeliveryProfileService deliveryProfileService;
 	
-	@PostMapping("/add-partner")
+	@PostMapping("/apply")
 	public ResponseEntity<?> addPartner(@RequestBody demo demo_dto_form_details){
 		System.out.println("In Post add-partner");
 		try {
@@ -93,26 +96,26 @@ public class DeliveryController {
 	
 	
 	@GetMapping("/details")
-	public ResponseEntity<?> profile(){
+	public ResponseEntity<?> profile(@RequestParam Long id){
 		System.out.println("In Get details");
 		try {
-			return ResponseEntity.ok("user details, vehicle details and month performance in a single json object");
+			return ResponseEntity.status(HttpStatus.OK).body(deliveryProfileService.getDeliveryPartnerProfile(id));
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("Error");
+					.body("Error : " + e.getMessage());
 		}
 	}
 	
 	@PutMapping("/edit-details")
-	public  ResponseEntity<?> editProfile(@RequestBody demo demo_dto_to_update_details){
+	public  ResponseEntity<?> editProfile(@RequestBody DeliveryProfileDto profileDto, @RequestParam Long id){
 		System.out.println("In Put Edit-Details");
 		try {
-			return ResponseEntity.ok("to change the user details");
+			return ResponseEntity.status(HttpStatus.OK).body(deliveryProfileService.updateDeliveryPartnerProfile(id, profileDto));	
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("Error");
+					.body("Error : " + e.getMessage());
 		}
 	}
 	
