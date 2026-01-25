@@ -2,7 +2,7 @@ package com.backend.dto.customer;
 
 import com.backend.entity.UserRole;
 
-
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -29,4 +29,14 @@ public class UserRequestDTO {
 	@NotNull
 	private String phone;
 	private UserRole role;
+	
+	@NotBlank
+	private String city;
+	@NotBlank
+	private String postalCode;
+	@NotBlank
+	private String lineOne;
+	@NotBlank
+	private String lineTwo;
+	private String state;
 }
