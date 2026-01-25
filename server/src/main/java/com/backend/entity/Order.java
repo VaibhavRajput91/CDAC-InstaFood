@@ -38,7 +38,7 @@ public class Order extends BaseEntity {
 	private Restaurant restaurant;
 	
 	@ManyToOne
-	@JoinColumn(name="delivery_partner_id", nullable=false)
+	@JoinColumn(name="delivery_partner_id", nullable=true)
 	private DeliveryPartner deliveryPartner;
 	
 	@OneToMany(
