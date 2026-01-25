@@ -1,5 +1,7 @@
 package com.backend.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.dto.demo;
+import com.backend.dto.admin.RestaurantApplicationsDTO;
 import com.backend.service.admin.AdminService;
 
 import lombok.RequiredArgsConstructor;
@@ -83,8 +86,11 @@ public class AdminController {
 	{
 		System.out.println("In GET /approvals/restauratns");
 		try {
-			return ResponseEntity.ok("Displaying list of pending applications");
-		}
+			List<RestaurantApplicationsDTO> applications =
+		            adminService.getPendingRestaurantApplications();
+             // Always return 200 OK
+		    // Empty list means "no pending applications"
+		     return ResponseEntity.ok(applications);}
 		catch(RuntimeException e)
 		{
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
