@@ -47,7 +47,7 @@ public class MenuDish{
 	@Column(nullable=false)
 	private double price;
 	
-	@Column(name="is_available",nullable=false)
+	@Column(name="is_available",nullable=false,columnDefinition = "BIT(1) DEFAULT b'1' ")
 	private boolean isAvailable=true;
 	
 	@CreationTimestamp
