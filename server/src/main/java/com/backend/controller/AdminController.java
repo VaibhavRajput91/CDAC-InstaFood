@@ -130,15 +130,15 @@ public class AdminController {
   }
   
   @PutMapping("/approvals/restaurants/{id}/reject")
-  public ResponseEntity<?> rejectRestaurant(@PathVariable Long id,@RequestBody demo demoDto)
+  public ResponseEntity<?> rejectRestaurant(@PathVariable Long id)
   {
 	   try {
-		   return ResponseEntity.ok("Restaurant rejected");
+		   return ResponseEntity.ok(adminService.rejectRestaurant(id));
 	   }
 	   catch(RuntimeException e)
 	   {
 		   return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				   .body("Error");
+				   .body(e.getMessage());
 	   }
   }
   @GetMapping("/approvals/delivery-partners/applications")
@@ -186,15 +186,15 @@ public class AdminController {
   }
   
   @PutMapping("/approvals/delivery-partners/{id}/reject")
-  public ResponseEntity<?> rejectDeliveryPartner(@PathVariable Long id,@RequestBody demo demoDto)
+  public ResponseEntity<?> rejectDeliveryPartner(@PathVariable Long id)
   {
 	   try {
-		   return ResponseEntity.ok("DeliveryPartner rejected");
+		   return ResponseEntity.ok(adminService.rejectDeliveryPartner(id));
 	   }
 	   catch(RuntimeException e)
 	   {
 		   return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				   .body("Error");
+				   .body(e.getMessage());
 	   }
   }
   

@@ -26,4 +26,8 @@ public interface AdminService {
 
 	DeliveryApprovalResponseDTO acceptDeliveryApplication(Long id);
 
+	RestaurantApprovalResponseDTO rejectRestaurant(Long id);
+
+	DeliveryApprovalResponseDTO rejectDeliveryPartner(Long id);
+
 }
