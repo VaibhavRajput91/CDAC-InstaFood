@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.backend.dto.admin.AdminProfileDTO;
 import com.backend.dto.admin.DeliveryPartnerApplicationsDTO;
+import com.backend.dto.admin.DeliveryPartnerDetailsDTO;
 import com.backend.dto.admin.RestaurantApplicationDetailsDTO;
 import com.backend.dto.admin.RestaurantApplicationsDTO;
 import com.backend.dto.admin.RestaurantApprovalResponseDTO;
@@ -125,5 +126,28 @@ public class AdminServiceImpl implements AdminService{
         }
 
         return dtoList;
+	}
+
+	@Override
+	public DeliveryPartnerDetailsDTO getDeliveryPartnerApplicationDetails(Long id) {
+		DeliveryPartner delivery = deliveryPartnerApprovalRepository.findByIdAndStatus(id,AvailabilityStatus.INACTIVE)
+                .orElseThrow(() -> new RuntimeException("Delivery Partner not found"));
+
+        User user = delivery.getUser();
+
+        DeliveryPartnerDetailsDTO deliverydto = new DeliveryPartnerDetailsDTO();
+
+        deliverydto.setDeliveryId(delivery.getId());
+       // deliverydto.setDeliveryPartnerName(delivery.getUser().getFirstName()+" "+delivery.getUser().getLastName());
+
+        deliverydto.setDeliveryPartnerName(user.getFirstName() + " " + user.getLastName());
+        deliverydto.setEmail(user.getEmail());
+        deliverydto.setPhone(user.getPhone());
+        deliverydto.setLicenseNumber(delivery.getLicenseNumber());
+        deliverydto.setVehicheType(delivery.getVehicheType());
+        deliverydto.setAddress(user.getAddress().getLineOne() + " "+ user.getAddress().getLineTwo()+ " "+ user.getAddress().getPostalCode());
+        
+
+        return deliverydto;
 	}
 }

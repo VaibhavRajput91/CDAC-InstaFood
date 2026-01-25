@@ -163,12 +163,12 @@ public class AdminController {
   {
 	  System.out.println("In GET delivery partner application");
 	  try {
-		  return ResponseEntity.ok("Displaying data of particular delivery-partner application with id "+id);
-	  }
+		  return ResponseEntity.ok(adminService.getDeliveryPartnerApplicationDetails(id));
+		  }
 	  catch(RuntimeException e)
 	  {
           return ResponseEntity.status(HttpStatus.NOT_FOUND)
-        		  .body("Error");
+        		  .body(e.getMessage());
 	  }
   }
   
