@@ -145,7 +145,7 @@ public class AdminServiceImpl implements AdminService{
         deliverydto.setEmail(user.getEmail());
         deliverydto.setPhone(user.getPhone());
         deliverydto.setLicenseNumber(delivery.getLicenseNumber());
-        deliverydto.setVehicheType(delivery.getVehicheType());
+        deliverydto.setVehicheType(delivery.getVehicleType());
         deliverydto.setAddress(user.getAddress().getLineOne() + " "+ user.getAddress().getLineTwo()+ " "+ user.getAddress().getPostalCode());
         
 
