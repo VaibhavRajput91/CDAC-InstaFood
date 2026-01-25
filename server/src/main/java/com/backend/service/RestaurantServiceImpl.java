@@ -151,20 +151,41 @@ public class RestaurantServiceImpl implements RestaurantService {
 			
 	}
 
-//	@Override
-//	public String updateDishDetails(Long menuId,Long dishId, DishUpdateDTO updatedDishDetails) {
-//		Menu menu = menuRepository.findById(menuId)
-//				.orElseThrow(() -> new RuntimeException("Menu not found"));
-//		List<MenuDish> menudishes = menu.getMenuDishes();
-//		for (MenuDish md : menudishes) {
-//			if (md.getDish().getId().equals(dishId)) {
-//				md.setDescription(updatedDishDetails.getDescription());
-//				md.setPrice(updatedDishDetails.getPrice());
-//				md.getDish().setName(updatedDishDetails.getName());
-//				dishRepository.save(md.getDish());
-//			}
-//		}
-//		return "Dish details updated successfully";
-//	}
+	@Override
+	public String updateDishDetails(Long menuId, Long dishId, DishUpdateDTO updatedDishDetails) {
+	    Menu menu = menuRepository.findById(menuId)
+	            .orElseThrow(() -> new RuntimeException("Menu not found"));
+
+	    List<MenuDish> menuDishes = menu.getMenuDishes();
+	    if (menuDishes == null || menuDishes.isEmpty()) {
+	        throw new RuntimeException("No dishes found in this menu");
+	    }
+
+	    MenuDish target = menuDishes.stream()
+	            .filter(md -> md.getDish() != null && dishId.equals(md.getDish().getId()))
+	            .findFirst()
+	            .orElseThrow(() -> new RuntimeException("Dish not found in menu"));
+
+	    // Update MenuDish fields (description, price)
+	    if (updatedDishDetails.getDescription() != null) {
+	        target.setDescription(updatedDishDetails.getDescription());
+	    }
+	    if (updatedDishDetails.getPrice() != null) {
+	        target.setPrice(updatedDishDetails.getPrice());
+	    }
+
+	    // Update Dish entity (name) if provided
+	    if (updatedDishDetails.getName() != null) {
+	        Dish dish = target.getDish();
+	        dish.setName(updatedDishDetails.getName());
+	        dishRepository.save(dish); // persist dish changes
+	    }
+
+	    // Persist Menu/MenuDish changes to ensure description/price are saved
+	    menuRepository.save(menu);
+
+	    return "Dish details updated successfully";
+	}
+
 	
 }

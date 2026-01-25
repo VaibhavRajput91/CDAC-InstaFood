@@ -13,5 +13,5 @@ public interface RestaurantService {
 	String updateRestaurantDetails(Long restaurantId ,RestaurantUpdateDTO updatedRestaurantDetails);
 	RestaurantDetailsDTO getRestaurantDetailsById(Long restaurantId);
 	DishDetailsDTO getDishDetailsById(Long menuId,Long dishId);
-//	String updateDishDetails(Long menuId,Long dishId, DishUpdateDTO updatedDishDetails);
+	String updateDishDetails(Long menuId,Long dishId, DishUpdateDTO updatedDishDetails);
 }

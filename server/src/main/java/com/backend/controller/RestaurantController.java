@@ -96,8 +96,7 @@ public class RestaurantController {
 	@PatchMapping("/dish/menuId/dishId")
 	public ResponseEntity<?> updateDish(@RequestParam Long menuId,@RequestParam Long dishid,@RequestBody DishUpdateDTO updatedDish){
 		return ResponseEntity.status(HttpStatus.OK)
-				.body("Updated dish details for dish id : " + dishid);
-//				.body(restaurantService.updateDishDetails(menuId,dishid, updatedDish));
+				.body(restaurantService.updateDishDetails(menuId,dishid, updatedDish));
 	}
 	
 	
