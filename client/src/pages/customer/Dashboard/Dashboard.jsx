@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import CustomerNavbar from '../../../components/customer/CustomerNavbar/CustomerNavbar'
 import { getRestaurants } from '../../../services/customer/dashboard'
 
 function Dashboard() {
+  const navigate = useNavigate()
   const [pincode, setPincode] = useState('')
   const [restaurants, setRestaurants] = useState([])
   const [loading, setLoading] = useState(false)
@@ -86,7 +88,8 @@ function Dashboard() {
             {filteredRestaurants.map((restaurant) => (
               <div
                 key={restaurant.id}
-                className="bg-white rounded-lg shadow-md border border-orange-100 p-4"
+                onClick={() => navigate(`/customer/menu/${restaurant.id}`)}
+                className="bg-white rounded-lg shadow-md border border-orange-100 p-4 cursor-pointer hover:shadow-lg transition-shadow duration-300"
               >
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   {restaurant.name}
