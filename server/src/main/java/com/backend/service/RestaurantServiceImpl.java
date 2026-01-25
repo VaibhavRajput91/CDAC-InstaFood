@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -58,6 +59,14 @@ public class RestaurantServiceImpl implements RestaurantService {
 	public List<RestaurantMenuDishesDTO> getMenuDishes(Long id) {
 		return restaurantRepository.findMenuDishesByRestaurantId(id);
 	}
+	
+	
+	@Override
+	public String DishAvailability(long dishId) {
+		int rowsAffected=restaurantRepository.changeAvailability(dishId);
+		return "Rows Affected : "+rowsAffected;
+	}
+
 
 
 	
@@ -187,5 +196,6 @@ public class RestaurantServiceImpl implements RestaurantService {
 	    return "Dish details updated successfully";
 	}
 
+	
 	
 }
