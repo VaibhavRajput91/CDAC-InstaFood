@@ -173,15 +173,15 @@ public class AdminController {
   }
   
   @PutMapping("/approvals/delivery-partners/{id}/approve")
-  public ResponseEntity<?> approveDeliveryPartner(@PathVariable Long id,@RequestBody demo demoDto)
+  public ResponseEntity<?> approveDeliveryPartner(@PathVariable Long id)
   {
 	  try {
-		 return ResponseEntity.ok("delivery-partner Approved Successfully");
-	  }
+		  return ResponseEntity.ok(adminService.acceptDeliveryApplication(id));
+		  }
 	  catch(RuntimeException e)
 	  {
 		  
-		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error");
+		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 	  }
   }
   

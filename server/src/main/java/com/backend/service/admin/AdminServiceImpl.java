@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.backend.dto.admin.AdminProfileDTO;
+import com.backend.dto.admin.DeliveryApprovalResponseDTO;
 import com.backend.dto.admin.DeliveryPartnerApplicationsDTO;
 import com.backend.dto.admin.DeliveryPartnerDetailsDTO;
 import com.backend.dto.admin.RestaurantApplicationDetailsDTO;
@@ -149,5 +150,22 @@ public class AdminServiceImpl implements AdminService{
         
 
         return deliverydto;
+	}
+
+	@Override
+	public DeliveryApprovalResponseDTO acceptDeliveryApplication(Long id) {
+		DeliveryPartner delivery = deliveryPartnerApprovalRepository
+		        .findByIdAndStatus(id, AvailabilityStatus.INACTIVE)
+		        .orElseThrow(() -> new RuntimeException("Delivery Partner not found"));
+
+		delivery.setStatus(AvailabilityStatus.AVAILABLE);
+		    deliveryPartnerApprovalRepository.save(delivery);
+
+		    return new DeliveryApprovalResponseDTO(
+		    		delivery.getId(),
+		    		delivery.getUser().getFirstName() + " " + delivery.getUser().getLastName(),
+		    		delivery.getStatus(),
+		        "Delivery Partner approved successfully"
+		    );
 	}
 }

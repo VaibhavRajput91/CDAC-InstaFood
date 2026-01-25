@@ -3,6 +3,7 @@ package com.backend.service.admin;
 import java.util.List;
 
 import com.backend.dto.admin.AdminProfileDTO;
+import com.backend.dto.admin.DeliveryApprovalResponseDTO;
 import com.backend.dto.admin.DeliveryPartnerApplicationsDTO;
 import com.backend.dto.admin.DeliveryPartnerDetailsDTO;
 import com.backend.dto.admin.RestaurantApplicationDetailsDTO;
@@ -22,5 +23,7 @@ public interface AdminService {
 	List<DeliveryPartnerApplicationsDTO> getPendingDeliveryPartnerApplications();
 
 	DeliveryPartnerDetailsDTO getDeliveryPartnerApplicationDetails(Long id);
+
+	DeliveryApprovalResponseDTO acceptDeliveryApplication(Long id);
 
 }
