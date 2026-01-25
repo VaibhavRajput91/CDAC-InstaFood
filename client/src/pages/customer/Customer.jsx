@@ -12,7 +12,7 @@ function Customer() {
   return (
     <>
       <Routes>
-        <Route path="/menu" element={<CustomerMenu />} />
+        <Route path="/menu/:restaurantId" element={<CustomerMenu />} />
         <Route path="/order-summary" element={<CustomerOrderSummary />} />
         <Route path="/orders" element={<CustomerOrders />} />
         <Route path="/profile" element={<CustomerProfile />} />

@@ -1,56 +1,37 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import './CustomerMenu.css';
 import CustomerNavbar from '../../../components/customer/CustomerNavbar/CustomerNavbar';
-
-const DISHES = [
-  {
-    id: 1,
-    name: 'Margherita Pizza',
-    description: 'Classic delight with 100% Real Mozzarella Cheese.',
-    price: 150,
-    image: null, 
-  },
-  {
-    id: 2,
-    name: 'Farmhouse Pizza',
-    description: 'Delightful combination of onion, capsicum, tomato & grilled mushroom.',
-    price: 200,
-    image: null,
-  },
-  {
-    id: 3,
-    name: 'Veggie Paradise',
-    description: 'Goldern Corn, Black Olives, Capsicum & Red Paprika.',
-    price: 220,
-    image: null,
-  },
-  {
-    id: 4,
-    name: 'Peppy Paneer',
-    description: 'Chunky paneer with crisp capsicum and spicy red pepper.',
-    price: 240,
-    image: null,
-  },
-  {
-    id: 5,
-    name: 'Mexican Green Wave',
-    description: 'A pizza loaded with crunchy onions, crisp capsicum, juicy tomatoes and jalapeno.',
-    price: 260,
-    image: null,
-  },
-  {
-    id: 6,
-    name: 'Deluxe Veggie',
-    description: 'For a vegetarian looking for a BIG treat that goes easy on the spices.',
-    price: 280,
-    image: null,
-  },
-];
+import { getRestaurantMenu } from '../../../services/customer/menu';
 
 function CustomerMenu() {
   const [cart, setCart] = useState({});
+  const [dishes, setDishes] = useState([]);
   const navigate = useNavigate();
+  const { restaurantId } = useParams();
+
+  useEffect(() => {
+    const loadMenu = async () => {
+      if (!restaurantId) return;
+      try {
+        const response = await getRestaurantMenu(restaurantId);
+        if (response) {
+          const mappedDishes = response.map(dish => ({
+            id: dish.dishId,
+            name: dish.name,
+            description: dish.description,
+            price: dish.price,
+            image: dish.image || null, // handle missing image
+            available: dish.available
+          }));
+          setDishes(mappedDishes);
+        }
+      } catch (error) {
+        console.error("Failed to load menu", error);
+      }
+    };
+    loadMenu();
+  }, [restaurantId]);
 
   const getQuantity = (id) => cart[id] || 0;
 
@@ -87,7 +68,7 @@ function CustomerMenu() {
 
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-20">
-          {DISHES.map((dish) => (
+          {dishes.map((dish) => (
             <div key={dish.id} className="bg-white border border-orange-100 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-300 flex flex-row items-center gap-3 group">
               
               {/* Dish Image */}
@@ -140,7 +121,7 @@ function CustomerMenu() {
             </div>
             <button 
               onClick={() => {
-                const orderItems = DISHES.filter(dish => cart[dish.id]).map(dish => ({
+                const orderItems = dishes.filter(dish => cart[dish.id]).map(dish => ({
                   ...dish,
                   quantity: cart[dish.id]
                 }));
