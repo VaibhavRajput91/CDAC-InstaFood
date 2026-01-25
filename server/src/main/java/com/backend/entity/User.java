@@ -35,7 +35,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = {"password","address"})
+@ToString(exclude = {"password"})
 public class User extends BaseEntity implements UserDetails{
 	@Column(name="first_name", length = 50, nullable=false)
 	private String firstName;
@@ -46,7 +46,7 @@ public class User extends BaseEntity implements UserDetails{
 	@Column(length=254, unique=true, nullable=false)
 	private String email;
 	
-	@Column(length=254, nullable=false)
+	@Column(length=255, nullable=false)
 	private String password;
 	
 	@Column(length=15)

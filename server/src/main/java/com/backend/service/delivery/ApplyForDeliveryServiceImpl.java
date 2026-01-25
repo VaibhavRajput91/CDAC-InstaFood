@@ -1,13 +1,10 @@
 package com.backend.service.delivery;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 
 import com.backend.dto.delivery.DeliveryPartnerApplyDto;
 import com.backend.entity.AvailabilityStatus;
 import com.backend.entity.DeliveryPartner;
-import com.backend.entity.KycStatus;
 import com.backend.entity.User;
 import com.backend.entity.UserRole;
 import com.backend.repository.delivery.DeliveryPartnerApplyRepository;
@@ -47,11 +44,14 @@ public class ApplyForDeliveryServiceImpl implements ApplyForDeliveryService {
 			User deliveryUser = deliveryUserRepository.findByIdAndRole(userId, UserRole.ROLE_DELIVERY_PARTNER).orElse(null);
 			// set details
 			newPartner.setUser(deliveryUser);
+			newPartner.getUser().setId(userId);
 			newPartner.setLicenseNumber(applyDto.getLicenseNumber());
 			newPartner.setModel(applyDto.getModel());
 			newPartner.setVehicleType(applyDto.getVehicleType());
-			newPartner.setKycStatus(KycStatus.PENDING);
-			newPartner.setStatus(AvailabilityStatus.INACTIVE);
+			newPartner.setStatus(AvailabilityStatus.PENDING);
+			
+			// save new delivery partner
+			deliveryPartnerApplyRepository.save(newPartner);
 			
 			return;
 		}
@@ -68,8 +68,8 @@ public class ApplyForDeliveryServiceImpl implements ApplyForDeliveryService {
 
 	@Override
 	public boolean canReapply(Long userId) {
-		KycStatus kycStatus = deliveryPartnerApplyRepository.findKycStatusByUserId(userId);
-		return kycStatus == KycStatus.REJECTED;
+		AvailabilityStatus status = deliveryPartnerApplyRepository.findStatusByUserId(userId);
+		return status == AvailabilityStatus.REJECTED;
 	}
 
 	@Override
@@ -80,8 +80,7 @@ public class ApplyForDeliveryServiceImpl implements ApplyForDeliveryService {
 			existingPartner.setLicenseNumber(applyDto.getLicenseNumber());
 			existingPartner.setModel(applyDto.getModel());
 			existingPartner.setVehicleType(applyDto.getVehicleType());
-			existingPartner.setKycStatus(KycStatus.PENDING);
-			existingPartner.setStatus(AvailabilityStatus.INACTIVE);
+			existingPartner.setStatus(AvailabilityStatus.PENDING);
 			// save updated partner
 			deliveryPartnerApplyRepository.save(existingPartner);
 		}
