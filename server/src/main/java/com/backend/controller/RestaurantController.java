@@ -69,15 +69,22 @@ public class RestaurantController {
 		}
 	}
 	
-	
-	
+	//toggle dish availability
 	
 	@PutMapping("/menu/toggle-dish")
-	public ResponseEntity<?> toggleDishAvailability(@RequestParam long id){
-		
-		return ResponseEntity.status(HttpStatus.OK)
-				.body("toggled dish availability for dish id : " + id);
+	public ResponseEntity<?> toggleDishAvailability(@RequestParam long dishId){
+		System.out.println("In Put of Menu/ToggleDish");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new RestaurantApiResponseDTO("Success", restaurantService.DishAvailability(dishId)));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
 	}
+	
+	
+	
 	
 	@DeleteMapping("/menu/delete")
 	public ResponseEntity<?> deleteDish(@RequestParam long id){
