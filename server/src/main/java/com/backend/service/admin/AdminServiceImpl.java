@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.backend.dto.admin.AdminProfileDTO;
+import com.backend.dto.admin.RestaurantApplicationDetailsDTO;
 import com.backend.dto.admin.RestaurantApplicationsDTO;
 import com.backend.entity.AvailabilityStatus;
 import com.backend.entity.Restaurant;
@@ -59,5 +60,28 @@ public class AdminServiceImpl implements AdminService{
         }
 
         return dtoList;
+	}
+
+	@Override
+	public RestaurantApplicationDetailsDTO getRestaurantApplicationDetails(Long id) {
+		Restaurant restaurant = restaurantApprovalRepository.findByIdAndStatus(id,AvailabilityStatus.INACTIVE)
+                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+
+        User user = restaurant.getUser();
+
+        RestaurantApplicationDetailsDTO restaurantdto = new RestaurantApplicationDetailsDTO();
+
+        restaurantdto.setRestaurantId(restaurant.getId());
+        restaurantdto.setRestaurantName(restaurant.getRestaurantName());
+
+        restaurantdto.setOwnerName(user.getFirstName() + " " + user.getLastName());
+        restaurantdto.setEmail(user.getEmail());
+        restaurantdto.setPhone(user.getPhone());
+
+        restaurantdto.setAddressLine1(user.getAddress().getLineOne());
+        restaurantdto.setAddressLine2(user.getAddress().getLineTwo());
+
+        return restaurantdto;
+		
 	}
 }

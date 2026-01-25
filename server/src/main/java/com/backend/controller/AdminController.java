@@ -104,12 +104,11 @@ public class AdminController {
 	{
 		System.out.println("In GET /approvals/restauratns/{id}");
 		try {
-			return ResponseEntity.ok("Displaying application details of applicant with id " + id);
-		}
+			return ResponseEntity.ok(adminService.getRestaurantApplicationDetails(id));}
 		catch(RuntimeException e)
 		{
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("Error");
+					.body(e.getMessage());
 		}
 		
 	}
