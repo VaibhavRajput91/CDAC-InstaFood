@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.backend.dto.admin.AdminProfileDTO;
 import com.backend.dto.admin.RestaurantApplicationDetailsDTO;
 import com.backend.dto.admin.RestaurantApplicationsDTO;
+import com.backend.dto.admin.RestaurantApprovalResponseDTO;
 import com.backend.entity.AvailabilityStatus;
 import com.backend.entity.Restaurant;
 import com.backend.entity.User;
@@ -83,5 +84,22 @@ public class AdminServiceImpl implements AdminService{
 
         return restaurantdto;
 		
+	}
+
+	@Override
+	public RestaurantApprovalResponseDTO acceptRestaurantAppication(Long id) {
+		Restaurant restaurant = restaurantApprovalRepository
+		        .findByIdAndStatus(id, AvailabilityStatus.INACTIVE)
+		        .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+
+		    restaurant.setStatus(AvailabilityStatus.AVAILABLE);
+		    restaurantApprovalRepository.save(restaurant);
+
+		    return new RestaurantApprovalResponseDTO(
+		        restaurant.getId(),
+		        restaurant.getRestaurantName(),
+		        restaurant.getStatus(),
+		        "Restaurant approved successfully"
+		    );
 	}
 }
