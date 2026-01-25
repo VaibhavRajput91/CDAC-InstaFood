@@ -203,12 +203,13 @@ public class AdminController {
   {
 	  System.out.println("Customer Data");
 	  try {
-		    return ResponseEntity.ok("Customer Data");
+		  return ResponseEntity.ok(
+	                adminService.getCustomerStatsData());
 	  }
 	  catch(RuntimeException e)
 	  {
 		  return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				  .body("Error");
+				  .body(e.getMessage());
 	  }
   }
   
