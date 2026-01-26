@@ -194,6 +194,7 @@ export default function MenuDishes() {
           </div>
         )}
 
+
         {/* Delete Confirmation Modal */}
         <ConfirmModal
           isOpen={deleteModal.isOpen}
