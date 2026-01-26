@@ -230,6 +230,22 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 	
 
-	
-	
+	@Override
+	public List<RestaurantListDTO> getRestaurantsByPincode(String pincode) {
+		List<Restaurant> restaurants = restaurantRepository.findByUserAddressPostalCode(pincode);
+		List<RestaurantListDTO> restaurantDTOs = new ArrayList<>();
+		for (Restaurant restaurant : restaurants) {
+			RestaurantListDTO dto = new RestaurantListDTO();
+			dto.setId(restaurant.getId());
+			dto.setName(restaurant.getRestaurantName());
+			dto.setOpeningTime(restaurant.getOpeningTime());
+			dto.setClosingTime(restaurant.getClosingTime());
+			Address address = restaurant.getUser().getAddress();
+			if (address != null) {
+				dto.setPostalCode(address.getPostalCode());
+			}
+			restaurantDTOs.add(dto);
+		}
+		return restaurantDTOs;
+	}
 }

@@ -147,7 +147,11 @@ public class RestaurantController {
 				.body(restaurantService.getAllOrdersByRestaurant(size));
 	}
 	@GetMapping("/list-restaurants")
-	public ResponseEntity<?> getRestaurantsList(){
+	public ResponseEntity<?> getRestaurantsList(@RequestParam(required = false) String postalCode){
+		if (postalCode != null && !postalCode.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(restaurantService.getRestaurantsByPincode(postalCode));
+		}
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(restaurantService.getAllRestaurants());
 	}

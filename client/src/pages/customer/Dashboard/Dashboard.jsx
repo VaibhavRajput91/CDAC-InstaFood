@@ -5,18 +5,19 @@ import { getRestaurants } from '../../../services/customer/dashboard'
 
 function Dashboard() {
   const navigate = useNavigate()
-  const [pincode, setPincode] = useState('')
+  const [pincode, setPincode] = useState(sessionStorage.getItem('postalCode') || '')
   const [restaurants, setRestaurants] = useState([])
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    fetchRestaurants()
+    const storedPincode = sessionStorage.getItem('postalCode');
+    fetchRestaurants(storedPincode)
   }, [])
 
-  const fetchRestaurants = async () => {
+  const fetchRestaurants = async (searchPincode) => {
     try {
       setLoading(true)
-      const response = await getRestaurants()
+      const response = await getRestaurants(searchPincode)
         console.log(response)
       // map backend response to UI structure
       const mappedRestaurants = response.map(r => ({
@@ -38,7 +39,7 @@ function Dashboard() {
   const filteredRestaurants =
     pincode.length === 6
       ? restaurants.filter(r => r.pincode === pincode)
-      : []
+      : restaurants
 
   return (
     <div>
@@ -70,7 +71,14 @@ function Dashboard() {
                 maxLength={6}
                 onChange={(e) => {
                   const val = e.target.value
-                  if (/^\d*$/.test(val)) setPincode(val)
+                  if (/^\d*$/.test(val)) {
+                    setPincode(val)
+                    if (val.length === 6) {
+                      fetchRestaurants(val)
+                    } else if (val.length === 0) {
+                      fetchRestaurants()
+                    }
+                  }
                 }}
                 className="bg-transparent border-none focus:ring-0 text-sm w-full outline-none"
               />
