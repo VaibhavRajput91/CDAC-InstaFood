@@ -18,3 +18,4 @@ export async function register(firstName, lastName, email, password, phone,role,
     console.log(`exception: `, ex)
   }
 }
+

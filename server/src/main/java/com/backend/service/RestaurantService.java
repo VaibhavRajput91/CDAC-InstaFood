@@ -18,4 +18,5 @@ public interface RestaurantService {
 	DishDetailsDTO getDishDetailsById(Long menuId,Long dishId);
 	String updateDishDetails(Long menuId,Long dishId, DishUpdateDTO updatedDishDetails);
 	List<RestaurantListDTO> getAllRestaurants();
+	List<RestaurantListDTO> getRestaurantsByPincode(String pincode);
 }
