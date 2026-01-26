@@ -7,7 +7,7 @@ import EmptyState from '../../../components/restaurant/UI/EmptyState';
 import ConfirmModal from '../../../components/restaurant/UI/ConfirmModal';
 import Toast from '../../../components/restaurant/UI/Toast';
 import { restaurantAPI, MENU_ID, RESTAURANT_ID } from '../../../services/Restaurant/api';
-import RestaurantNavbar from '../../../components/restaurant/RestaurantNavbar/RestaurantNavbar';
+
 
 export default function MenuDishes() {
   const navigate = useNavigate();
@@ -147,7 +147,7 @@ export default function MenuDishes() {
 
   return (
     <>
-      <RestaurantNavbar />
+      
       <br />
       <div className="space-y-6 pl-4 sm:pl-6 lg:pl-8">
         <div className="flex items-center justify-between">
