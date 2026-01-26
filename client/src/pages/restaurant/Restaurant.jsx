@@ -10,6 +10,7 @@ import RestaurantEditProfile from './RestaurantEditProfile/RestaurantEditProfile
 import ManageMenu from './ManageMenu/ManageMenu';
 import Revenue from './Revenue/Revenue';
 import AddDish from './AddDish/AddDish';
+import EditDish from './EditDish/EditDish';
 import RestaurantNavbar from '../../components/restaurant/RestaurantNavbar/RestaurantNavbar';
 
 function Restaurant() {
@@ -31,6 +32,7 @@ function Restaurant() {
         <Route path="/menu/dishes" element={<ManageMenu />} />
         <Route path="/revenue" element={<Revenue />} />
         <Route path="/add-dish" element={<AddDish />} />
+        <Route path="/dish/edit/:menuId/:dishId" element={<EditDish />} />
       </Routes>
 
 

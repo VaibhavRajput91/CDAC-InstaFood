@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.dto.*;
 import com.backend.service.RestaurantService;
 
-@CrossOrigin(origins = "http://localhost:5173")
+//@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/restaurant")
 public class RestaurantController {
