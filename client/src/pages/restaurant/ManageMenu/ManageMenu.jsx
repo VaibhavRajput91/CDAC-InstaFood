@@ -194,11 +194,6 @@ export default function MenuDishes() {
           </div>
         )}
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> Digvijay
         {/* Delete Confirmation Modal */}
         <ConfirmModal
           isOpen={deleteModal.isOpen}
