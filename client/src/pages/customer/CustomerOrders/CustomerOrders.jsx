@@ -1,40 +1,47 @@
 import React, { useState, useEffect } from 'react';
-//import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import CustomerNavbar from '../../../components/customer/CustomerNavbar/CustomerNavbar';
 import { getCustomerOrders } from '../../../services/customer/customerOrders';
+import { toast } from 'react-toastify';
 import './CustomerOrders.css';
 
 function CustomerOrders() {
-  //const navigate = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const ordersFetched = React.useRef(false);
+
+  // Handle order success toast on mount
+  useEffect(() => {
+    if (location.state?.orderSuccess && !ordersFetched.current) {
+      toast.success("Order placed successfully!");
+      ordersFetched.current = true;
+      // Clear navigation state to prevent toast showing again on manual refresh
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, navigate]); 
+
+  // Fetch orders
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const userId = sessionStorage.getItem('userId') || 2; // Default to 2 if not found
+        const userId = sessionStorage.getItem('userId') || 2;
         const response = await getCustomerOrders(userId);
         
         if (response) {
-          // Map API response to UI structure
-          // API returns array of objects: { restaurantName, deliveryName, orderDate, totalAmount, dishesWithQuantities, orderStatus }
-          // We need: { id, restaurantName, status, image, items, total }
-          
           const mappedOrders = response.map((order, index) => ({
-            id: order.orderId || `ORD-${Date.now()}-${index}`, // Fallback ID
+            id: order.orderId || `ORD-${Date.now()}-${index}`,
             restaurantName: order.restaurantName,
             status: order.orderStatus,
-            image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=500&q=60', // Placeholder
+            image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=500&q=60',
             items: Object.entries(order.dishesWithQuantities || {}).map(([dish, qty]) => `${qty}x ${dish}`),
             total: order.totalAmount,
             date: order.orderDate
           }));
 
-          // Sort by date (newest first) or status if needed. 
-          // Here keeping the status priority logic or just displaying as is. 
-          // Let's sort by date for now, or just reverse to show newest.
           setOrders(mappedOrders.reverse());
         }
       } catch (error) {
@@ -45,7 +52,7 @@ function CustomerOrders() {
     };
 
     fetchOrders();
-  }, []);
+  }, []); // Run on mount
 
   // Sort orders according to status - Optional, can be re-enabled if client wants specific sorting
   const statusPriority = {

@@ -16,6 +16,9 @@ export async function getCustomerOrders(userId) {
     const response = await axios.get(url,{
         params:{
             userId
+        },
+        headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('token')}`
         }
 
     })

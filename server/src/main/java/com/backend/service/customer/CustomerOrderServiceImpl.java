@@ -37,18 +37,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	public List<OrdersByCustomerDTO> getAllOrdersByCustomer(Long customerId) {
 		
 		List<OrdersByCustomerDTO> ordersByCustomer = new ArrayList<>();
-		Map<String, Integer> dishesWithQuantities = new HashMap<>();
 		User customer = userRepository.findById(customerId)
 				.orElseThrow(()->new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "User Not Found"
             ));
-		List<Order> currentOrder = orderRepository.findByCustomer(customer)
+		List<Order> orders = orderRepository.findByCustomer(customer)
 				.orElseThrow(()->new ResponseStatusException(
 				HttpStatus.NOT_FOUND,
 				"No Orders Found for this Customer"
 			));
-		for(Order order : currentOrder) {
+		for(Order order : orders) {
 			OrdersByCustomerDTO singleOrder = new OrdersByCustomerDTO();
 			singleOrder.setOrderDate(order.getCreatedOn());
 			singleOrder.setRestaurantName(order.getRestaurant().getRestaurantName());
@@ -57,6 +56,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 				order.getDeliveryPartner().getUser().getLastName());
 			singleOrder.setOrderStatus(order.getOrderStatus());
 			singleOrder.setTotalAmount(order.getTotalAmount());
+			Map<String, Integer> dishesWithQuantities = new HashMap<>();
 		List<OrderItem> orderItems = orderItemRepository.findByOrderId(order.getId())
 				.orElseThrow(()->new ResponseStatusException(
 				HttpStatus.NOT_FOUND,

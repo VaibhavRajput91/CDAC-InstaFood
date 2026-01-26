@@ -9,7 +9,11 @@ export async function getRestaurants(postalCode) {
       url += `?postalCode=${postalCode}`
     }
 
-    const response = await axios.get(url)
+    const response = await axios.get(url,{
+      headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('token')}`
+        }
+    })
 
     // return response body
     return response.data
