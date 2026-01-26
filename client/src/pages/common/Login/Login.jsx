@@ -139,13 +139,13 @@ function Login() {
             </div>
           </div>
 
-          <div className="flex items-center justify-end">
+          {/* <div className="flex items-center justify-end">
             <div className="text-sm">
               <a href="#" className="font-bold text-orange-600 hover:text-orange-700 transition-colors">
                 Forgot password?
               </a>
             </div>
-          </div>
+          </div> */}
 
           <div className="flex flex-col gap-4">
             <button

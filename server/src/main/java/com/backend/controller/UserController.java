@@ -86,12 +86,12 @@ public class UserController {
 		
 		
 	}
-	@PutMapping("/updatePassword/userId")
-	public ResponseEntity<?> updateUserPassword(@RequestParam Long userId,@RequestBody UserPasswordUpdateDTO newCredentials)
+	@PutMapping("/updatePassword")
+	public ResponseEntity<?> updateUserPassword(@RequestBody UserPasswordUpdateDTO newCredentials)
 	{
 		System.out.println("In updateUserPassword ");
 		try {
-		return ResponseEntity.ok(userService.updateUserPassword(userId, newCredentials));
+		return ResponseEntity.ok(userService.updateUserPassword(newCredentials));
 		}catch (RuntimeException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}

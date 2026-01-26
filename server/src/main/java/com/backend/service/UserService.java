@@ -14,7 +14,7 @@ public interface UserService {
 	UserResponseDTO registerUser(UserRequestDTO userReq);
 	AuthenticationResponse loadUser(AuthenticationRequest authUser);
 	UserResponseDTO updateUser(Long id, UserUpdateDTO userReq);
-	String updateUserPassword(Long id, UserPasswordUpdateDTO passwordUpdateDTO); 
+	String updateUserPassword(UserPasswordUpdateDTO passwordUpdateDTO); 
 	
 	
 

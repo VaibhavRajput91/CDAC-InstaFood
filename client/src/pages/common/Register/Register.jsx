@@ -78,7 +78,7 @@ function Register() {
                 type="text"
                 required
                 className="block w-full px-4 py-3 bg-orange-50/30 border-2 border-orange-100/50 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:bg-white transition-all duration-300 sm:text-sm font-semibold shadow-sm"
-                placeholder="John"
+                placeholder="Digvijay"
                 value={formData.firstName}
                 onChange={handleChange}
               />
@@ -93,7 +93,7 @@ function Register() {
                 type="text"
                 required
                 className="block w-full px-4 py-3 bg-orange-50/30 border-2 border-orange-100/50 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:bg-white transition-all duration-300 sm:text-sm font-semibold shadow-sm"
-                placeholder="Doe"
+                placeholder="Singh"
                 value={formData.lastName}
                 onChange={handleChange}
               />
@@ -109,7 +109,7 @@ function Register() {
                 autoComplete="email"
                 required
                 className="block w-full px-4 py-3 bg-orange-50/30 border-2 border-orange-100/50 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:bg-white transition-all duration-300 sm:text-sm font-semibold shadow-sm"
-                placeholder="john.doe@example.com"
+                placeholder="digvijay@example.com"
                 value={formData.email}
                 onChange={handleChange}
               />
@@ -124,7 +124,7 @@ function Register() {
                 type="tel"
                 required
                 className="block w-full px-4 py-3 bg-orange-50/30 border-2 border-orange-100/50 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:bg-white transition-all duration-300 sm:text-sm font-semibold shadow-sm"
-                placeholder="+1 234 567 8900"
+                placeholder="9876543210"
                 value={formData.phone}
                 onChange={handleChange}
               />

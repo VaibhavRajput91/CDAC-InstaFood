@@ -1,7 +1,7 @@
 package com.backend.service;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -81,9 +81,9 @@ public class UserServiceImpl implements UserService {
 		
 	}
 	@Override
-	public String updateUserPassword(Long id, UserPasswordUpdateDTO newCred) {
+	public String updateUserPassword(UserPasswordUpdateDTO newCred) {
 		
-		User existingUser = userRepository.findById(id).orElseThrow(
+		User existingUser = userRepository.findByEmail(newCred.getEmail()).orElseThrow(
 				()-> new RuntimeException("User Not Found")
 				);
 		if(existingUser.getPassword()!=null) {
