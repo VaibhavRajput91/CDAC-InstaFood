@@ -59,6 +59,12 @@ public class RestaurantServiceImpl implements RestaurantService {
 	public List<RestaurantMenuDishesDTO> getMenuDishes(Long id) {
 		return restaurantRepository.findMenuDishesByRestaurantId(id);
 	}
+	@Override
+	public List<RestaurantMenuDishesDTO> getAvailableMenuDishes(Long id) {
+		// TODO Auto-generated method stub
+		return restaurantRepository.findAvailableMenuDishesByRestaurantId(id);
+		
+	}
 	
 	
 	@Override
@@ -201,6 +207,28 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 	    return "Dish details updated successfully";
 	}
+
+	@Override
+	public List<RestaurantListDTO> getAllRestaurants() {
+		List<Restaurant> restaurants = restaurantRepository.findAll();
+		List<RestaurantListDTO> restaurantDTOs = new ArrayList<>();
+		for (Restaurant restaurant : restaurants) {
+			RestaurantListDTO dto = new RestaurantListDTO();
+			dto.setId(restaurant.getId());
+			dto.setName(restaurant.getRestaurantName());
+			dto.setOpeningTime(restaurant.getOpeningTime());
+			dto.setClosingTime(restaurant.getClosingTime());
+			Address address = restaurant.getUser().getAddress();
+			if (address != null) {
+				dto.setPostalCode(address.getPostalCode());
+			}
+			restaurantDTOs.add(dto);
+			// You can add dto to a list and return the list if needed
+		}
+		return restaurantDTOs;
+	}
+
+	
 
 	
 	

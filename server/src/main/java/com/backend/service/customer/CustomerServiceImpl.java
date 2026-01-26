@@ -106,6 +106,7 @@ public class CustomerServiceImpl implements CustomerService {
 		PlaceOrderResponseDTO orderResponse = new PlaceOrderResponseDTO();
 		orderResponse.setOrderId(order.getId());
 		orderResponse.setAmount(totalAmount);
+		order.setTotalAmount(totalAmount);
 		orderResponse.setStatusMessage("Order Placed Successfully");
 		return orderResponse;
 		
