@@ -1,10 +1,13 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ProfileAvatar from "../../../../common/ProfileAvatar/ProfileAvatar";
-import { getRestaurantApplicationDetails } from "../../../../../services/admin/restaurantApprovals";
+import { getRestaurantApplicationDetails, approveRestaurant, rejectRestaurant } from "../../../../../services/admin/restaurantApprovals";
+import { toast } from "react-toastify";
 
 function ViewRestaurantApplication() {
     const { id } = useParams();
+    const navigate = useNavigate();
+
     const [application, setApplication] = useState(null);
 
     useEffect(() => {
@@ -15,6 +18,25 @@ function ViewRestaurantApplication() {
         const data = await getRestaurantApplicationDetails(id);
         if (data) {
             setApplication(data);
+        }
+    };
+    const handleAccept = async () => {
+        const result = await approveRestaurant(id);
+        if (result) {
+            toast.success("Application Accepted");
+            navigate("/admin/approvals/restaurants");
+        } else {
+            toast.error("Failed to accept application");
+        }
+    };
+
+    const handleReject = async () => {
+        const result = await rejectRestaurant(id);
+        if (result) {
+            toast.success("Application Rejected");
+            navigate("/admin/approvals/restaurants");
+        } else {
+            toast.error("Failed to reject application");
         }
     };
 
@@ -65,11 +87,15 @@ function ViewRestaurantApplication() {
                     </tbody>
                 </table>
                 <div className="flex justify-center gap-6 mt-6">
-                    <button className="px-8 py-2 rounded-md bg-green-600 text-white font-semibold hover:bg-green-700">
+                    <button
+                        onClick={handleAccept}
+                        className="px-8 py-2 rounded-md bg-green-600 text-white font-semibold hover:bg-green-700">
                         Accept
                     </button>
 
-                    <button className="px-8 py-2 rounded-md bg-red-700 text-white font-semibold hover:bg-red-800">
+                    <button
+                        onClick={handleReject}
+                        className="px-8 py-2 rounded-md bg-red-700 text-white font-semibold hover:bg-red-800">
                         Reject
                     </button>
                 </div>
