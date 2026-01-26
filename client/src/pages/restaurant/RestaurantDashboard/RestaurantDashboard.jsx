@@ -1,128 +1,123 @@
-import React from 'react'
-import Navbar from '../../../components/common/Navbar/Navbar'
-function RestaurantDashboard() {
+import { useState, useEffect } from 'react';
+import { IndianRupee, ShoppingBag, TrendingUp } from 'lucide-react';
+import RestaurantNavbar from '../../../components/restaurant/RestaurantNavbar/RestaurantNavbar';
+import StatCard from '../../../components/restaurant/UI/StatCard';
+import LoadingSkeleton from '../../../components/restaurant/UI/LoadingSkeleton';
+import Toast from '../../../components/restaurant/UI/Toast';
+import { restaurantAPI, RESTAURANT_ID } from '../../../services/Restaurant/api';
+
+export default function Dashboard() {
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    fetchStatistics();
+  }, []);
+
+  const fetchStatistics = async () => {
+    try {
+      setLoading(true);
+      const response = await restaurantAPI.getStatistics(RESTAURANT_ID);
+      setStats(response.data);
+    } catch (error) {
+      setToast({
+        message: 'Failed to load statistics. Using mock data.',
+        type: 'error',
+      });
+      // Use mock data on error
+      setStats({
+        totalOrders: 0,
+        totalRevenue: 0,
+        averageRating: 0,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <>
+        <RestaurantNavbar />
+        <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
+          <h2 className="font-bold text-2xl text-gray-900">Dashboard Overview</h2>
+          <LoadingSkeleton type="card" count={4} />
+        </div>
+      </>
+    );
+  }
+
   return (
-    <div>
-      <div className="min-h-screen bg-white">
-
-        {/* NAVBAR */}
-        <Navbar />
-
-        {/* SEARCH BAR */}
-        <h1 className="text-center text-3xl font-bold mt-8 text-gray-800">
-          Orders
-        </h1>
-
-        {/* FIRST ROW (3 CARDS) */}
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mt-10 p-4">
-
-          {/* ORDER 1 */}
-          <div className="border bg-orange-50 shadow-lg rounded-2xl p-4 hover:shadow-xl transition">
-            <div className="h-40 bg-orange-200 rounded-xl"></div>
-
-            <div className="mt-4 space-y-1 text-gray-700">
-              <p><b>Item:</b> Paneer Butter Masala</p>
-              <p><b>Quantity:</b> 2</p>
-              <p><b>Description:</b> Creamy paneer gravy</p>
-              <p><b>Total Amount:</b> ₹480</p>
-              <p><b>Delivery Address:</b> </p>
-              <p><b>Status:</b> Pending</p>
-            </div>
-
-            <div className="flex justify-center gap-4 mt-4">
-              <button className="px-6 py-2 border rounded-full bg-green-100 hover:bg-green-200">
-                Accept
-              </button>
-              <button className="px-6 py-2 border rounded-full bg-red-100 hover:bg-red-200">
-                Reject
-              </button>
-            </div>
+    <>
+      <RestaurantNavbar />
+      <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="font-bold text-3xl text-gray-900">Restaurant Overview</h2>
+            {/* <p className="text-gray-600 mt-1">Monitor your restaurant's performance</p> */}
           </div>
-
-          {/* ORDER 2 */}
-          <div className="border bg-blue-50 shadow-lg rounded-2xl p-4 hover:shadow-xl transition">
-            <div className="h-40 bg-blue-200 rounded-xl"></div>
-
-            <div className="mt-4 space-y-1 text-gray-700">
-              <p><b>Item:</b> Veg Biryani</p>
-              <p><b>Quantity:</b> 1</p>
-              <p><b>Description:</b> Spicy aromatic biryani</p>
-              <p><b>Total Amount:</b> ₹250</p>
-              <p><b>Delivery Address:</b> </p>
-              <p><b>Status:</b> Pending</p>
-            </div>
-
-            <div className="flex justify-center gap-4 mt-4">
-              <button className="px-6 py-2 border rounded-full bg-green-100 hover:bg-green-200">
-                Accept
-              </button>
-              <button className="px-6 py-2 border rounded-full bg-red-100 hover:bg-red-200">
-                Reject
-              </button>
-            </div>
-          </div>
-
-          {/* ORDER 3 */}
-          <div className="border bg-green-50 shadow-lg rounded-2xl p-4 hover:shadow-xl transition">
-            <div className="h-40 bg-green-200 rounded-xl"></div>
-
-            <div className="mt-4 space-y-1 text-gray-700">
-              <p><b>Item:</b> Masala Dosa</p>
-              <p><b>Quantity:</b> 3</p>
-              <p><b>Description:</b> Crispy dosa with aloo masala</p>
-              <p><b>Total Amount:</b> ₹300</p>
-              <p><b>Delivery Address:</b> </p>
-              <p><b>Status:</b> Pending</p>
-            </div>
-
-            <div className="flex justify-center gap-4 mt-4">
-              <button className="px-6 py-2 border rounded-full bg-green-100 hover:bg-green-200">
-                Accept
-              </button>
-              <button className="px-6 py-2 border rounded-full bg-red-100 hover:bg-red-200">
-                Reject
-              </button>
-            </div>
-          </div>
-
+          <button
+            onClick={fetchStatistics}
+            className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium"
+          >
+            Refresh Data
+          </button>
         </div>
 
-        {/* SECOND ROW (1 CARD) */}
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 p-4">
-
-          {/* ORDER 4 */}
-          <div className="border bg-purple-50 shadow-lg rounded-2xl p-4 hover:shadow-xl transition">
-            <div className="h-40 bg-purple-200 rounded-xl"></div>
-
-            <div className="mt-4 space-y-1 text-gray-700">
-              <p><b>Item:</b>Margherita Pizza</p>
-              <p><b>Quantity:</b> 1</p>
-              <p><b>Description:</b> Loaded extra cheese pizza</p>
-              <p><b>Total Amount:</b> ₹50</p>
-              <p><b>Delivery Address:</b> </p>
-              <p><b>Status:</b> Pending</p>
+        {/* Statistics Cards - Horizontal Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-shadow">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-semibold text-gray-700">Total Orders</h3>
+              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                <ShoppingBag className="w-5 h-5 text-orange-600" />
+              </div>
             </div>
-
-            
-
-            <div className="flex justify-center gap-4 mt-4">
-              <button className="px-6 py-2 border rounded-full bg-green-100 hover:bg-green-200">
-                Accept
-              </button>
-              <button className="px-6 py-2 border rounded-full bg-red-100 hover:bg-red-200">
-                Reject
-              </button>
+            <div className="space-y-1">
+              <p className="text-3xl font-bold text-gray-900">{stats?.totalOrders || 0}</p>
+              {/* <p className="text-gray-500 text-sm">Orders Received</p> */}
+              <p className="text-green-600 font-medium text-sm">Orders Received</p>
             </div>
           </div>
 
-          {/* Empty placeholders */}
-          <div></div>
-          <div></div>
+          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-shadow">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-semibold text-gray-700">Total Revenue</h3>
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <IndianRupee className="w-5 h-5 text-green-600" />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <p className="text-3xl font-bold text-gray-900">₹{(stats?.totalRevenue || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+              <p className="text-green-600 font-medium text-sm">Amount in Rupees</p>
+            </div>
+          </div>
 
+          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-shadow">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-semibold text-gray-700">Average Rating</h3>
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-purple-600" />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <p className="text-3xl font-bold text-gray-900">{stats?.averageRating ? stats.averageRating.toFixed(1) : 0}/5</p>
+              {/* <p className="text-gray-500 text-sm">customer satisfaction</p> */}
+              <p className="text-green-600 font-medium text-sm">Customer Satisfaction</p>
+            </div>
+          </div>
         </div>
+
+        {/* Toast Notification */}
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        )}
       </div>
-    </div>
-  )
+    </>
+  );
 }
-
-export default RestaurantDashboard
