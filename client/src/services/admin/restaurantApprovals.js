@@ -22,3 +22,24 @@ export async function getRestaurantApplicationDetails(id) {
         return null
     }
 }
+export async function approveRestaurant(id) {
+    try {
+        const url = `${config.server}/admin/approvals/restaurants/${id}/approve`
+        const response = await axios.put(url)
+        return response.data
+    } catch (ex) {
+        console.log(`exception: `, ex)
+        return null
+    }
+}
+
+export async function rejectRestaurant(id) {
+    try {
+        const url = `${config.server}/admin/approvals/restaurants/${id}/reject`
+        const response = await axios.put(url)
+        return response.data
+    } catch (ex) {
+        console.log(`exception: `, ex)
+        return null
+    }
+}
