@@ -69,8 +69,15 @@ public class UserServiceImpl implements UserService {
 					);
 			modelMapper.map(userReq, existingUser);
 			userRepository.save(existingUser);
-			return modelMapper.map(existingUser, UserResponseDTO.class);
-		
+			existingUser.getAddress().setCity(userReq.getCity());
+			existingUser.getAddress().setLineOne(userReq.getLineOne());
+			existingUser.getAddress().setLineTwo(userReq.getLineTwo());
+			existingUser.getAddress().setPostalCode(userReq.getPostalCode());
+			existingUser.getAddress().setState(userReq.getState());
+			addressRepository.save(existingUser.getAddress());
+			UserResponseDTO responseUser = modelMapper.map(existingUser, UserResponseDTO.class);
+			responseUser.setPostalCode(existingUser.getAddress().getPostalCode());
+			return responseUser;
 		
 	}
 	@Override

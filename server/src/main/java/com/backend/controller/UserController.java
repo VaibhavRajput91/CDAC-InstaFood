@@ -74,7 +74,7 @@ public class UserController {
 		
 		
 	}
-	@PutMapping("/update/userId")
+	@PutMapping("/updateUser")
 	public ResponseEntity<?> updateUser(@RequestParam Long userId,@RequestBody UserUpdateDTO user)
 	{
 		System.out.println("In updateUser ");
