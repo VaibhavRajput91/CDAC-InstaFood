@@ -68,6 +68,17 @@ public class RestaurantController {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
 		}
 	}
+	@GetMapping("/menu/Dishes")
+	public ResponseEntity<?> getAvailableDishes(@RequestParam Long id){
+		System.out.println("In Get of Restaurant/Menu/Dishes");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(restaurantService.getAvailableMenuDishes(id));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
+	}
 	
 	//toggle dish availability
 	
@@ -134,6 +145,11 @@ public class RestaurantController {
 	public ResponseEntity<?> getOrdersList(@RequestParam Long size){
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(restaurantService.getAllOrdersByRestaurant(size));
+	}
+	@GetMapping("/list-restaurants")
+	public ResponseEntity<?> getRestaurantsList(){
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(restaurantService.getAllRestaurants());
 	}
 	
 }

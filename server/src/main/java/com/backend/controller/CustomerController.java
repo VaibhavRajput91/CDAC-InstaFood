@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.service.customer.CustomerService;
@@ -31,8 +32,8 @@ public class CustomerController {
 		
 		
 	}
-	@GetMapping("/order/{userId}")
-	public ResponseEntity<?> getAllOrdersByCustomer(@PathVariable Long userId)
+	@GetMapping("/orders")
+	public ResponseEntity<?> getAllOrdersByCustomer(@RequestParam Long userId)
 	{
 		System.out.println("getAllOrdersByCustomer");
 		return ResponseEntity.ok(orderService.getAllOrdersByCustomer(userId));
