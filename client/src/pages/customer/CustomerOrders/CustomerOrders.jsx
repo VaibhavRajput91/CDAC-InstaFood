@@ -32,8 +32,8 @@ function CustomerOrders() {
         const response = await getCustomerOrders(userId);
         
         if (response) {
-          const mappedOrders = response.map((order, index) => ({
-            id: order.orderId || `ORD-${Date.now()}-${index}`,
+          const mappedOrders = response.map((order) => ({
+            id: order.orderId ,
             restaurantName: order.restaurantName,
             status: order.orderStatus,
             image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=500&q=60',
