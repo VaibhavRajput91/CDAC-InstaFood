@@ -65,12 +65,12 @@ public class JwtUtil {
 				.setIssuedAt(new Date())// Sets the JWT Claims iat (issued at) value of current date
 				.setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))// Sets the JWT Claims exp
 																				// (expiration) value.
-				// setting a custom claim , to add granted authorities
 				.claim("authorities", 
 						getAuthoritiesInString(userPrincipal.getAuthorities()))
 				.claim("postalCode", userPrincipal.getAddress() != null ? userPrincipal.getAddress().getPostalCode() : null)
+				.claim("userId", userPrincipal.getId())
 
-				.signWith(key, SignatureAlgorithm.HS256) // Signs the constructed JWT using the specified
+				.signWith(key, SignatureAlgorithm.HS256) 
 								// algorithm with the specified key, producing a
 								// JWS(Json web signature=signed JWT)
 

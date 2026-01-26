@@ -1,12 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import CustomerNavbar from '../../../components/customer/CustomerNavbar/CustomerNavbar';
 import ProfileAvatar from '../../../components/common/ProfileAvatar/ProfileAvatar';
 import UserDetails from '../../../components/common/UserDetails/UserDetails';
 import { useNavigate } from 'react-router-dom';
+import { getCustomerProfile } from '../../../services/customer/customerProfile';
 import './CustomerProfile.css';
 
 function CustomerProfile() {
     const navigate = useNavigate();
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const userId = sessionStorage.getItem('userId') ; // Default to 2 if not found as per previous context
+                const response = await getCustomerProfile(userId);
+                if (response) {
+                    setUser(response);
+                }
+            } catch (error) {
+                console.error("Error fetching profile:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProfile();
+    }, []);
 
     return (
         <div className="min-h-screen bg-orange-50">
@@ -15,12 +36,18 @@ function CustomerProfile() {
                 <div className="bg-white shadow rounded-lg overflow-hidden border border-orange-100">
                     <div className="bg-white p-6 flex flex-col items-center border-b border-orange-200">
                          <div className="mb-4">
-                            <ProfileAvatar />
+                            <ProfileAvatar user={user} />
                         </div>
                     </div>
                     
                     <div className="p-6">
-                        <UserDetails />
+                        {loading ? (
+                            <div className="flex justify-center items-center py-10">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+                            </div>
+                        ) : (
+                            <UserDetails user={user} />
+                        )}
                         
                         <div className="mt-8 flex justify-center">
                             <button
