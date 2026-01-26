@@ -24,8 +24,8 @@ public class CustomerController {
 	
 	private final CustomerService customerService;
 	private final CustomerOrderService orderService;
-	@GetMapping("/profile/{userId}")
-	public ResponseEntity<?> getCustomerDetails(@PathVariable Long userId)
+	@GetMapping("/profile")
+	public ResponseEntity<?> getCustomerDetails(@RequestParam Long userId)
 	{
 		System.out.println("In getCustomerDetails ");
 		return ResponseEntity.ok(customerService.getCustomerById(userId));

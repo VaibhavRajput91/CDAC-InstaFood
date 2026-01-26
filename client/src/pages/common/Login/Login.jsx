@@ -49,9 +49,16 @@ function Login() {
         const roles = payload?.authorities || [];
         const postalCode = payload?.postalCode;
 
-        // Store token, email, and postalCode
+        // Store token, email, postalCode, and userId
         sessionStorage.setItem('token', response.token);
         sessionStorage.setItem('email', response.email);
+        
+        // Extract userId from response or JWT payload
+        const userId = response.id || payload?.userId;
+        if (userId) {
+          sessionStorage.setItem('userId', userId);
+        }
+        
         if (postalCode) {
           sessionStorage.setItem('postalCode', postalCode);
         }

@@ -14,7 +14,7 @@ function CustomerOrders() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const userId = localStorage.getItem('userId') || 2; // Default to 1 if not found
+        const userId = sessionStorage.getItem('userId') || 2; // Default to 2 if not found
         const response = await getCustomerOrders(userId);
         
         if (response) {
