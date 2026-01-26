@@ -16,8 +16,8 @@ import com.backend.dto.delivery.DeliveryPartnerApplyDto;
 import com.backend.dto.delivery.DeliveryProfileDto;
 import com.backend.dto.delivery.DeliveryWalletSummaryDto;
 import com.backend.service.delivery.ApplyForDeliveryService;
+import com.backend.service.delivery.DeliveryDashboardService;
 import com.backend.service.delivery.DeliveryOrderService;
-import com.backend.service.delivery.DeliveryOrderServiceImpl;
 import com.backend.service.delivery.DeliveryProfileService;
 import com.backend.service.delivery.DeliveryWalletService;
 
@@ -33,6 +33,7 @@ public class DeliveryController {
 	private final DeliveryWalletService deliveryWalletService;
 	private final DeliveryProfileService deliveryProfileService;
 	private final ApplyForDeliveryService applyForDeliveryService;
+	private final DeliveryDashboardService deliveryDashboardService;
 	
 	@PostMapping("/apply")
 	public ResponseEntity<?> addPartner(@RequestBody DeliveryPartnerApplyDto applyDto, @RequestParam Long userId){
@@ -168,34 +169,34 @@ public class DeliveryController {
 	}
 	
 	@GetMapping("/dashboard/summary")
-	public ResponseEntity<?> dashboardSummary(){
+	public ResponseEntity<?> dashboardSummary(@RequestParam Long deliveryPartnerId){
 		System.out.println("In Get dashboard/summary");
 		try {
-			return ResponseEntity.ok("top half of the dashboard page(earnings, order, wallet, stats, etc)");
+			return ResponseEntity.ok(deliveryDashboardService.getDeliveryDashboardSummary(deliveryPartnerId));
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("Error");
+					.body("Error : " + e.getMessage());
 		}
 	}
 	
 	@GetMapping("/status")
-	public ResponseEntity<?> status(){
+	public ResponseEntity<?> status(@RequestParam Long deliveryPartnerId){
 		System.out.println("In Get status");
 		try {
-			return ResponseEntity.ok("delivery partner online or not");
+			return ResponseEntity.status(HttpStatus.OK).body(deliveryDashboardService.getDeliveryPartnerStatus(deliveryPartnerId));
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("Error");
+					.body("Error:" + e.getMessage());
 		}
 	}
 	
 	@PatchMapping("/status")
-	public ResponseEntity<?> statusUpadate(@RequestBody demo demo_dto_to_update_status){
+	public ResponseEntity<?> statusUpadate(@RequestParam Long deliveryPartnerId){
 		System.out.println("In Patch status update");
-		try {
-			return ResponseEntity.ok("update online status");
+		try {  
+			return ResponseEntity.status(HttpStatus.OK).body(deliveryDashboardService.toggleDeliveryPartnerStatus(deliveryPartnerId));
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -205,38 +206,32 @@ public class DeliveryController {
 	
 	
 	@GetMapping("/orders/available")
-	public ResponseEntity<?> ordersAvailable(@RequestParam int since){
+	public ResponseEntity<?> ordersAvailable(){
 		System.out.println("In Get orders-available");
+		
 		try {
-			return ResponseEntity.ok("(auto-refresh)list of currently placed orders under "+since+" ms");
+			return ResponseEntity.status(HttpStatus.OK).body(deliveryDashboardService.getNewAvailableDeliveryRequests());
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("Error");
+					.body("Error : " + e.getMessage());
 		}
 	}
 	
 	
-	@PostMapping("/orders/accept/{orderId}")
-	public ResponseEntity<?> orderAccept(@PathVariable int orderId, @RequestBody demo demo_dto_for_order){
+	@PatchMapping("/orders/accept")
+	public ResponseEntity<?> orderAccept(@RequestParam Long orderId, @RequestParam Long deliveryPartnerId){
 		System.out.println("In Get order-accept");
-		try {
-			return ResponseEntity.ok("accepted an order with orderId="+orderId);
+		try { 
+			return ResponseEntity.status(HttpStatus.OK).body(deliveryDashboardService.acceptDeliveryRequest(deliveryPartnerId, orderId));
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("Error");
+					.body("Error : " + e.getMessage());
 		}
 	}
 	
 	
-	//delivery/notifications/unread-count (maintain notification count) {optional}
-	
-	
-	
-	
-	
-	
-	
+	//delivery/notifications/unread-count (maintain notification count) {optional} 
 	
 }

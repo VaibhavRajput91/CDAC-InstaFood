@@ -68,10 +68,7 @@ public class JwtUtil {
 				// setting a custom claim , to add granted authorities
 				.claim("authorities", 
 						getAuthoritiesInString(userPrincipal.getAuthorities()))
-			
-				// setting a custom claim , to add user id (remove it if not required in the
-				// project) - future
-			
+				.claim("postalCode", userPrincipal.getAddress() != null ? userPrincipal.getAddress().getPostalCode() : null)
 
 				.signWith(key, SignatureAlgorithm.HS256) // Signs the constructed JWT using the specified
 								// algorithm with the specified key, producing a
