@@ -1,27 +1,78 @@
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './CustomerOrderSummary.css';
 import CustomerNavbar from '../../../components/customer/CustomerNavbar/CustomerNavbar';
-
-// Mock Data for Address
-const MOCK_ADDRESS = {
-  street: '123, Foodie Lane',
-  city: 'Flavor Town',
-  zip: '400001',
-  state: 'Maharashtra',
-};
+import { getCustomerProfile } from '../../../services/customer/customerProfile';
+import { placeOrder } from '../../../services/customer/customerPlaceOrder';
+import { toast } from 'react-toastify';
 
 function CustomerOrderSummary() {
   const location = useLocation();
-  
+  const navigate = useNavigate();
   
   const [orderItems] = useState(location.state?.orderItems || []);
-  const [address] = useState(MOCK_ADDRESS); 
+  const [restaurantId] = useState(location.state?.restaurantId);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+        try {
+            const userId = sessionStorage.getItem('userId');
+            if (userId) {
+                const response = await getCustomerProfile(userId);
+                if (response) {
+                    setUser(response);
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching profile:", error);
+            toast.error("Failed to load user details");
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    fetchProfile();
+  }, []);
 
   // Calculate Total Bill
   const totalBill = orderItems.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  const handlePlaceOrder = async () => {
+    if (!orderItems.length) {
+        toast.warning("Your cart is empty");
+        return;
+    }
+
+    try {
+        const customerId = sessionStorage.getItem('userId');
+        
+        // Map items to the required format: { itemId: quantity }
+        const itemMap = {};
+        orderItems.forEach(item => {
+            itemMap[item.id] = item.quantity;
+        });
+
+        const response = await placeOrder(
+            restaurantId,
+            customerId,
+            itemMap,
+            totalBill
+        );
+
+        if (response) {
+            navigate('/customer/orders', { state: { orderSuccess: true } });
+        }
+    } catch (error) {
+        console.error("Failed to place order:", error);
+        toast.error("Failed to place order. Please try again.");
+    }
+  };
+
+  const fullAddress = user ? [user.lineOne, user.lineTwo, user.city, user.state]
+    .filter(part => part && part.trim() !== "")
+    .join(", ") : "";
 
   return (
     <div className="min-h-screen bg-orange-50 font-sans">
@@ -52,13 +103,36 @@ function CustomerOrderSummary() {
               </div>
             </div>
 
-            {/* Address Section */}
+            {/* User Details & Address Section */}
             <div className="p-6 border-b border-orange-100 bg-orange-50/30">
-              <h2 className="text-xl font-semibold text-gray-800 mb-2">Delivery Address</h2>
-              <div className="text-gray-600 bg-white p-4 rounded-lg border border-orange-100 shadow-sm">
-                <p>{address.street}</p>
-                <p>{address.city}, {address.state} - {address.zip}</p>
-              </div>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Delivery Details</h2>
+              {loading ? (
+                <div className="flex justify-center py-4">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
+                </div>
+              ) : user ? (
+                <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">Customer Name</p>
+                            <p className="font-medium text-gray-800">{user.firstName} {user.lastName}</p>
+                        </div>
+                        <div>
+                            <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">Phone Number</p>
+                            <p className="font-medium text-gray-800">{user.phone}</p>
+                        </div>
+                    </div>
+                    <div>
+                        <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">Delivery Address</p>
+                        <div className="mt-1 text-gray-600 bg-white p-4 rounded-lg border border-orange-100 shadow-sm text-sm">
+                            <p className="leading-relaxed">{fullAddress || 'Address not provided'}</p>
+                            {user.postalCode && <p className="mt-1 font-bold">PIN: {user.postalCode}</p>}
+                        </div>
+                    </div>
+                </div>
+              ) : (
+                <p className="text-red-500 text-sm">Failed to load delivery details. Please check your profile.</p>
+              )}
             </div>
 
             {/* Total Bill Section */}
@@ -70,9 +144,15 @@ function CustomerOrderSummary() {
 
               {/* Place Order Button */}
               <button 
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg hover:shadow-green-600/30 transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 text-lg"
+                onClick={handlePlaceOrder}
+                disabled={loading || !user || !orderItems.length}
+                className={`w-full font-bold py-4 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 text-lg ${
+                    loading || !user || !orderItems.length
+                    ? 'bg-gray-400 cursor-not-allowed text-gray-200' 
+                    : 'bg-green-600 hover:bg-green-700 text-white hover:shadow-green-600/30 focus:ring-green-500'
+                }`}
               >
-                Place Order
+                {loading ? 'Processing...' : 'Place Order'}
               </button>
             </div>
 

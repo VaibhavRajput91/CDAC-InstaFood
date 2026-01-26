@@ -125,7 +125,7 @@ function CustomerMenu() {
                   ...dish,
                   quantity: cart[dish.id]
                 }));
-                navigate('/customer/order-summary', { state: { orderItems } });
+                navigate('/customer/order-summary', { state: { orderItems, restaurantId } });
               }}
               className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-orange-500/30 transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
               Checkout

@@ -87,7 +87,7 @@ function Admin() {
                 />
 
                 <Route
-                    path="approvals/restaurants/view-application"
+                    path="approvals/restaurants/view-application/:id"
                     element={<ViewRestaurantApplication />}
                 />
 
