@@ -48,7 +48,7 @@ export const restaurantAPI = {
 
   // Update dish
   updateDish: (menuId, dishId, data) =>
-    api.patch(`/restaurant/dish/${menuId}/${dishId}`, data),
+    api.patch(`/restaurant/dish/menuId/dishId?menuId=${menuId}&dishid=${dishId}`, data),
 
   // Get orders
   getOrders: (size = 10) =>
