@@ -92,7 +92,7 @@ function Admin() {
                 />
 
                 <Route
-                    path="approvals/delivery-partners/view-application"
+                    path="approvals/delivery-partners/view-application/:id"
                     element={<ViewDeliveryPartnerApplication />}
                 />
 
