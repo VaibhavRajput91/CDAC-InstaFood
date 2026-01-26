@@ -20,4 +20,6 @@ public class DeliveryOrderDto {
 	private double totalAmount;
 	private int items;
 	private DeliveryStatus deliveryStatus;
+	
+	
 }
