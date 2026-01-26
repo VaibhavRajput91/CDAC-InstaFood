@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { IndianRupee, ShoppingBag, TrendingUp } from 'lucide-react';
-import RestaurantNavbar from '../../../components/restaurant/RestaurantNavbar/RestaurantNavbar';
 import StatCard from '../../../components/restaurant/UI/StatCard';
 import LoadingSkeleton from '../../../components/restaurant/UI/LoadingSkeleton';
 import Toast from '../../../components/restaurant/UI/Toast';
@@ -39,7 +38,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <>
-        <RestaurantNavbar />
+        {/* <RestaurantNavbar /> */}
         <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
           <h2 className="font-bold text-2xl text-gray-900">Dashboard Overview</h2>
           <LoadingSkeleton type="card" count={4} />
@@ -48,9 +47,10 @@ export default function Dashboard() {
     );
   }
 
+
   return (
     <>
-      <RestaurantNavbar />
+      {/* <RestaurantNavbar /> */}
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
         <div className="flex items-center justify-between">
           <div>
