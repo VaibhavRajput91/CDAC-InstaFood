@@ -1,174 +1,214 @@
-import React from 'react'
-import Navbar from '../../../components/common/Navbar/Navbar';
+import { useState, useEffect } from 'react';
+import { ShoppingBag, ChevronLeft, ChevronRight } from 'lucide-react';
+import OrderCard from '../../../components/restaurant/orders/OrderCard';
+import LoadingSkeleton from '../../../components/restaurant/UI/LoadingSkeleton';
+import EmptyState from '../../../components/restaurant/UI/EmptyState';
+import Toast from '../../../components/restaurant/UI/Toast';
+import { restaurantAPI } from '../../../services/Restaurant/api';
 
-function RestaurantOrders() {
+export default function Orders() {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [totalOrders, setTotalOrders] = useState(0);
 
-  const orders = [
-    {
-      id: "ORD1021",
-      date: "12 Jan 2025",
-      customer: "Tina Sharma",
-      address: " ",
-      items: [
-        { name: "Pizza", qty: 2 },
-        { name: "Burger", qty: 1 }
-      ],
-      total: 620,
-      status: "Accepted",
-    },
-    {
-      id: "ORD1022",
-      date: "13 Jan 2025",
-      customer: "Minal Kohli",
-      address: " ",
-      items: [
-        { name: "Pasta", qty: 1 },
-        { name: "Coke", qty: 2 }
-      ],
-      total: 340,
-      status: "Cancelled",
-    },
-    {
-      id: "ORD1023",
-      date: "14 Jan 2025",
-      customer: "Rohit Yadav",
-      address: " ",
-      items: [
-        { name: "Veg Biryani", qty: 1 },
-        { name: "Gulab Jamun", qty: 4 }
-      ],
-      total: 450,
-      status: "Accepted",
-    },
-    {
-      id: "ORD1024",
-      date: "15 Jan 2025",
-      customer: "D Siya",
-      address: " ",
-      items: [
-        { name: "Margherita Pizza", qty: 1 }
-      ],
-      total: 320,
-      status: "Accepted",
-    },
-    {
-      id: "ORD1025",
-      date: "16 Jan 2025",
-      customer: "D Rahul",
-      address: " ",
-      items: [
-        { name: "Frankie", qty: 2 },
-        { name: "Brownie", qty: 1 }
-      ],
-      total: 410,
-      status: "Cancelled",
-    },
-    {
-      id: "ORD1026",
-      date: "17 Jan 2025",
-      customer: "Mohit Kumar",
-      address: " ",
-      items: [
-        { name: "Sandwich", qty: 2 }
-      ],
-      total: 180,
-      status: "Accepted",
+  useEffect(() => {
+    fetchOrders();
+  }, [currentPage]);
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const response = await restaurantAPI.getOrders(pageSize);
+      setOrders(response.data);
+      setTotalOrders(response.data.length);
+    } catch (error) {
+      setToast({
+        message: 'Failed to load orders. Using mock data.',
+        type: 'error',
+      });
+      // Mock data
+      const mockOrders = [
+        {
+          id: 'ORD-001',
+          customerName: 'John Doe',
+          customerPhone: '+1 (555) 123-4567',
+          status: 'pending',
+          items: [
+            { name: 'Margherita Pizza', quantity: 2, price: 12.99 },
+            { name: 'Caesar Salad', quantity: 1, price: 7.99 },
+          ],
+          total: 33.97,
+          orderDate: '2026-01-26T10:30:00',
+          deliveryAddress: '123 Main St, Apt 4B, New York, NY 10001',
+        },
+        {
+          id: 'ORD-002',
+          customerName: 'Jane Smith',
+          customerPhone: '+1 (555) 234-5678',
+          status: 'preparing',
+          items: [
+            { name: 'Chicken Burger', quantity: 1, price: 9.99 },
+            { name: 'Fish & Chips', quantity: 1, price: 14.99 },
+          ],
+          total: 24.98,
+          orderDate: '2026-01-26T11:15:00',
+          deliveryAddress: '456 Oak Ave, Brooklyn, NY 11201',
+        },
+        {
+          id: 'ORD-003',
+          customerName: 'Mike Johnson',
+          customerPhone: '+1 (555) 345-6789',
+          status: 'ready',
+          items: [
+            { name: 'Spaghetti Carbonara', quantity: 1, price: 13.99 },
+          ],
+          total: 13.99,
+          orderDate: '2026-01-26T11:45:00',
+          deliveryAddress: '789 Elm St, Queens, NY 11354',
+        },
+        {
+          id: 'ORD-004',
+          customerName: 'Sarah Williams',
+          customerPhone: '+1 (555) 456-7890',
+          status: 'delivered',
+          items: [
+            { name: 'Margherita Pizza', quantity: 1, price: 12.99 },
+            { name: 'Chocolate Brownie', quantity: 2, price: 6.99 },
+          ],
+          total: 26.97,
+          orderDate: '2026-01-26T09:00:00',
+          deliveryAddress: '321 Pine St, Manhattan, NY 10002',
+        },
+        {
+          id: 'ORD-005',
+          customerName: 'Tom Brown',
+          customerPhone: '+1 (555) 567-8901',
+          status: 'cancelled',
+          items: [
+            { name: 'Caesar Salad', quantity: 1, price: 7.99 },
+          ],
+          total: 7.99,
+          orderDate: '2026-01-26T08:30:00',
+          deliveryAddress: '654 Maple Dr, Bronx, NY 10451',
+        },
+      ];
+      setOrders(mockOrders);
+      setTotalOrders(mockOrders.length);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  const totalPages = Math.ceil(totalOrders / pageSize);
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <h2 className="font-bold text-2xl text-gray-900">Orders</h2>
+        <LoadingSkeleton type="table" count={5} />
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen w-full bg-gray-50 flex flex-col">
-      
-      
-      <Navbar />
-
-      
-      <h1 className="text-center text-3xl font-bold mt-6 text-gray-800">
-        Orders
-      </h1>
-
-      {/* Orders Grid */}
-      <div className="w-full max-w-6xl mx-auto p-6">
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-
-          {orders.map((order, index) => (
-            <div
-              key={index}
-              className={`bg-white p-6 rounded-2xl shadow-md hover:shadow-lg 
-              hover:-translate-y-1 transition-all duration-300 
-              border-2 ${
-                order.status === "Accepted"
-                  ? "border-green-500"
-                  : "border-red-500"
-              }`}
-            >
-              
-              {/* Header */}
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-gray-900">
-                  {order.customer}
-                </h2>
-
-                <span
-                  className={`px-3 py-1 text-xs rounded-full font-semibold ${
-                    order.status === "Accepted"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
-                  {order.status}
-                </span>
-              </div>
-
-              
-              <p className="text-xs text-gray-500 mt-1">
-                Order ID: <span className="font-semibold">{order.id}</span>
-              </p>
-
-              
-              <p className="text-xs text-gray-500 -mt-1">
-                Date: <span className="font-semibold">{order.date}</span>
-              </p>
-
-             
-              <p className="text-xs text-gray-600 mt-1 mb-3">
-                Delivery Address: <span className="font-medium">{order.address}</span>
-              </p>
-
-              
-              <div className="my-3 border-t border-gray-200"></div>
-
-              
-              <p className="font-semibold text-gray-700 mb-2 text-sm">
-                Ordered Items
-              </p>
-
-              <div className="space-y-2">
-                {order.items.map((item, i) => (
-                  <div
-                    key={i}
-                    className="flex justify-between bg-gray-50 rounded-lg px-3 py-2 
-                    border border-gray-200"
-                  >
-                    <span className="text-gray-800">{item.name}</span>
-                    <span className="font-semibold text-gray-900">{item.qty}x</span>
-                  </div>
-                ))}
-              </div>
-
-              
-              <p className="mt-5 text-lg font-extrabold text-gray-900">
-                Total: <span className="text-orange-600">₹{order.total}</span>
-              </p>
-
-            </div>
-          ))}
-
+    <div className="space-y-6 mx-4 md:mx-8 lg:mx-12">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-bold text-2xl text-gray-900">Orders</h2>
+          <p className="text-gray-600 mt-1">
+            Showing {orders.length} order{orders.length !== 1 ? 's' : ''}
+          </p>
         </div>
+        <button
+          onClick={fetchOrders}
+          className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+        >
+          Refresh
+        </button>
       </div>
-    </div>
-  )
-}
 
-export default RestaurantOrders
+      {/* Filter Tabs */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-2 flex gap-2 overflow-x-auto">
+        {['all', 'pending', 'preparing', 'ready', 'delivered', 'cancelled'].map((status) => (
+          <button
+            key={status}
+            className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors whitespace-nowrap ${status === 'all'
+              ? 'bg-orange-600 text-white'
+              : 'text-gray-700 hover:bg-gray-100'
+              }`}
+          >
+            {status.charAt(0).toUpperCase() + status.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {/* Orders List */}
+      {orders.length === 0 ? (
+        <EmptyState
+          icon={ShoppingBag}
+          title="No orders yet"
+          description="When customers place orders, they will appear here."
+        />
+      ) : (
+        <div className="space-y-4">
+          {orders.map((order) => (
+            <OrderCard key={order.id} order={order} />
+          ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {orders.length > 0 && totalPages > 1 && (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-gray-600">
+              Page {currentPage} of {totalPages}
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={handlePreviousPage}
+                disabled={currentPage === 1}
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Previous
+              </button>
+              <button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+    </div>
+  );
+}
