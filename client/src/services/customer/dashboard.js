@@ -1,19 +1,19 @@
 import axios from 'axios'
 import { config } from '../config';
 
-export async function getRestaurants() {
+export async function getRestaurants(postalCode) {
   try {
     // create url
-    const url = `${config.server}/restaurant/list-restaurants`
+    let url = `${config.server}/restaurant/list-restaurants`
+    if (postalCode) {
+      url += `?postalCode=${postalCode}`
+    }
 
-    // create headers with require token
-    // send GET request and get the response
-    // const response = await axios.get(url, {
-    //   headers: {
-    //     token: localStorage.getItem('token'),
-    //   },
-    // })
-    const response = await axios.get(url)
+    const response = await axios.get(url,{
+      headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('token')}`
+        }
+    })
 
     // return response body
     return response.data

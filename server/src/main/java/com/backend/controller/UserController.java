@@ -22,6 +22,7 @@ import com.backend.security.JwtUtil;
 import com.backend.service.UserService;
 
 
+import com.backend.entity.User;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -54,12 +55,11 @@ public class UserController {
 						authenticationManager.authenticate(authToken);
 				//=> success
 				System.out.println("after - "+validAuth.isAuthenticated());//true
-				System.out.println(validAuth);//user details : UserEntity
-				//2. Create signed JWT n send it in the response.
-				
+				User user = (User) validAuth.getPrincipal();
 				return ResponseEntity.status(HttpStatus.CREATED)//SC 201
 						.body(new AuthenticationResponse(authUser.getEmail(),
-								jwtUtil.generateJwtToken(validAuth)));
+								jwtUtil.generateJwtToken(validAuth),
+								user.getId()));
 		
 	}
 	@PostMapping("/sign-up")
@@ -74,7 +74,7 @@ public class UserController {
 		
 		
 	}
-	@PutMapping("/update/userId")
+	@PutMapping("/updateUser")
 	public ResponseEntity<?> updateUser(@RequestParam Long userId,@RequestBody UserUpdateDTO user)
 	{
 		System.out.println("In updateUser ");
@@ -86,12 +86,12 @@ public class UserController {
 		
 		
 	}
-	@PutMapping("/updatePassword/userId")
-	public ResponseEntity<?> updateUserPassword(@RequestParam Long userId,@RequestBody UserPasswordUpdateDTO newCredentials)
+	@PutMapping("/updatePassword")
+	public ResponseEntity<?> updateUserPassword(@RequestBody UserPasswordUpdateDTO newCredentials)
 	{
 		System.out.println("In updateUserPassword ");
 		try {
-		return ResponseEntity.ok(userService.updateUserPassword(userId, newCredentials));
+		return ResponseEntity.ok(userService.updateUserPassword(newCredentials));
 		}catch (RuntimeException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}

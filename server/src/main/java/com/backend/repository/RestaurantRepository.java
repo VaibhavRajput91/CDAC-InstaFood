@@ -41,11 +41,27 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 	""")
 	List<RestaurantMenuDishesDTO> findMenuDishesByRestaurantId(@Param("restaurantId") Long restaurantId);
 	
+	@Query("""
+	        SELECT new com.backend.dto.RestaurantMenuDishesDTO(
+	            d.id,
+	            d.name,
+	            md.description,
+	            md.price,
+	            md.isAvailable
+	        )
+	        FROM Menu m
+	        JOIN m.menuDishes md
+	        JOIN md.dish d
+	        WHERE m.restaurant.id = :restaurantId
+	          AND m.isActive = true
+	          AND md.isAvailable = true
+	""")
+	List<RestaurantMenuDishesDTO> findAvailableMenuDishesByRestaurantId(@Param("restaurantId") Long restaurantId);
 	@Modifying
 	@Transactional
 	@Query("""
 	    UPDATE MenuDish md
-	    SET md.isAvailable = false
+	    SET md.isAvailable = NOT md.isAvailable
 	    WHERE md.dish.id = :dishId
 	""")
 	int changeAvailability(@Param("dishId") Long dishId);
@@ -58,8 +74,11 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 	      AND md.dish.id = :dishId
 	""")
 	int deleteDish(@Param("menuId") long menuId, @Param("dishId") long dishId);
-
 	
+	
+	List<Restaurant> findAll();
+	
+	List<Restaurant> findByUserAddressPostalCode(String postalCode);
 }
 
 

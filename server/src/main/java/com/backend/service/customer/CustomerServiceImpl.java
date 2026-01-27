@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.backend.dto.customer.PlaceOrderDTO;
 import com.backend.dto.customer.PlaceOrderResponseDTO;
 import com.backend.dto.customer.UserProfileDTO;
+import com.backend.entity.Address;
 import com.backend.entity.DeliveryPartner;
 import com.backend.entity.Dish;
 import com.backend.entity.Menu;
@@ -53,6 +54,12 @@ public class CustomerServiceImpl implements CustomerService {
             ));
 		System.out.println(user);
 		UserProfileDTO userProfile = modelMapper.map(user, UserProfileDTO.class);
+		Address addr = user.getAddress();
+		userProfile.setCity(addr.getCity());
+		userProfile.setLineOne(addr.getLineOne());
+		userProfile.setLineTwo(addr.getLineTwo());
+		userProfile.setPostalCode(addr.getPostalCode());
+		userProfile.setState(addr.getState());
 		return userProfile;
 	}
 	@Override
@@ -106,6 +113,7 @@ public class CustomerServiceImpl implements CustomerService {
 		PlaceOrderResponseDTO orderResponse = new PlaceOrderResponseDTO();
 		orderResponse.setOrderId(order.getId());
 		orderResponse.setAmount(totalAmount);
+		order.setTotalAmount(totalAmount);
 		orderResponse.setStatusMessage("Order Placed Successfully");
 		return orderResponse;
 		

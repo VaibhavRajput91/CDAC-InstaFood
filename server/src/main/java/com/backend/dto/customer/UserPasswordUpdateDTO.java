@@ -10,6 +10,7 @@ import lombok.ToString;
 @RequiredArgsConstructor
 @ToString
 public class UserPasswordUpdateDTO {
+	private String email;
 	private String currentPassword;
 	private String newPassword;
 

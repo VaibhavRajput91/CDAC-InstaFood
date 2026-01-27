@@ -8,6 +8,7 @@ public interface RestaurantService {
 	RestaurantApiResponseDTO restaurantApply(RestaurantApplyDTO applyDTO);
 	RestaurantStaticsDTO restaurantStatics(Long id);
 	List<RestaurantMenuDishesDTO> getMenuDishes(Long id);
+	List<RestaurantMenuDishesDTO> getAvailableMenuDishes(Long id);
 	String DishAvailability(long dishId);
 	String deleteMenuDish(long menuId, long dishId);
 
@@ -16,4 +17,6 @@ public interface RestaurantService {
 	RestaurantDetailsDTO getRestaurantDetailsById(Long restaurantId);
 	DishDetailsDTO getDishDetailsById(Long menuId,Long dishId);
 	String updateDishDetails(Long menuId,Long dishId, DishUpdateDTO updatedDishDetails);
+	List<RestaurantListDTO> getAllRestaurants();
+	List<RestaurantListDTO> getRestaurantsByPincode(String pincode);
 }

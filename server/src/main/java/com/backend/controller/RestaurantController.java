@@ -3,6 +3,7 @@ package com.backend.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.dto.*;
 import com.backend.service.RestaurantService;
 
+//@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/restaurant")
 public class RestaurantController {
@@ -43,7 +45,7 @@ public class RestaurantController {
 	
 	// menu page
 	
-	@GetMapping("/menu/statics")
+	@GetMapping("/statistics")
 	public ResponseEntity<?> getStats(@RequestParam Long id){
 		System.out.println("In Get of Restaurant/Menu/Stats");
 		try {
@@ -68,10 +70,21 @@ public class RestaurantController {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
 		}
 	}
+	@GetMapping("/menu/Dishes")
+	public ResponseEntity<?> getAvailableDishes(@RequestParam Long id){
+		System.out.println("In Get of Restaurant/Menu/Dishes");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(restaurantService.getAvailableMenuDishes(id));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
+	}
 	
 	//toggle dish availability
 	
-	@PutMapping("/menu/toggle-dish")
+	@PutMapping("/menu/dishes")
 	public ResponseEntity<?> toggleDishAvailability(@RequestParam long dishId){
 		System.out.println("In Put of Menu/ToggleDish");
 		try {
@@ -87,7 +100,7 @@ public class RestaurantController {
 	
 	// Delete dish using menuId & dishId
 	
-	@DeleteMapping("/menu/delete-dish")
+	@DeleteMapping("/menu/dishes")
 	public ResponseEntity<?> deleteDish(@RequestParam Long menuId,@RequestParam Long dishId){
 		System.out.println("In Delete of Menu/Delete");
 		try {
@@ -134,6 +147,15 @@ public class RestaurantController {
 	public ResponseEntity<?> getOrdersList(@RequestParam Long size){
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(restaurantService.getAllOrdersByRestaurant(size));
+	}
+	@GetMapping("/list-restaurants")
+	public ResponseEntity<?> getRestaurantsList(@RequestParam(required = false) String postalCode){
+		if (postalCode != null && !postalCode.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(restaurantService.getRestaurantsByPincode(postalCode));
+		}
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(restaurantService.getAllRestaurants());
 	}
 	
 }
