@@ -133,7 +133,9 @@ export default function MenuDishes() {
   };
 
   const handleEdit = (dishId) => {
-    navigate(`/dish/edit/${MENU_ID}/${dishId}`);
+    // Find the dish object from the filtered dishes
+    const dishToEdit = filteredDishes.find(dish => dish.dishId === dishId);
+    navigate(`/restaurant/dish/edit/${MENU_ID}/${dishId}`, { state: { dish: dishToEdit } });
   };
 
   if (loading) {
@@ -147,7 +149,7 @@ export default function MenuDishes() {
 
   return (
     <>
-      
+
       <br />
       <div className="space-y-6 pl-4 sm:pl-6 lg:pl-8">
         <div className="flex items-center justify-between">
@@ -192,6 +194,11 @@ export default function MenuDishes() {
           </div>
         )}
 
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> Digvijay
         {/* Delete Confirmation Modal */}
         <ConfirmModal
           isOpen={deleteModal.isOpen}
