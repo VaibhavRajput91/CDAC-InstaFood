@@ -10,7 +10,7 @@ export default function RestaurantApply() {
   const [success, setSuccess] = useState(false);
   const [toast, setToast] = useState(null);
   const [formData, setFormData] = useState({
-    userId: '43',
+    userId: '',
     restaurantName: '',
     openingTime: '',
     closingTime: '',
@@ -111,7 +111,8 @@ export default function RestaurantApply() {
 
       // Transform form data to match backend DTO
       const submitData = {
-        userId: formData.userId ? parseInt(formData.userId) : null,
+        userId: sessionStorage.getItem('userId'),
+        // userId: formData.userId ? parseInt(formData.userId) : null,
         restaurantName: formData.restaurantName,
         openingTime: formData.openingTime,
         closingTime: formData.closingTime,
