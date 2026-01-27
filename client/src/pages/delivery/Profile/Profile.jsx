@@ -4,21 +4,30 @@ import {
   MapPin,
   Edit,
   ChevronRight,
-  Bike
+  Bike,
+  LogOut
 } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
 import { BottomNav } from '../../../components/delivery/BottomNav'
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 export function Profile({ navigateTo }) {
+  const navigate = useNavigate();
   const [details, setDetails] = useState(null);
   useEffect(() => {
-    fetch('http://localhost:8080/delivery/details?id=7')
+    fetch('http://localhost:8080/delivery/details?deliveryPartnerId=7')
       .then(res => res.json())
       .then(data => setDetails(data))
       .catch(() => setDetails(null));
   }, []);
+
+  const handleLogout = () => {
+    // Clear session storage
+    sessionStorage.clear();
+    // Redirect to login page
+    navigate('/');
+  };
 
   if (!details) {
     return (
@@ -40,8 +49,13 @@ export function Profile({ navigateTo }) {
             </button>
             <h1 className="text-xl">Profile</h1>
           </div>
-          <button className="text-orange-500 text-sm">
-            Logout
+          <button onClick={
+            () => {
+              handleLogout();
+              }} 
+            className="flex items-center gap-2 px-4 py-2 bg-white text-orange-600 rounded-lg hover:bg-gray-100 transition-colors font-medium">
+            <LogOut className="w-5 h-5" />
+            <span>Logout</span>
           </button>
         </div>
       </div>

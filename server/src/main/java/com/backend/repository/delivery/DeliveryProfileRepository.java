@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.backend.entity.AvailabilityStatus;
 import com.backend.entity.DeliveryPartner;
+import com.backend.entity.User;
 
 public interface DeliveryProfileRepository extends JpaRepository<DeliveryPartner, Long> {
 	
@@ -24,5 +25,6 @@ public interface DeliveryProfileRepository extends JpaRepository<DeliveryPartner
 	@Query("select dp.status from DeliveryPartner dp where dp.id = ?1")
 	public Optional<AvailabilityStatus> getStatusById(Long id);
 		
-	
+	@Query("select dp.id from DeliveryPartner dp where dp.user.id = ?1")
+	public Long findByUser(Long id);
 }

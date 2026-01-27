@@ -17,7 +17,7 @@ export function EditProfile({ navigateTo }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:8080/delivery/details?id=7')
+    fetch('http://localhost:8080/delivery/details?deliveryPartnerId=17')
       .then(res => res.json())
       .then(data => {
         setFormData({
@@ -47,7 +47,7 @@ export function EditProfile({ navigateTo }) {
     setError('');
     setSuccess(false);
     try {
-      const res = await fetch('http://localhost:8080/delivery/edit-details?id=7', {
+      const res = await fetch('http://localhost:8080/delivery/edit-details?deliveryPartnerId=17', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

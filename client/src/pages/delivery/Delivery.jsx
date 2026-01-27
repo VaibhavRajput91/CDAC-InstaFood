@@ -7,6 +7,8 @@ import { Wallet } from './Wallet/Wallet';
 import { Profile } from './Profile/Profile';
 import { EditProfile } from './EditProfile/EditProfile';
 import { Apply } from './Apply';
+import { Settings } from './Settings';
+import { Support } from '../common/ContactUs/Support';
 // import { Support } from './components/Support';
 // import { Login } from './components/Login';
 // import { Onboarding } from './components/Onboarding';

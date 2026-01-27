@@ -55,6 +55,17 @@ public class DeliveryController {
 		}
 	}
 	
+	@GetMapping("/delivery-id")
+	public ResponseEntity<?> getDeliveryPartnerId(@RequestParam Long userId){
+		System.out.println("In Get delivery-id");
+		try {
+			return ResponseEntity.status(HttpStatus.OK).body(deliveryProfileService.getDeliveryPartnerId(userId));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error:" + e.getMessage());
+		}
+	}
+	
 	@GetMapping("/wallet/summary")
 	public ResponseEntity<?> walletSummary(@RequestParam Long deliveryPartnerId){
 		System.out.println("In Get wallet/summary");
@@ -108,10 +119,10 @@ public class DeliveryController {
 	
 	
 	@GetMapping("/details")
-	public ResponseEntity<?> profile(@RequestParam Long id){
+	public ResponseEntity<?> profile(@RequestParam Long deliveryPartnerId){
 		System.out.println("In Get details");
 		try {
-			return ResponseEntity.status(HttpStatus.OK).body(deliveryProfileService.getDeliveryPartnerProfile(id));
+			return ResponseEntity.status(HttpStatus.OK).body(deliveryProfileService.getDeliveryPartnerProfile(deliveryPartnerId));
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -120,10 +131,10 @@ public class DeliveryController {
 	}
 	
 	@PutMapping("/edit-details")
-	public  ResponseEntity<?> editProfile(@RequestBody DeliveryProfileDto profileDto, @RequestParam Long id){
+	public  ResponseEntity<?> editProfile(@RequestBody DeliveryProfileDto profileDto, @RequestParam Long deliveryPartnerId){
 		System.out.println("In Put Edit-Details");
 		try {
-			return ResponseEntity.status(HttpStatus.OK).body(deliveryProfileService.updateDeliveryPartnerProfile(id, profileDto));	
+			return ResponseEntity.status(HttpStatus.OK).body(deliveryProfileService.updateDeliveryPartnerProfile(deliveryPartnerId, profileDto));	
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
