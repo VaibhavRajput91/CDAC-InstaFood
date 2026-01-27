@@ -1,81 +1,63 @@
-import {
-    PieChart, Pie, Cell,
-    LineChart, Line,
-    BarChart, Bar,
-    XAxis, YAxis, Tooltip,
-    ResponsiveContainer
-} from "recharts";
+import { useEffect, useState } from "react";
+import { getTotalOrdersDetails } from "../../../services/admin/dashboardStats";
+
 
 function Dashboard() {
+    const [stats, setStats] = useState({
+        totalOrders: 0,
+        totalMoneySpent: 0,
+        totalDishesOffered: 0,
+        totalCategoriesOffered: 0
+    });
 
-    const pieData = [
-        { name: "Food Orders", value: 400 },
-        { name: "Cancelled", value: 100 },
-        { name: "Delivered", value: 300 },
-    ];
+    useEffect(() => {
+        loadData();
+    }, []);
 
-    const COLORS = ["#ef4444", "#f97316", "#22c55e"];
+    const loadData = async () => {
+        const data = await getTotalOrdersDetails();
+        if (data) {
+            setStats(data);
+        }
+    };
 
-    const lineData = [
-        { day: "Mon", orders: 30 },
-        { day: "Tue", orders: 50 },
-        { day: "Wed", orders: 45 },
-        { day: "Thu", orders: 60 },
-        { day: "Fri", orders: 80 },
-    ];
-
-    const barData = [
-        { name: "Burger", sales: 120 },
-        { name: "Pizza", sales: 90 },
-        { name: "Fries", sales: 70 },
-    ];
+    
 
     return (
-        <div className="bg-gray-100 min-h-screen">
+        <div className="bg-gray-100 min-h-screen p-10">
+            <div className="max-w-7xl mx-auto">
+                <h1 className="text-3xl font-bold mb-8 text-gray-800">Dashboard Overview</h1>
 
-            <div className="max-w-screen mx-auto mt-10 bg-white shadow-lg rounded-lg p-10">
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-12">
-
-                    <div className="h-60 border-2 border-gray-400 rounded-lg flex items-center justify-center">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie data={pieData} dataKey="value" outerRadius={60} label>
-                                    {pieData.map((entry, i) => (
-                                        <Cell key={i} fill={COLORS[i]} />
-                                    ))}
-                                </Pie>
-                            </PieChart>
-                        </ResponsiveContainer>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {/* Total Orders Card */}
+                    <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500 hover:shadow-lg transition-shadow">
+                        <div className="text-gray-500 font-medium mb-2">Total Orders</div>
+                        <div className="text-4xl font-bold text-gray-800">{stats.totalOrders}</div>
                     </div>
 
-                    <div className="h-60 border-2 border-gray-400 rounded-lg">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={lineData}>
-                                <XAxis dataKey="day" />
-                                <YAxis />
-                                <Tooltip />
-                                <Line type="monotone" dataKey="orders" stroke="#ef4444" strokeWidth={2} />
-                            </LineChart>
-                        </ResponsiveContainer>
+                    {/* Total Revenue Card */}
+                    <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500 hover:shadow-lg transition-shadow">
+                        <div className="text-gray-500 font-medium mb-2">Total Revenue</div>
+                        <div className="text-4xl font-bold text-gray-800">₹{stats.totalMoneySpent}</div>
                     </div>
 
-                    <div className="h-60 border-2 border-gray-400 rounded-lg">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={barData}>
-                                <XAxis dataKey="name" />
-                                <YAxis />
-                                <Tooltip />
-                                <Bar dataKey="sales" fill="#f97316" />
-                            </BarChart>
-                        </ResponsiveContainer>
+                    {/* Total Dishes Card */}
+                    <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-orange-500 hover:shadow-lg transition-shadow">
+                        <div className="text-gray-500 font-medium mb-2">Total Dishes</div>
+                        <div className="text-4xl font-bold text-gray-800">{stats.totalDishesOffered}</div>
                     </div>
 
+                    {/* Total Categories Card */}
+                    <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500 hover:shadow-lg transition-shadow">
+                        <div className="text-gray-500 font-medium mb-2">Categories</div>
+                        <div className="text-4xl font-bold text-gray-800">{stats.totalCategoriesOffered}</div>
+                    </div>
                 </div>
-
             </div>
+
+           
         </div>
     );
 }
 
-export default Dashboard
+export default Dashboard;
