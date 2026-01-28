@@ -10,7 +10,7 @@ const api = axios.create({
 
 // Restaurant ID - In production, this would come from authentication
 // For now, using a mock restaurant ID
-export const RESTAURANT_ID = 3;
+export const RESTAURANT_ID = 1;
 export const MENU_ID = 1;
 
 // Restaurant API

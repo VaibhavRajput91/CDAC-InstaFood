@@ -1,4 +1,4 @@
-import { Link, Route, Routes, Navigate } from "react-router-dom";
+import { Link, Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import Navbar from "../../components/common/Navbar/Navbar";
 import Dashboard from "../../components/admin/Dashboard/Dashboard";
 import Statistics from "../../components/admin/Statistics/Statistics";
@@ -13,6 +13,11 @@ import ViewDeliveryPartnerApplication from "../../components/admin/Approvals/Del
 import Profile from "../../components/admin/Profile/Profile"
 
 function Admin() {
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        navigate("/");
+    };
     return (
         <div>
             <nav className="w-full bg-red-600 shadow-sm sticky top-0 z-50">
@@ -33,9 +38,12 @@ function Admin() {
                     </ul>
 
                     {/* Desktop Login Button */}
-                    <button className="hidden md:block bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg">
-                        Login
-                    </button>
+                    <button
+            onClick={handleLogout}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 transition-colors duration-200 focus:outline-none shadow-sm"
+          >
+            Logout
+          </button>
                 </div>
             </nav>
 

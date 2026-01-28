@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, LogOut, Home, ShoppingBag, UtensilsCrossed, BarChart3, User, Settings } from 'lucide-react';
 
 export default function RestaurantNavbar() {
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleMenu = () => {
@@ -10,11 +11,11 @@ export default function RestaurantNavbar() {
     };
 
     const handleLogout = () => {
-        // Clear any stored auth tokens/user data
-        localStorage.clear();
-        // Navigate to login
-        window.location.href = '/login';
-    };
+    // Clear session storage
+    sessionStorage.clear();
+    // Redirect to login page
+    navigate('/');
+  };
 
     return (
         <>

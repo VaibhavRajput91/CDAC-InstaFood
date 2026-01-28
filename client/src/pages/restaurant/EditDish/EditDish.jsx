@@ -164,7 +164,7 @@ export default function EditDish() {
       <div className="w-full max-w-2xl space-y-6">
         <div className="flex items-center justify-start gap-4">
           <button
-            onClick={() => navigate('/menu')}
+            onClick={() => navigate('/restaurant/menu/dishes')}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <ArrowLeft className="w-5 h-5 text-gray-600" />

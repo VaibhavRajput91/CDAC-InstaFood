@@ -14,7 +14,7 @@ export default function MenuDishes() {
   const [dishes, setDishes] = useState([]);
   const [filteredDishes, setFilteredDishes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm] = useState('');
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, dish: null });
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [toast, setToast] = useState(null);
@@ -122,7 +122,7 @@ export default function MenuDishes() {
       });
 
       setDeleteModal({ isOpen: false, dish: null });
-    } catch (error) {
+    } catch {
       setToast({
         message: 'Failed to delete dish',
         type: 'error',
