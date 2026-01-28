@@ -1,6 +1,9 @@
 package com.backend.service.delivery;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -8,11 +11,13 @@ import com.backend.dto.delivery.DeliveryDashboardSummaryDto;
 import com.backend.dto.delivery.DeliveryOrderDto;
 import com.backend.dto.delivery.DeliveryResponseDto;
 import com.backend.dto.delivery.DeliveryStatusDto;
+import com.backend.dto.delivery.OrderItemDto;
 import com.backend.entity.AvailabilityStatus;
 import com.backend.entity.DeliveryLog;
 import com.backend.entity.DeliveryPartner;
 import com.backend.entity.DeliveryStatus;
 import com.backend.entity.Order;
+import com.backend.entity.OrderItem;
 import com.backend.entity.OrderStatus;
 import com.backend.repository.delivery.DeliveryOrderRepository;
 import com.backend.repository.delivery.DeliveryProfileRepository;
@@ -54,7 +59,17 @@ public class DeliveryDashboardServiceImpl implements DeliveryDashboardService {
 					dto.setRestaurantName(order.getRestaurant().getRestaurantName());
 					dto.setRestaurantAddress(order.getRestaurant().getUser().getAddress().getLineOne());
 					dto.setTotalAmount(order.getTotalAmount());
-					dto.setItems(order.getOrderItems().size());
+					Set<OrderItemDto> items = new HashSet<>();
+					for(OrderItem item : order.getOrderItems()) {
+						OrderItemDto orderItemDto = new OrderItemDto();
+						orderItemDto.setDishId(item.getDish().getId());
+						orderItemDto.setDishName(item.getDish().getName());
+						orderItemDto.setPrice(item.getPrice());
+						orderItemDto.setQuantity(item.getQuantity());
+						
+						items.add(orderItemDto);
+					}
+					dto.setItems(items);
 					dto.setDeliveryStatus(DeliveryStatus.PENDING);
 					return dto;
 				})

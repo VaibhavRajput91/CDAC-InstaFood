@@ -17,6 +17,7 @@ import com.backend.dto.demo;
 import com.backend.dto.delivery.DeliveryPartnerApplyDto;
 import com.backend.dto.delivery.DeliveryProfileDto;
 import com.backend.dto.delivery.DeliveryWalletSummaryDto;
+import com.backend.entity.OrderStatus;
 import com.backend.service.delivery.ApplyForDeliveryService;
 import com.backend.service.delivery.DeliveryDashboardService;
 import com.backend.service.delivery.DeliveryOrderService;
@@ -144,7 +145,7 @@ public class DeliveryController {
 	
 	
 	@GetMapping("/orders")
-	public ResponseEntity<?> orders(@RequestParam Long deliveryPartnerId){
+	public ResponseEntity<?> orders(@RequestParam Long deliveryPartnerId, @RequestParam OrderStatus status){
 		System.out.println("In Get Orders");
 		try{
 			return ResponseEntity

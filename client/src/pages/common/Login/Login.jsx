@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { login } from '../../../services/common/login';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
+import { config } from '../../../services/config';
 
 function Login() {
   const navigate = useNavigate();
@@ -42,7 +44,7 @@ function Login() {
 
     try {
       const response = await login(email, password);
-      
+
       if (response && response.token) {
         // Decode token to find role and postalCode
         const payload = decodeToken(response.token);
@@ -52,31 +54,46 @@ function Login() {
         // Store token, email, postalCode, and userId
         sessionStorage.setItem('token', response.token);
         sessionStorage.setItem('email', response.email);
-        
+
         // Extract userId from response or JWT payload
         const userId = response.id || payload?.userId;
         if (userId) {
           sessionStorage.setItem('userId', userId);
         }
-        
+
         if (postalCode) {
           sessionStorage.setItem('postalCode', postalCode);
         }
-        
+
         toast.success(`Welcome back, ${response.email}!`);
 
         // Role-based navigation
-        setTimeout(() => {
+        const navigateToRole = async () => {
           if (roles.includes('ROLE_ADMIN')) {
             navigate('/admin');
           } else if (roles.includes('ROLE_RESTAURANT')) {
             navigate('/restaurant');
           } else if (roles.includes('ROLE_DELIVERY_PARTNER')) {
+            try {
+              console.log("Fetching deliveryPartnerId for userId:", userId);
+              const deliveryIdResponse = await axios.get(`${config.server}/delivery/delivery-id?userId=${userId}`);
+              console.log("Delivery ID Response:", parseInt(deliveryIdResponse.data));
+              if (deliveryIdResponse.data) {
+                sessionStorage.setItem('deliveryPartnerId', deliveryIdResponse.data);
+                console.log("Stored deliveryPartnerId in sessionStorage:", deliveryIdResponse.data);
+              }
+            } catch (error) {
+              console.log("Delivery Partner ID not found or error fetching it:", error);
+              // If 404, the user hasn't applied yet, which is handled in Delivery.jsx
+              sessionStorage.removeItem('deliveryPartnerId');
+            }
             navigate('/delivery');
           } else {
             navigate('/customer');
           }
-        }, 1500);
+        };
+
+        setTimeout(navigateToRole, 1500);
       } else {
         toast.error('Invalid credentials. Please try again.');
       }
@@ -87,7 +104,7 @@ function Login() {
   };
 
   const handleRegister = () => {
-    navigate('/register'); 
+    navigate('/register');
   };
 
   return (
@@ -102,10 +119,10 @@ function Login() {
             Sign in to experience the <span className="font-bold">best flavors</span>
           </p>
         </div>
-        
+
         <form className="mt-10 space-y-8" onSubmit={handleSubmit}>
           <div className="space-y-6">
-            
+
             {/* Email Field */}
             <div className="group relative">
               <label htmlFor="email" className="block text-xs font-bold text-orange-500 uppercase tracking-widest mb-1 ml-1 group-focus-within:text-orange-600 transition-colors">Email address</label>

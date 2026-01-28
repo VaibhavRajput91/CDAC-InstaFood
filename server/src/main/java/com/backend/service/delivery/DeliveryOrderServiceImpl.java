@@ -44,7 +44,18 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
 			orderDto.setRestaurantName(order.getRestaurant().getRestaurantName());
 			orderDto.setRestaurantAddress(order.getRestaurant().getUser().getAddress().getLineOne());
 			orderDto.setTotalAmount(order.getTotalAmount());
-			orderDto.setItems(order.getOrderItems().size());
+			Set<OrderItemDto> items = new HashSet<>();
+			Set<OrderItem> orderItems = new HashSet<>();
+			for(OrderItem orderItem : orderItems) {
+				OrderItemDto oid = new OrderItemDto();
+				oid.setDishId(orderItem.getDish().getId());
+				oid.setDishName(orderItem.getDish().getName());
+				oid.setPrice(orderItem.getPrice());
+				oid.setQuantity(orderItem.getQuantity());
+				
+				items.add(oid);
+			}
+			orderDto.setItems(items);
 			orderDto.setDeliveryStatus(order.getDeliveryPartnerLog().getStatus());
 			
 			orderDtos.add(orderDto);
@@ -52,6 +63,7 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
 		return orderDtos;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<DeliveryOrderDto> getOrdersHistory(Long deliveryPartnerId, int limit) {
 		List<Order> orders = orderRepository.findByDeliveryPartnerIdOrderByCreatedOnDesc(deliveryPartnerId);
@@ -62,7 +74,18 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
 			orderDto.setRestaurantName(order.getRestaurant().getRestaurantName());
 			orderDto.setRestaurantAddress(order.getRestaurant().getUser().getAddress().getLineOne());
 			orderDto.setTotalAmount(order.getTotalAmount());
-			orderDto.setItems(order.getOrderItems().size());
+			Set<OrderItemDto> items = new HashSet<>();
+			Set<OrderItem> orderItems = new HashSet<>();
+			for(OrderItem orderItem : orderItems) {
+				OrderItemDto oid = new OrderItemDto();
+				oid.setDishId(orderItem.getDish().getId());
+				oid.setDishName(orderItem.getDish().getName());
+				oid.setPrice(orderItem.getPrice());
+				oid.setQuantity(orderItem.getQuantity());
+				
+				items.add(oid);
+			}
+			orderDto.setItems(items);
 			orderDto.setDeliveryStatus(order.getDeliveryPartnerLog().getStatus());
 			
 			orderDtos.add(orderDto);

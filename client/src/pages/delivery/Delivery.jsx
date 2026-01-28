@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dashboard } from './Dashboard/Dashboard';
 import { OrdersList } from './OrderList/OrdersList';
 import { OrderDetails } from './OrderDetails/OrderDetails';
@@ -9,17 +9,15 @@ import { EditProfile } from './EditProfile/EditProfile';
 import { Apply } from './Apply';
 import { Settings } from './Settings';
 import { Support } from '../common/ContactUs/Support';
-// import { Support } from './components/Support';
-// import { Login } from './components/Login';
-// import { Onboarding } from './components/Onboarding';
-// import { Notifications } from './components/Notifications';
-// import { Settings } from './components/Settings';
+import { Notifications } from './Notifications';
 
 export default function Delivery() {
-  const [currentScreen, setCurrentScreen] = useState('login');
+  const [currentScreen, setCurrentScreen] = useState(() => {
+    return sessionStorage.getItem('deliveryPartnerId') ? 'dashboard' : 'apply';
+  });
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [registeredAsDeliveryPartner, setRegisteredAsDeliveryPartner] = useState(!!sessionStorage.getItem('deliveryPartnerId'));
   const [isLoggedIn, setIsLoggedIn] = useState(true);
-  // const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
 
   const navigateTo = (screen, orderId) => {
     if (orderId) {
@@ -28,24 +26,8 @@ export default function Delivery() {
     setCurrentScreen(screen);
   };
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-    setCurrentScreen('onboarding');
-  };
-
-  const handleOnboardingComplete = () => {
-    setHasCompletedOnboarding(true);
-    setCurrentScreen('dashboard');
-  };
-
   const renderScreen = () => {
-    if (!isLoggedIn) {
-      return <Login onLogin={handleLogin} />;
-    }
 
-    // if (!hasCompletedOnboarding) {
-    //   return <Onboarding onComplete={handleOnboardingComplete} />;
-    // }
 
     switch (currentScreen) {
       case 'apply':

@@ -11,6 +11,7 @@ import {
   Navigation
 } from 'lucide-react';
 import { BottomNav } from '../../../components/delivery/BottomNav';
+import { config } from '../../../services/config';
 
 const availableOrders = [
   {
@@ -55,7 +56,7 @@ export function Dashboard({ navigateTo }) {
   });
 
   useEffect(() => {
-    fetch('http://localhost:8080/delivery/status?deliveryPartnerId=1')
+    fetch(`${config.server}/delivery/status?deliveryPartnerId=${sessionStorage.deliveryPartnerId}`)
       .then(res => res.json())
       .then(data => {
         setIsOnline(data.status === 'AVAILABLE');
@@ -64,7 +65,7 @@ export function Dashboard({ navigateTo }) {
         setIsOnline(false);
       });
 
-    fetch('http://localhost:8080/delivery/dashboard/summary?deliveryPartnerId=1')
+    fetch(`${config.server}/delivery/dashboard/summary?deliveryPartnerId=${sessionStorage.deliveryPartnerId}`)
       .then(res => res.json())
       .then(data => {
         setSummary({
@@ -106,9 +107,8 @@ export function Dashboard({ navigateTo }) {
           <div>
             <p className="text-sm text-gray-500">Status</p>
             <p
-              className={`text-lg ${
-                isOnline ? 'text-green-600' : 'text-gray-600'
-              }`}
+              className={`text-lg ${isOnline ? 'text-green-600' : 'text-gray-600'
+                }`}
             >
               {isOnline ? 'Online' : 'Offline'}
             </p>
@@ -120,7 +120,7 @@ export function Dashboard({ navigateTo }) {
                 const res = await fetch('http://localhost:8080/delivery/status?deliveryPartnerId=1', {
                   method: 'PATCH',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ status: isOnline ? 'UNAVAILABLE' : 'AVAILABLE' }) 
+                  body: JSON.stringify({ status: isOnline ? 'UNAVAILABLE' : 'AVAILABLE' })
                 });
                 if (res.ok) {
                   setIsOnline(!isOnline);
@@ -130,14 +130,12 @@ export function Dashboard({ navigateTo }) {
               }
             }}
             disabled={loadingStatus}
-            className={`relative w-16 h-8 rounded-full transition-colors ${
-              isOnline ? 'bg-green-500' : 'bg-gray-300'
-            }`}
+            className={`relative w-16 h-8 rounded-full transition-colors ${isOnline ? 'bg-green-500' : 'bg-gray-300'
+              }`}
           >
             <div
-              className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow-md transition-transform ${
-                isOnline ? 'translate-x-9' : 'translate-x-1'
-              }`}
+              className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow-md transition-transform ${isOnline ? 'translate-x-9' : 'translate-x-1'
+                }`}
             />
           </button>
         </div>

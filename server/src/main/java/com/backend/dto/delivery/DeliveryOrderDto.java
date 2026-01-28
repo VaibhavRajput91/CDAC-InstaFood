@@ -1,5 +1,8 @@
 package com.backend.dto.delivery;
 
+import java.util.List;
+import java.util.Set;
+
 import com.backend.entity.DeliveryStatus;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +21,7 @@ public class DeliveryOrderDto {
 	private String restaurantName;
 	private String restaurantAddress;
 	private double totalAmount;
-	private int items;
+	private Set<OrderItemDto> items;
 	private DeliveryStatus deliveryStatus;
 	
 	
