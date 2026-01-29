@@ -12,31 +12,7 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import axios from 'axios';
-
-const earningsData = {
-  daily: [
-    { name: 'Mon', earnings: 547 },
-    { name: 'Tue', earnings: 623 },
-    { name: 'Wed', earnings: 489 },
-    { name: 'Thu', earnings: 712 },
-    { name: 'Fri', earnings: 856 },
-    { name: 'Sat', earnings: 1034 },
-    { name: 'Sun', earnings: 847 }
-  ],
-  weekly: [
-    { name: 'Week 1', earnings: 3245 },
-    { name: 'Week 2', earnings: 4123 },
-    { name: 'Week 3', earnings: 3867 },
-    { name: 'Week 4', earnings: 4521 }
-  ],
-  monthly: [
-    { name: 'Aug', earnings: 12456 },
-    { name: 'Sep', earnings: 14234 },
-    { name: 'Oct', earnings: 13567 },
-    { name: 'Nov', earnings: 15890 },
-    { name: 'Dec', earnings: 14234 }
-  ]
-};
+import { config } from '../../../services/config'
 
 const transactions = [
   { id: '1', type: 'credit', description: 'Order #ORD001 Completed', amount: 45, date: 'Today, 2:45 PM' },
@@ -47,55 +23,97 @@ const transactions = [
   { id: '6', type: 'credit', description: 'Order #ORD004 Completed', amount: 78, date: 'Dec 6, 3:20 PM' }
 ];
 
-export function Wallet({navigateTo}){
+export function Wallet({ navigateTo }) {
   const [walletSummary, setWalletSummary] = useState({
     todayCollection: 0.0,
     weekCollection: 0.0,
     monthCollection: 0.0
   });
+  const [loading, setLoading] = useState(true);
+  const [trendData, setTrendData] = useState([]);
 
   useEffect(() => {
-      fetch('http://localhost:8080/delivery/wallet/summary?deliveryPartnerId=5')
-        .then(res => res.json())
-        .then(data => {
-          setWalletSummary({
-            todayCollection: data.todayCollection || 0.0,
-            weekCollection: data.weekCollection || 0.0,
-            monthCollection: data.monthCollection
-          });
-          setLoading(false);
-        })
-        .catch(() => {
-          
-        });
-    }, []);
+    const deliveryPartnerId = sessionStorage.getItem("deliveryPartnerId");
+    if (!deliveryPartnerId) return;
 
-    const [transactions, setTransactions] = useState([]);
-    const [txnLoading, setTxnLoading] = useState(true);
-
-
-    useEffect(() => {
-  fetch('http://localhost:8080/delivery/wallet/transactions?deliveryPartnerId=5&size=5')
-    .then(res => res.json())
-    .then(data => {
-      setTransactions(
-        data.map(order => ({
-          id: order.orderId,
-          type: 'credit', // Let us assume transactions are credits
-          description: `Order #${order.orderId} ${order.orderStatus}`,
-          amount: order.earnings,
-          date: '—' // backend doesn’t provide date yet
-        }))
-      );
-      setTxnLoading(false);
+    axios.get(`${config.server}/delivery/wallet/summary`, {
+      params: { deliveryPartnerId }
     })
-    .catch(() => {
-      setTxnLoading(false);
-    });
+      .then(res => {
+        setWalletSummary({
+          todayCollection: res.data.todayCollection || 0.0,
+          weekCollection: res.data.weekCollection || 0.0,
+          monthCollection: res.data.monthCollection || 0.0
+        });
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error fetching wallet summary", err);
+        setLoading(false);
+      });
   }, []);
 
-   
+  const [transactions, setTransactions] = useState([]);
+  const [txnLoading, setTxnLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${config.server}/delivery/wallet/transactions?deliveryPartnerId=${sessionStorage.deliveryPartnerId}&size=10`)
+      .then(res => res.json())
+      .then(data => {
+        setTransactions(
+          data.map(order => ({
+            id: order.orderId,
+            type: 'credit', // Let us assume transactions are credits
+            description: `Order #${order.orderId} ${order.orderStatus}`,
+            amount: order.earnings,
+            date: '—' // backend doesn’t provide date yet
+          }))
+        );
+        setTxnLoading(false);
+      })
+      .catch(err => {
+        console.error("Error fetching transactions", err);
+        setTxnLoading(false);
+      });
+  }, []);
+
   const [period, setPeriod] = useState('daily');
+
+  useEffect(() => {
+    const fetchTrend = async () => {
+      try {
+        const dpId = sessionStorage.getItem("deliveryPartnerId");
+        if (!dpId) return;
+
+        const res = await axios.get(`${config.server}/delivery/wallet/earnings-trend`, {
+          params: { deliveryPartnerId: 1, range: period }
+        });
+
+        // Backend returns: [today, yesterday, ..., 6-steps-ago]
+        const rawData = res.data;
+        const processedData = rawData.map((val, index) => {
+          let name = '';
+          const date = new Date();
+          if (period === 'daily') {
+            date.setDate(date.getDate() - index);
+            name = date.toLocaleDateString('en-US', { weekday: 'short' });
+          } else if (period === 'weekly') {
+            name = index === 0 ? 'This Week' : `Week -${index}`;
+          } else if (period === 'monthly') {
+            date.setMonth(date.getMonth() - index);
+            name = date.toLocaleDateString('en-US', { month: 'short' });
+          }
+          return { name, earnings: val };
+        }).reverse();
+
+        setTrendData(processedData);
+      } catch (err) {
+        console.error("Error fetching trend data", err);
+      }
+    };
+    fetchTrend();
+  }, [period]);
+
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -105,16 +123,12 @@ export function Wallet({navigateTo}){
           <button onClick={() => navigateTo('dashboard')}>
             <ArrowLeft className="w-6 h-6 text-gray-700" />
           </button>
-          <h1 className="text-xl">Wallet & Earnings</h1>
+          <h1 className="text-xl">Earnings</h1>
         </div>
       </div>
 
       {/* Balance Card */}
       <div className="p-4">
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-3xl p-6 text-white shadow-lg mb-6">
-          <p className="text-green-100 mb-1">Available Balance</p>
-          <h2 className="text-5xl mb-6">₹2,450</h2>
-        </div>
 
         {/* Earnings Stats */}
         <div className="grid grid-cols-3 gap-3 mb-6">
@@ -150,11 +164,10 @@ export function Wallet({navigateTo}){
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
-                className={`px-4 py-2 rounded-xl text-sm transition-colors ${
-                  period === p
-                    ? 'bg-orange-500 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
+                className={`px-4 py-2 rounded-xl text-sm transition-colors ${period === p
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
               >
                 {p.charAt(0).toUpperCase() + p.slice(1)}
               </button>
@@ -164,7 +177,7 @@ export function Wallet({navigateTo}){
           {/* Chart */}
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={earningsData[period]}>
+              <LineChart data={trendData}>
                 <XAxis dataKey="name" stroke="#9CA3AF" style={{ fontSize: '12px' }} />
                 <YAxis stroke="#9CA3AF" style={{ fontSize: '12px' }} />
                 <Tooltip

@@ -44,7 +44,6 @@ public class ApplyForDeliveryServiceImpl implements ApplyForDeliveryService {
 			User deliveryUser = deliveryUserRepository.findByIdAndRole(userId, UserRole.ROLE_DELIVERY_PARTNER).orElse(null);
 			// set details
 			newPartner.setUser(deliveryUser);
-			newPartner.getUser().setId(userId);
 			newPartner.setLicenseNumber(applyDto.getLicenseNumber());
 			newPartner.setModel(applyDto.getModel());
 			newPartner.setVehicleType(applyDto.getVehicleType());

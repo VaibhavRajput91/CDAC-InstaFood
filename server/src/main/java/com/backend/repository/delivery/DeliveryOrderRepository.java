@@ -1,4 +1,4 @@
-package com.backend.repository.delivery;
+	package com.backend.repository.delivery;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,8 +13,21 @@ import com.backend.entity.Order;
 import com.backend.entity.OrderStatus;
 
 public interface DeliveryOrderRepository extends JpaRepository<Order, Long> {
-	public List<Order> findByDeliveryPartnerIdAndCreatedOn(Long deliveryPartnerId, LocalDate today);
-	
+	public List<Order> findByDeliveryPartnerIdAndCreatedOnAndOrderStatusOrderByLastUpdatedDesc(
+		    Long deliveryPartnerId,
+		    LocalDate today,
+		    OrderStatus status
+		);
+	public List<Order> findTop5ByDeliveryPartnerIdAndCreatedOnAndOrderStatusOrderByLastUpdatedDesc(
+		    Long deliveryPartnerId,
+		    LocalDate today,
+		    OrderStatus status
+		);
+	public List<Order> findTopByDeliveryPartnerIdAndCreatedOnAndOrderStatusOrderByLastUpdatedDesc(
+		    Long deliveryPartnerId,
+		    LocalDate today,
+		    OrderStatus status
+		);
 	public List<Order> findByDeliveryPartnerIdOrderByCreatedOnDesc(Long deliveryPartnerId);
 	
 	@Query(value="select sum(total_amount)*0.25 from orders where delivery_partner_id=?1 and created_at >= CURDATE() and created_at < CURDATE() + INTERVAL 1 DAY", nativeQuery=true)

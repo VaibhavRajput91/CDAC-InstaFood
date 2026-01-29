@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import { config } from '../../services/config';
 
 const vehicleTypes = [
   'BICYCLE',
@@ -29,18 +31,30 @@ export function Apply({ navigateTo }) {
     setLoading(true);
     setError('');
     setSuccess(false);
+    const userId = sessionStorage.getItem('userId');
     try {
-      // Replace with your actual API endpoint
-      const res = await fetch('http://localhost:8080/delivery/apply?userId=44', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
-      });
-      if (!res.ok) throw new Error('Application failed');
-      setSuccess(true);
-      setTimeout(() => {
-        navigateTo && navigateTo('dashboard');
-      }, 1500);
+      const res = await axios.post(`${config.server}/delivery/apply?userId=${userId}`, form);
+
+      if (res.status === 200) {
+        // Fetch the deliveryPartnerId after successful application
+        try {
+          const idRes = await axios.get(`${config.server}/delivery/delivery-id?userId=${userId}`);
+          const deliveryPartnerId = idRes.data?.data ? parseInt(idRes.data.data) : null;
+
+          if (deliveryPartnerId) {
+            sessionStorage.setItem('deliveryPartnerId', deliveryPartnerId);
+            setSuccess(true);
+            setTimeout(() => {
+              navigateTo && navigateTo('dashboard');
+            }, 1500);
+          } else {
+            setError('Application submitted but failed to retrieve Delivery Partner ID. Please try logging in again.');
+          }
+        } catch (idErr) {
+          console.error("Error fetching delivery ID after application", idErr);
+          setError('Application submitted but error occurred retrieving details.');
+        }
+      }
     } catch (err) {
       setError('Failed to submit application');
     } finally {

@@ -3,7 +3,9 @@ package com.backend.service.delivery;
 import org.springframework.stereotype.Service;
 
 import com.backend.dto.delivery.DeliveryProfileDto;
+import com.backend.dto.delivery.DeliveryResponseDto;
 import com.backend.entity.DeliveryPartner;
+import com.backend.entity.User;
 import com.backend.repository.delivery.DeliveryProfileRepository;
 
 import jakarta.transaction.Transactional;
@@ -85,6 +87,16 @@ public class DeliveryProfileServiceImpl implements DeliveryProfileService {
 			return updatedProfileDto;
 		}
 		return null;
+	}
+
+	@Override
+	public DeliveryResponseDto getDeliveryPartnerId(Long userId) {
+		Long deliveryPartnerId = deliveryProfileRepository.findByUser(userId);
+		DeliveryResponseDto dto = new DeliveryResponseDto();
+		dto.setStatus("success");
+		dto.setData(deliveryPartnerId);
+		dto.setMessage("Delivery Partne Id");
+		return dto;
 	}
 
 }

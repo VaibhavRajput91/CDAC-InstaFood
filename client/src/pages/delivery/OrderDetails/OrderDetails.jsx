@@ -1,16 +1,47 @@
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { ArrowLeft, MapPin, Phone, Navigation, Clock, Package } from 'lucide-react';
+import { config } from '../../../services/config';
 
 export function OrderDetails({ navigateTo, orderId }) {
-  const orderItems = [
-    { name: 'Margherita Pizza (Large)', quantity: 1, price: 349 },
-    { name: 'Garlic Bread', quantity: 2, price: 99 },
-    { name: 'Coke (750ml)', quantity: 1, price: 45 }
-  ];
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const itemTotal = 493;
-  const deliveryFee = 30;
-  const taxes = 25;
-  const total = 548;
+  useEffect(() => {
+    if (orderId) {
+      fetchOrderDetails();
+    }
+  }, [orderId]);
+
+  const fetchOrderDetails = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${config.server}/delivery/orders/order-details`, {
+        params: { orderId }
+      });
+      setOrderDetails(response.data);
+    } catch (error) {
+      console.error("Error fetching order details:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-500">Loading details...</div>;
+  }
+
+  if (!orderDetails) {
+    return <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-500">Order not found</div>;
+  }
+
+  const { pickup, drop, restaurantName, customerName, customerPhone, orderItems = [] } = orderDetails;
+
+  // Calculate totals
+  const itemTotal = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const deliveryFee = 30; // Fixed fee for now as API doesn't provide it
+  const taxes = Math.round(itemTotal * 0.05); // Assume 5% tax
+  const total = itemTotal + deliveryFee + taxes;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -23,9 +54,6 @@ export function OrderDetails({ navigateTo, orderId }) {
           <div className="flex-1">
             <h1 className="text-xl">Order Details</h1>
             <p className="text-sm text-gray-500">Order #{orderId}</p>
-          </div>
-          <div className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm">
-            New
           </div>
         </div>
       </div>
@@ -49,7 +77,8 @@ export function OrderDetails({ navigateTo, orderId }) {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Pickup</p>
-                <p className="text-gray-900">Pizza Palace</p>
+                <p className="text-gray-900">{restaurantName}</p>
+                <p className="text-xs text-gray-500">{pickup}</p>
               </div>
             </div>
           </div>
@@ -62,7 +91,7 @@ export function OrderDetails({ navigateTo, orderId }) {
             </div>
             <div>
               <p className="text-sm text-gray-500">Drop</p>
-              <p className="text-gray-900">123 Main St, Apartment 4B</p>
+              <p className="text-gray-900">{drop}</p>
             </div>
           </div>
         </div>
@@ -75,8 +104,8 @@ export function OrderDetails({ navigateTo, orderId }) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500 mb-1">Customer</p>
-              <p className="text-gray-900">Rahul Sharma</p>
-              <p className="text-sm text-gray-500">+91 98765 43210</p>
+              <p className="text-gray-900">{customerName}</p>
+              <p className="text-sm text-gray-500">{customerPhone}</p>
             </div>
             <button className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center hover:bg-green-600 transition-colors">
               <Phone className="w-5 h-5 text-white" />
@@ -95,7 +124,7 @@ export function OrderDetails({ navigateTo, orderId }) {
             {orderItems.map((item, index) => (
               <div key={index} className="flex items-start justify-between">
                 <div className="flex-1">
-                  <p className="text-gray-900">{item.name}</p>
+                  <p className="text-gray-900">{item.dishName}</p>
                   <p className="text-sm text-gray-500">
                     Qty: {item.quantity}
                   </p>

@@ -18,6 +18,7 @@ import com.backend.dto.delivery.OrderItemDto;
 import com.backend.entity.DeliveryStatus;
 import com.backend.entity.Order;
 import com.backend.entity.OrderItem;
+import com.backend.entity.OrderStatus;
 import com.backend.repository.delivery.DeliveryOrderRepository;
 
 import jakarta.transaction.Transactional;
@@ -32,41 +33,30 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
 	private final DeliveryOrderRepository orderRepository;
 
 	@Override
-	public List<DeliveryOrderDto> getTodayOrdersList(Long deliveryPartnerId, DeliveryStatus status) {
+	public List<DeliveryOrderDto> getTodayOrdersList(Long deliveryPartnerId, OrderStatus status) {
 		LocalDate today = LocalDate.now();
-		System.out.print(today.toString());
-		
-		List<Order> orders = orderRepository.findByDeliveryPartnerIdAndCreatedOn(deliveryPartnerId, today); 
-		List<DeliveryOrderDto> orderDtos = new ArrayList<>();
-		for(Order order : orders) {
-			DeliveryOrderDto orderDto = new DeliveryOrderDto();
-			orderDto.setOrderId(order.getId());
-			orderDto.setRestaurantName(order.getRestaurant().getRestaurantName());
-			orderDto.setRestaurantAddress(order.getRestaurant().getUser().getAddress().getLineOne());
-			orderDto.setTotalAmount(order.getTotalAmount());
-			orderDto.setItems(order.getOrderItems().size());
-			orderDto.setDeliveryStatus(order.getDeliveryPartnerLog().getStatus());
-			
-			orderDtos.add(orderDto);
+		List<Order> orders = new ArrayList<>();
+		if(status == OrderStatus.ACCEPTED) {
+			orders = orderRepository.findTop5ByDeliveryPartnerIdAndCreatedOnAndOrderStatusOrderByLastUpdatedDesc(deliveryPartnerId, today, status);
 		}
+		else if(status == OrderStatus.OUT_FOR_DELIVERY){
+			orders = orderRepository.findTopByDeliveryPartnerIdAndCreatedOnAndOrderStatusOrderByLastUpdatedDesc(deliveryPartnerId, today, status);
+		}
+		else if(status == OrderStatus.DELIVERED) {
+			orders = orderRepository.findByDeliveryPartnerIdAndCreatedOnAndOrderStatusOrderByLastUpdatedDesc(deliveryPartnerId, today, status);
+		}
+		List<DeliveryOrderDto> orderDtos = this.mapOrderList(orders);
+		
 		return orderDtos;
 	}
 
+	
+	
 	@Override
 	public List<DeliveryOrderDto> getOrdersHistory(Long deliveryPartnerId, int limit) {
-		List<Order> orders = orderRepository.findByDeliveryPartnerIdOrderByCreatedOnDesc(deliveryPartnerId);
-		List<DeliveryOrderDto> orderDtos = new ArrayList<>();
-		for(Order order : orders) {
-			DeliveryOrderDto orderDto = new DeliveryOrderDto();
-			orderDto.setOrderId(order.getId());
-			orderDto.setRestaurantName(order.getRestaurant().getRestaurantName());
-			orderDto.setRestaurantAddress(order.getRestaurant().getUser().getAddress().getLineOne());
-			orderDto.setTotalAmount(order.getTotalAmount());
-			orderDto.setItems(order.getOrderItems().size());
-			orderDto.setDeliveryStatus(order.getDeliveryPartnerLog().getStatus());
-			
-			orderDtos.add(orderDto);
-		}
+		List<Order> orders = orderRepository.findByDeliveryPartnerIdOrderByCreatedOnDesc(deliveryPartnerId);		
+		List<DeliveryOrderDto> orderDtos = this.mapOrderList(orders);
+
 		return orderDtos;
 	}
 
@@ -101,5 +91,33 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
 			return null;
 		}
 	}
-
+	
+	public List<DeliveryOrderDto> mapOrderList(List<Order> orders){
+		List<DeliveryOrderDto> orderDtos = new ArrayList<>();
+		for(Order order : orders) {
+			DeliveryOrderDto orderDto = new DeliveryOrderDto();
+			orderDto.setOrderId(order.getId());
+			orderDto.setRestaurantName(order.getRestaurant().getRestaurantName());
+			orderDto.setRestaurantAddress(order.getRestaurant().getUser().getAddress().getLineOne());
+			orderDto.setTotalAmount(order.getTotalAmount());
+			Set<OrderItemDto> items = new HashSet<>();
+			Set<OrderItem> orderItems = order.getOrderItems();
+			for(OrderItem orderItem : orderItems) {
+				OrderItemDto oid = new OrderItemDto();
+				oid.setDishId(orderItem.getDish().getId());
+				oid.setDishName(orderItem.getDish().getName());
+				oid.setPrice(orderItem.getPrice());
+				oid.setQuantity(orderItem.getQuantity());
+				
+				items.add(oid);
+			}
+			orderDto.setItems(items);
+			orderDto.setOrderStatus(order.getOrderStatus());
+			orderDto.setTime(order.getLastUpdated());
+			
+			orderDtos.add(orderDto);
+		}
+		return orderDtos;
+	}
+	
 }

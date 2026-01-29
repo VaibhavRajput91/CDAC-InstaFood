@@ -59,14 +59,14 @@ public class DeliveryWalletServiceImpl implements DeliveryWalletService {
 		
 		if(range.equals("daily")) {
 			LocalDate today = LocalDate.now();
-			for(int i = 0; i < 5; i++) {
+			for(int i = 0; i < 7; i++) {
 				LocalDate d = today.minusDays(i);
 				earnings.add(walletRepository.getEarnings(deliveryPartnerId, d, d));
 			}
 		}
 		else if(range.equals("weekly")) {
 			LocalDate weekStart = LocalDate.now().with(DayOfWeek.MONDAY);
-			for(int i = 0; i < 5; i++) {
+			for(int i = 0; i < 7; i++) {
 				LocalDate ws = weekStart.minusWeeks(i);
 				LocalDate we = ws.plusDays(6);
 				earnings.add(walletRepository.getEarnings(deliveryPartnerId, ws, we));
@@ -74,7 +74,7 @@ public class DeliveryWalletServiceImpl implements DeliveryWalletService {
 		}
 		else if(range.equals("monthly")) {
 			LocalDate monthStart = LocalDate.now().withDayOfMonth(1);
-			for(int i = 0; i < 5; i++) {
+			for(int i = 0; i < 7; i++) {
 				LocalDate ms = monthStart.minusMonths(i);
 				LocalDate me = ms.plusMonths(1).minusDays(1);
 				earnings.add(walletRepository.getEarnings(deliveryPartnerId, ms, me));

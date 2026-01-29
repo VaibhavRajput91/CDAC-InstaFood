@@ -17,6 +17,7 @@ import com.backend.dto.demo;
 import com.backend.dto.delivery.DeliveryPartnerApplyDto;
 import com.backend.dto.delivery.DeliveryProfileDto;
 import com.backend.dto.delivery.DeliveryWalletSummaryDto;
+import com.backend.entity.OrderStatus;
 import com.backend.service.delivery.ApplyForDeliveryService;
 import com.backend.service.delivery.DeliveryDashboardService;
 import com.backend.service.delivery.DeliveryOrderService;
@@ -25,10 +26,6 @@ import com.backend.service.delivery.DeliveryWalletService;
 
 import lombok.RequiredArgsConstructor;
 
-@CrossOrigin(
-	    origins = "http://localhost:5173",
-	    methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS, RequestMethod.PATCH}
-	)
 @RestController
 @RequestMapping("/delivery")
 @RequiredArgsConstructor 
@@ -52,6 +49,17 @@ public class DeliveryController {
 		catch(RuntimeException e) { 
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body("Error : " + e.getMessage());
+		}
+	}
+	
+	@GetMapping("/delivery-id")
+	public ResponseEntity<?> getDeliveryPartnerId(@RequestParam Long userId){
+		System.out.println("In Get delivery-id");
+		try {
+			return ResponseEntity.status(HttpStatus.OK).body(deliveryProfileService.getDeliveryPartnerId(userId));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error:" + e.getMessage());
 		}
 	}
 	
@@ -108,10 +116,10 @@ public class DeliveryController {
 	
 	
 	@GetMapping("/details")
-	public ResponseEntity<?> profile(@RequestParam Long id){
+	public ResponseEntity<?> profile(@RequestParam Long deliveryPartnerId){
 		System.out.println("In Get details");
 		try {
-			return ResponseEntity.status(HttpStatus.OK).body(deliveryProfileService.getDeliveryPartnerProfile(id));
+			return ResponseEntity.status(HttpStatus.OK).body(deliveryProfileService.getDeliveryPartnerProfile(deliveryPartnerId));
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -120,10 +128,10 @@ public class DeliveryController {
 	}
 	
 	@PutMapping("/edit-details")
-	public  ResponseEntity<?> editProfile(@RequestBody DeliveryProfileDto profileDto, @RequestParam Long id){
+	public  ResponseEntity<?> editProfile(@RequestBody DeliveryProfileDto profileDto, @RequestParam Long deliveryPartnerId){
 		System.out.println("In Put Edit-Details");
 		try {
-			return ResponseEntity.status(HttpStatus.OK).body(deliveryProfileService.updateDeliveryPartnerProfile(id, profileDto));	
+			return ResponseEntity.status(HttpStatus.OK).body(deliveryProfileService.updateDeliveryPartnerProfile(deliveryPartnerId, profileDto));	
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -133,12 +141,12 @@ public class DeliveryController {
 	
 	
 	@GetMapping("/orders")
-	public ResponseEntity<?> orders(@RequestParam Long deliveryPartnerId){
+	public ResponseEntity<?> orders(@RequestParam Long deliveryPartnerId, @RequestParam OrderStatus status){
 		System.out.println("In Get Orders");
 		try{
 			return ResponseEntity
 					.status(HttpStatus.OK)
-					.body(orderService.getTodayOrdersList(deliveryPartnerId, null));
+					.body(orderService.getTodayOrdersList(deliveryPartnerId, status));
 		}
 		catch(RuntimeException e) {
 			System.out.print(e.getMessage());
@@ -148,12 +156,12 @@ public class DeliveryController {
 	}
 	
 	@GetMapping("/orders/order-details")
-	public ResponseEntity<?> orderDetails(@RequestParam Long id){
+	public ResponseEntity<?> orderDetails(@RequestParam Long orderId){
 		System.out.println("In Get Orders/order-details");
 		try{
 			return ResponseEntity
 					.status(HttpStatus.OK)
-					.body(orderService.getOrderDetails(id));
+					.body(orderService.getOrder	Details(orderId));
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
