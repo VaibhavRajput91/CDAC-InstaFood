@@ -161,7 +161,7 @@ public class DeliveryController {
 		try{
 			return ResponseEntity
 					.status(HttpStatus.OK)
-					.body(orderService.getOrder	Details(orderId));
+					.body(orderService.getOrderDetails(orderId));
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
