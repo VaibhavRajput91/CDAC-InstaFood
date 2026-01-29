@@ -15,6 +15,14 @@ import jakarta.transaction.Transactional;
 
 @Repository
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
+	
+	@Query("""
+		    SELECT r.id
+		    FROM Restaurant r
+		    WHERE r.user.id = :userId
+		""")
+	Long findRestaurantIdByUserId(@Param("userId") Long userId);
+
 	@Query(value="""
 			SELECT  COUNT(o.order_id) AS totalOrders,
 					SUM(o.total_amount) AS totalRevenue,

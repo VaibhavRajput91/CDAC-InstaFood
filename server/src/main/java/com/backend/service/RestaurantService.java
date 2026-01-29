@@ -5,6 +5,9 @@ import java.util.List;
 import com.backend.dto.*;
 
 public interface RestaurantService {
+	
+	String getRestaurantId(Long userId);
+	
 	RestaurantApiResponseDTO restaurantApply(RestaurantApplyDTO applyDTO);
 	RestaurantStaticsDTO restaurantStatics(Long id);
 	List<RestaurantMenuDishesDTO> getMenuDishes(Long id);

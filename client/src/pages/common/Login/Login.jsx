@@ -72,7 +72,25 @@ function Login() {
           if (roles.includes('ROLE_ADMIN')) {
             navigate('/admin');
           } else if (roles.includes('ROLE_RESTAURANT')) {
-            navigate('/restaurant');
+            try {
+              console.log("Fetching restaurantId for userId:", userId);
+              const restaurantIdResponse = await axios.get(`${config.server}/restaurant/restaurantId?userId=${userId}`);
+              const restaurantId = restaurantIdResponse.data?.body ? parseInt(restaurantIdResponse.data.body) : null;
+
+              if (restaurantId) {
+                sessionStorage.setItem('restaurantId', restaurantId);
+                navigate('/restaurant');
+              }
+              else {
+                sessionStorage.removeItem('restaurantId');
+                navigate('/restaurant/apply');
+              }
+            }
+            catch (error) {
+              console.error("Error during restaurant role navigation:", error);
+              sessionStorage.removeItem('restaurantId');
+              navigate('/restaurant/apply');
+            }
           } else if (roles.includes('ROLE_DELIVERY_PARTNER')) {
             try {
               console.log("Fetching deliveryPartnerId for userId:", userId);
