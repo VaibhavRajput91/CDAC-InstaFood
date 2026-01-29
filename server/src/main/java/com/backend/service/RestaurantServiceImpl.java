@@ -28,7 +28,11 @@ public class RestaurantServiceImpl implements RestaurantService {
 	private final DishRepository dishRepository;
 	private final MenuRepository menuRepository;
 	
-	
+	@Override
+	public String getRestaurantId(Long userId) {
+		Long id=restaurantRepository.findRestaurantIdByUserId(userId);
+		return id.toString();
+	}
 
 	@Override
 	public RestaurantApiResponseDTO restaurantApply(RestaurantApplyDTO applyDTO) {
@@ -248,4 +252,5 @@ public class RestaurantServiceImpl implements RestaurantService {
 		}
 		return restaurantDTOs;
 	}
+
 }

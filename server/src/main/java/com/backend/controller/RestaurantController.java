@@ -28,6 +28,18 @@ public class RestaurantController {
 		this.restaurantService=restaurantService;
 	}
 	
+	@GetMapping("/restaurantId")
+	public ResponseEntity<?> getRestaurantIdFromUserId(@RequestParam Long userId){
+		System.out.println("In Get of restaurant/restaurantId");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new RestaurantApiResponseDTO("Success",restaurantService.getRestaurantId(userId)));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
+	}
+	
 	//Apply Page
 
 	@PostMapping("/apply")
