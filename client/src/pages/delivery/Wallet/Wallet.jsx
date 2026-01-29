@@ -129,10 +129,6 @@ export function Wallet({ navigateTo }) {
 
       {/* Balance Card */}
       <div className="p-4">
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-3xl p-6 text-white shadow-lg mb-6">
-          <p className="text-green-100 mb-1">Total Earnings</p>
-          <h2 className="text-5xl mb-6">₹2,450</h2>
-        </div>
 
         {/* Earnings Stats */}
         <div className="grid grid-cols-3 gap-3 mb-6">

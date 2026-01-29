@@ -77,17 +77,22 @@ function Login() {
             try {
               console.log("Fetching deliveryPartnerId for userId:", userId);
               const deliveryIdResponse = await axios.get(`${config.server}/delivery/delivery-id?userId=${userId}`);
-              console.log("Delivery ID Response:", parseInt(deliveryIdResponse.data));
-              if (deliveryIdResponse.data) {
-                sessionStorage.setItem('deliveryPartnerId', deliveryIdResponse.data);
-                console.log("Stored deliveryPartnerId in sessionStorage:", deliveryIdResponse.data);
+              const deliveryPartnerId = deliveryIdResponse.data?.data ? parseInt(deliveryIdResponse.data.data) : null;
+
+              console.log("Delivery ID Response Data:", deliveryPartnerId);
+
+              if (deliveryPartnerId) {
+                sessionStorage.setItem('deliveryPartnerId', deliveryPartnerId);
+                navigate('/delivery');
+              } else {
+                sessionStorage.removeItem('deliveryPartnerId');
+                navigate('/delivery/apply');
               }
             } catch (error) {
               console.log("Delivery Partner ID not found or error fetching it:", error);
-              // If 404, the user hasn't applied yet, which is handled in Delivery.jsx
               sessionStorage.removeItem('deliveryPartnerId');
+              navigate('/delivery/apply');
             }
-            navigate('/delivery');
           } else {
             navigate('/customer');
           }

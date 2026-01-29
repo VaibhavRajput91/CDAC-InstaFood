@@ -1,68 +1,61 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { ArrowLeft, MapPin, Clock, DollarSign, Package } from 'lucide-react';
 import { BottomNav } from '../../../components/delivery/BottomNav';
-
-const ordersData = {
-  new: [
-    {
-      id: '1',
-      restaurant: 'Pizza Palace',
-      distance: '1.2 km',
-      time: '15 min',
-      payout: 45,
-      items: 2,
-      address: '123 Main St'
-    },
-    {
-      id: '2',
-      restaurant: 'Burger King',
-      distance: '2.5 km',
-      time: '20 min',
-      payout: 65,
-      items: 3,
-      address: '456 Oak Ave'
-    }
-  ],
-  ongoing: [
-    {
-      id: '3',
-      restaurant: 'Sushi House',
-      distance: '0.8 km',
-      time: '10 min',
-      payout: 38,
-      items: 1,
-      address: '789 Pine Rd',
-      status: 'Picked up'
-    }
-  ],
-  completed: [
-    {
-      id: '4',
-      restaurant: 'Taco Bell',
-      distance: '1.5 km',
-      time: '18 min',
-      payout: 52,
-      items: 2,
-      address: '321 Elm St',
-      completedAt: '2:45 PM'
-    },
-    {
-      id: '5',
-      restaurant: 'KFC',
-      distance: '3.2 km',
-      time: '25 min',
-      payout: 78,
-      items: 4,
-      address: '654 Maple Dr',
-      completedAt: '1:30 PM'
-    }
-  ]
-};
+import { config } from '../../../services/config';
 
 export function OrdersList({ navigateTo }) {
   const [activeTab, setActiveTab] = useState('new');
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const orders = ordersData[activeTab];
+  useEffect(() => {
+    fetchOrders();
+  }, [activeTab]);
+
+  const fetchOrders = async () => {
+    const deliveryPartnerId = sessionStorage.getItem('deliveryPartnerId');
+    if (!deliveryPartnerId) return;
+
+    let url = `${config.server}/delivery/orders`;
+    let params = { deliveryPartnerId };
+
+    if (activeTab === 'new') {
+      url = `${config.server}/delivery/orders/available`;
+      // Available API doesn't use status or deliveryPartnerId params for filtering usually, or at least based on Dashboard it didn't use params.
+      // Dashboard usage: fetch(`${config.server}/delivery/orders/available`)
+      params = {};
+    } else {
+      let status = 'ACCEPTED'; // Default fallback, though expected tabs are ongoing/completed
+      if (activeTab === 'ongoing') status = 'OUT_FOR_DELIVERY';
+      if (activeTab === 'completed') status = 'DELIVERED';
+      params.status = status;
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.get(url, { params });
+
+      const mappedOrders = response.data.map(order => ({
+        id: order.orderId,
+        restaurant: order.restaurantName,
+        address: order.restaurantAddress,
+        payout: order.totalAmount,
+        itemsCount: order.items ? order.items.length : 0,
+        distance: '2.5 km', // Mock data
+        time: '20 min',     // Mock data
+        status: order.orderStatus,
+        completedAt: order.time // Mock data as API doesn't return it
+      }));
+
+      setOrders(mappedOrders);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -79,42 +72,41 @@ export function OrdersList({ navigateTo }) {
         <div className="flex gap-2">
           <button
             onClick={() => setActiveTab('new')}
-            className={`flex-1 py-3 rounded-xl transition-colors ${
-              activeTab === 'new'
-                ? 'bg-orange-500 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+            className={`flex-1 py-3 rounded-xl transition-colors ${activeTab === 'new'
+              ? 'bg-orange-500 text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
           >
-            New ({ordersData.new.length})
+            New
           </button>
 
           <button
             onClick={() => setActiveTab('ongoing')}
-            className={`flex-1 py-3 rounded-xl transition-colors ${
-              activeTab === 'ongoing'
-                ? 'bg-orange-500 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+            className={`flex-1 py-3 rounded-xl transition-colors ${activeTab === 'ongoing'
+              ? 'bg-orange-500 text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
           >
-            Ongoing ({ordersData.ongoing.length})
+            Ongoing
           </button>
 
           <button
             onClick={() => setActiveTab('completed')}
-            className={`flex-1 py-3 rounded-xl transition-colors ${
-              activeTab === 'completed'
-                ? 'bg-orange-500 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+            className={`flex-1 py-3 rounded-xl transition-colors ${activeTab === 'completed'
+              ? 'bg-orange-500 text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
           >
-            Completed ({ordersData.completed.length})
+            Completed
           </button>
         </div>
       </div>
 
       {/* Orders List */}
       <div className="p-4 space-y-3">
-        {orders.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-12 text-gray-500">Loading orders...</div>
+        ) : orders.length === 0 ? (
           <div className="text-center py-12">
             <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <p className="text-gray-500">
@@ -163,7 +155,7 @@ export function OrdersList({ navigateTo }) {
                     </span>
                   </div>
                   <p className="text-xs text-gray-500">
-                    {order.items} items
+                    {order.itemsCount} items
                   </p>
                 </div>
               </div>

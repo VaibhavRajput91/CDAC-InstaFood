@@ -1,9 +1,11 @@
 package com.backend.dto.delivery;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
 import com.backend.entity.DeliveryStatus;
+import com.backend.entity.OrderStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +24,8 @@ public class DeliveryOrderDto {
 	private String restaurantAddress;
 	private double totalAmount;
 	private Set<OrderItemDto> items;
-	private DeliveryStatus deliveryStatus;
+	private OrderStatus orderStatus;
+	private LocalDateTime time;
 	
 	
 }

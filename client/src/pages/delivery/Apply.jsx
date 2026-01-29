@@ -39,17 +39,21 @@ export function Apply({ navigateTo }) {
         // Fetch the deliveryPartnerId after successful application
         try {
           const idRes = await axios.get(`${config.server}/delivery/delivery-id?userId=${userId}`);
-          if (idRes.data) {
-            sessionStorage.setItem('deliveryPartnerId', parseInt(idRes.data));
+          const deliveryPartnerId = idRes.data?.data ? parseInt(idRes.data.data) : null;
+
+          if (deliveryPartnerId) {
+            sessionStorage.setItem('deliveryPartnerId', deliveryPartnerId);
+            setSuccess(true);
+            setTimeout(() => {
+              navigateTo && navigateTo('dashboard');
+            }, 1500);
+          } else {
+            setError('Application submitted but failed to retrieve Delivery Partner ID. Please try logging in again.');
           }
         } catch (idErr) {
           console.error("Error fetching delivery ID after application", idErr);
+          setError('Application submitted but error occurred retrieving details.');
         }
-
-        setSuccess(true);
-        setTimeout(() => {
-          navigateTo && navigateTo('dashboard');
-        }, 1500);
       }
     } catch (err) {
       setError('Failed to submit application');

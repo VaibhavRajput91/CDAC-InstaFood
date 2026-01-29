@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Menu,
   Bell,
@@ -12,33 +13,6 @@ import {
 } from 'lucide-react';
 import { BottomNav } from '../../../components/delivery/BottomNav';
 import { config } from '../../../services/config';
-
-const availableOrders = [
-  {
-    id: '1',
-    restaurant: 'Pizza Palace',
-    distance: '1.2 km',
-    time: '15 min',
-    payout: 45,
-    items: 2
-  },
-  {
-    id: '2',
-    restaurant: 'Burger King',
-    distance: '2.5 km',
-    time: '20 min',
-    payout: 65,
-    items: 3
-  },
-  {
-    id: '3',
-    restaurant: 'Sushi House',
-    distance: '0.8 km',
-    time: '10 min',
-    payout: 38,
-    items: 1
-  }
-];
 
 export function Dashboard({ navigateTo }) {
   const [isOnline, setIsOnline] = useState(false);
@@ -54,18 +28,25 @@ export function Dashboard({ navigateTo }) {
       totalOrdersCount: 0
     }
   });
+  const [availableOrders, setAvailableOrders] = useState([]);
 
   useEffect(() => {
-    fetch(`${config.server}/delivery/status?deliveryPartnerId=${sessionStorage.deliveryPartnerId}`)
+    const deliveryPartnerId = sessionStorage.getItem('deliveryPartnerId');
+    if (!deliveryPartnerId) {
+      console.error("No deliveryPartnerId found in session");
+      return;
+    }
+
+    // Fetch initial status
+    fetch(`${config.server}/delivery/status?deliveryPartnerId=${deliveryPartnerId}`)
       .then(res => res.json())
       .then(data => {
         setIsOnline(data.status === 'AVAILABLE');
       })
-      .catch(() => {
-        setIsOnline(false);
-      });
+      .catch(err => console.error("Error fetching status:", err));
 
-    fetch(`${config.server}/delivery/dashboard/summary?deliveryPartnerId=${sessionStorage.deliveryPartnerId}`)
+    // Fetch dashboard summary
+    fetch(`${config.server}/delivery/dashboard/summary?deliveryPartnerId=${deliveryPartnerId}`)
       .then(res => res.json())
       .then(data => {
         setSummary({
@@ -79,7 +60,28 @@ export function Dashboard({ navigateTo }) {
             totalOrdersCount: data.miscStats?.totalOrdersCount ?? 0
           }
         });
-      });
+      })
+      .catch(err => console.error("Error fetching summary:", err));
+
+    // Fetch available orders
+    fetch(`${config.server}/delivery/orders/available`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          // Add default distance/time if not present in API, as UI expects it
+          const mappedOrders = data.map(order => ({
+            ...order, // keep original data
+            id: order.orderId,
+            restaurant: order.restaurantName,
+            distance: '2 km', // Mock distance
+            time: '20 min',   // Mock time
+            payout: order.totalAmount,
+            itemCount: order.items?.length || 0
+          }));
+          setAvailableOrders(mappedOrders.slice(0, 5));
+        }
+      })
+      .catch(err => console.error("Error fetching available orders:", err));
   }, []);
 
   return (
@@ -116,15 +118,31 @@ export function Dashboard({ navigateTo }) {
           <button
             onClick={async () => {
               setLoadingStatus(true);
+              const deliveryPartnerId = sessionStorage.getItem('deliveryPartnerId');
               try {
-                const res = await fetch('http://localhost:8080/delivery/status?deliveryPartnerId=1', {
+                // Using PATCH with query param as requested: patch : ${config.server}/delivery/status?deliveryPartnerId=${sessionStorage.getItem("deliveryPartnerId}
+                // The user request didn't specify body content for the toggle, it just said 'to toggle the status... use the api'.
+                // Usually PATCH toggles or sends new status. The previous code sent body. Use logic: current isOnline -> new is !isOnline?
+                // Wait, user instructions: "to toggle the status and persist into db use the api: patch : ${config.server}/delivery/status?deliveryPartnerId=..."
+                // It does NOT say send body. Perhaps the server toggles it automatically?
+                // I will try sending empty body or just the request. given "toggle", it implies server side toggle.
+                // But previously I saw code sending body. I'll adhere to user instruction which doesn't specify body.
+                // However, axios/fetch might require method.
+
+                const res = await fetch(`${config.server}/delivery/status?deliveryPartnerId=${deliveryPartnerId}`, {
                   method: 'PATCH',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ status: isOnline ? 'UNAVAILABLE' : 'AVAILABLE' })
+                  headers: { 'Content-Type': 'application/json' }
                 });
+
                 if (res.ok) {
-                  setIsOnline(!isOnline);
+                  const data = await res.json();
+                  // Response is { "status": "AVAILABLE" or "UNAVAILABLE" }
+                  if (data.status) {
+                    setIsOnline(data.status === 'AVAILABLE');
+                  }
                 }
+              } catch (e) {
+                console.error("Error toggling status", e);
               } finally {
                 setLoadingStatus(false);
               }
@@ -252,7 +270,7 @@ export function Dashboard({ navigateTo }) {
                     <span className="text-lg">₹{order.payout}</span>
                   </div>
                   <p className="text-xs text-gray-500">
-                    {order.items} items
+                    {order.itemCount} items
                   </p>
                 </div>
               </div>

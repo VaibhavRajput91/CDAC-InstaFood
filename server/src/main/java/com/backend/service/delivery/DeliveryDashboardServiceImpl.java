@@ -70,7 +70,7 @@ public class DeliveryDashboardServiceImpl implements DeliveryDashboardService {
 						items.add(orderItemDto);
 					}
 					dto.setItems(items);
-					dto.setDeliveryStatus(DeliveryStatus.PENDING);
+					dto.setOrderStatus(OrderStatus.ACCEPTED);
 					return dto;
 				})
 				.toList();

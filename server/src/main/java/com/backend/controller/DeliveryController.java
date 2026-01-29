@@ -26,10 +26,6 @@ import com.backend.service.delivery.DeliveryWalletService;
 
 import lombok.RequiredArgsConstructor;
 
-@CrossOrigin(
-	    origins = "http://localhost:5173",
-	    methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS, RequestMethod.PATCH}
-	)
 @RestController
 @RequestMapping("/delivery")
 @RequiredArgsConstructor 
@@ -150,7 +146,7 @@ public class DeliveryController {
 		try{
 			return ResponseEntity
 					.status(HttpStatus.OK)
-					.body(orderService.getTodayOrdersList(deliveryPartnerId, null));
+					.body(orderService.getTodayOrdersList(deliveryPartnerId, status));
 		}
 		catch(RuntimeException e) {
 			System.out.print(e.getMessage());
@@ -160,12 +156,12 @@ public class DeliveryController {
 	}
 	
 	@GetMapping("/orders/order-details")
-	public ResponseEntity<?> orderDetails(@RequestParam Long id){
+	public ResponseEntity<?> orderDetails(@RequestParam Long orderId){
 		System.out.println("In Get Orders/order-details");
 		try{
 			return ResponseEntity
 					.status(HttpStatus.OK)
-					.body(orderService.getOrderDetails(id));
+					.body(orderService.getOrder	Details(orderId));
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
