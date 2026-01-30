@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Edit2, Save, X } from 'lucide-react';
 import LoadingSkeleton from '../../../components/restaurant/UI/LoadingSkeleton';
 import Toast from '../../../components/restaurant/UI/Toast';
-import { restaurantAPI, RESTAURANT_ID } from '../../../services/Restaurant/api';
+import { restaurantAPI } from '../../../services/Restaurant/api';
 import RestaurantNavbar from '../../../components/restaurant/RestaurantNavbar/RestaurantNavbar';
 
 export default function RestaurantProfile() {
@@ -29,6 +29,11 @@ export default function RestaurantProfile() {
   useEffect(() => {
     fetchProfile();
   }, []);
+
+  const RESTAURANT_ID = sessionStorage.getItem('restaurantId');
+  if (!RESTAURANT_ID) {
+    throw new Error("Restaurant ID missing");
+  }
 
   const fetchProfile = async () => {
     try {
@@ -94,7 +99,6 @@ export default function RestaurantProfile() {
   const handleSave = async () => {
     try {
       setSaving(true);
-      // Send the data with the exact DTO field names
       const updateData = {
         restaurantName: profileData.restaurantName,
         firstName: profileData.firstName,

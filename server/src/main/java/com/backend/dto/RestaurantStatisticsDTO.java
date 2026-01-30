@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RestaurantStaticsDTO {
-	private Long totalOrders;
+public class RestaurantStatisticsDTO {
+	private int totalOrders;
 	private Double totalRevenue;
 	private Double averageRating;
 }

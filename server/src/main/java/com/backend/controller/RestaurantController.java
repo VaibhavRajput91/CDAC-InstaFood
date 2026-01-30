@@ -59,14 +59,14 @@ public class RestaurantController {
 	// menu page
 	
 	@GetMapping("/statistics")
-	public ResponseEntity<?> getStats(@RequestParam Long id){
+	public ResponseEntity<?> getStats(@RequestParam Long restaurantId){
 		System.out.println("In Get of Restaurant/Menu/Stats");
 		try {
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(restaurantService.restaurantStatics(id));
+					.body(restaurantService.restaurantStatistics(restaurantId));
 		}
 		catch(RuntimeException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
 		}
 	}
 
