@@ -280,8 +280,7 @@ export function Dashboard({ navigateTo }) {
                 }
                 className="w-full bg-orange-500 text-white py-3 rounded-xl hover:bg-orange-600 transition-colors flex items-center justify-center gap-2"
               >
-                <Navigation className="w-4 h-4" />
-                Accept Order
+                Details
               </button>
             </div>
           ))}

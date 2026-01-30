@@ -78,15 +78,33 @@ public class DeliveryDashboardServiceImpl implements DeliveryDashboardService {
 	}
 
 	@Override
+	@Transactional
 	public DeliveryResponseDto acceptDeliveryRequest(Long deliveryPartnerId, Long orderId) {
-		// TODO Auto-generated method stub
-		Order order = deliveryOrderRepository.findById(orderId)
-				.orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
-		DeliveryPartner deliveryPartner = deliveryProfileRepository.findById(deliveryPartnerId).
-				orElseThrow(() -> new RuntimeException("Delivery partner not found with id: " + deliveryPartnerId));
-		order.setDeliveryPartner(deliveryPartner);
-		deliveryOrderRepository.save(order);
-		return new DeliveryResponseDto("SUCCESS", "Delivery request accepted successfully", null);
+
+	    Order order = deliveryOrderRepository.findByIdForUpdate(orderId)
+	            .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
+
+	    // Check if already accepted
+	    if (order.getDeliveryPartner() != null ||
+	        order.getOrderStatus() == OrderStatus.ASSIGNED) {
+
+	        throw new RuntimeException("Order already accepted by another delivery partner");
+	    }
+
+	    DeliveryPartner deliveryPartner = deliveryProfileRepository.findById(deliveryPartnerId)
+	            .orElseThrow(() -> new RuntimeException(
+	                    "Delivery partner not found with id: " + deliveryPartnerId));
+
+	    order.setDeliveryPartner(deliveryPartner);
+	    order.setOrderStatus(OrderStatus.ASSIGNED);
+
+	    deliveryOrderRepository.save(order);
+
+	    return new DeliveryResponseDto(
+	            "SUCCESS",
+	            "Delivery request accepted successfully",
+	            null
+	    );
 	}
 
 	@Override
