@@ -12,12 +12,15 @@ public interface RestaurantService {
 	String adminApproval(Long restaurantId);
 	RestaurantStatisticsDTO restaurantStatistics(Long restaurantId);
 	
-	List<RestaurantMenuDishesDTO> getMenuDishes(Long id);
+	List<RestaurantMenuDishesDTO> getMenuDishes(Long restaurantId);
 	List<RestaurantMenuDishesDTO> getAvailableMenuDishes(Long id);
-	String DishAvailability(long dishId);
+	
+	String DishAvailability(long menuId,long dishId);
 	String deleteMenuDish(long menuId, long dishId);
 
 	List<RestaurantOrdersDTO> getAllOrdersByRestaurant(Long restaurantId);
+	
+	Long getMenuIdByRestaurantId(Long restaurantId);
 	
 	
 	RestaurantDetailsDTO getRestaurantDetailsById(Long restaurantId);
