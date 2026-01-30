@@ -34,16 +34,19 @@ export const restaurantAPI = {
     api.get(`/restaurant/statistics?restaurantId=${restaurantId}`),
   // Get dishes
   getDishes: (restaurantId) =>
-    api.get(`/restaurant/menu/dishes?id=${restaurantId}`),
+    api.get(`/restaurant/menu/dishes?restaurantId=${restaurantId}`),
+
+  getMenuId: (restaurantId) =>
+    api.get(`/restaurant/menu?restaurantId=${restaurantId}`),
 
   // Toggle dish availability
-  toggleDish: (dishId) =>
+  toggleDish: (menuId, dishId) =>
     // Backend toggles availability via PUT /restaurant/menu/dishes?dishId={dishId}
-    api.put(`/restaurant/menu/dishes?dishId=${dishId}`),
+    api.put(`/restaurant/menu/dishes?menuId=${menuId}&dishId=${dishId}`),
 
   // Delete dish
   deleteDish: (menuId, dishId) =>
-    api.delete(`/restaurant/menu?menuId=${menuId}&dishId=${dishId}`),
+    api.delete(`/restaurant/menu/dishes?menuId=${menuId}&dishId=${dishId}`),
 
   // Get dish details
   getDishDetails: (menuId, dishId) =>

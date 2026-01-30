@@ -80,20 +80,19 @@ public class RestaurantServiceImpl implements RestaurantService {
 	}
 	
 	@Override
-	public List<RestaurantMenuDishesDTO> getMenuDishes(Long id) {
-		return restaurantRepository.findMenuDishesByRestaurantId(id);
+	public List<RestaurantMenuDishesDTO> getMenuDishes(Long restaurantId) {
+		return restaurantRepository.findMenuDishesByRestaurantId(restaurantId);
 	}
 	@Override
 	public List<RestaurantMenuDishesDTO> getAvailableMenuDishes(Long id) {
-		// TODO Auto-generated method stub
 		return restaurantRepository.findAvailableMenuDishesByRestaurantId(id);
 		
 	}
 	
 	
 	@Override
-	public String DishAvailability(long dishId) {
-		int rowsAffected=restaurantRepository.changeAvailability(dishId);
+	public String DishAvailability(long menuId,long dishId) {
+		int rowsAffected=restaurantRepository.changeAvailability(menuId,dishId);
 		return "Rows Affected : "+rowsAffected;
 	}
 	
@@ -306,6 +305,15 @@ public class RestaurantServiceImpl implements RestaurantService {
 			restaurantDTOs.add(dto);
 		}
 		return restaurantDTOs;
+	}
+
+	@Override
+	public Long getMenuIdByRestaurantId(Long restaurantId) {
+		Restaurant restaurant=restaurantRepository.findById(restaurantId)
+				.orElseThrow(()->new RuntimeException("Restaurant not found"));
+		Menu menu=menuRepository.findByRestaurant(restaurant)
+				.orElseThrow(()->new RuntimeException("Menu not found"));
+		return menu.getId();
 	}
 
 }

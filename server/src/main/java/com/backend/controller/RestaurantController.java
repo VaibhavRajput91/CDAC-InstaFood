@@ -81,18 +81,29 @@ public class RestaurantController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
 		}
 	}
+	@GetMapping("/menu")
+	public ResponseEntity<?> getMenuId(@RequestParam Long restaurantId){
+		System.out.println("In Get of Restaurant/Menu");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(restaurantService.getMenuIdByRestaurantId(restaurantId));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
+	}
 
 	//menu dishes
 	
 	@GetMapping("/menu/dishes")
-	public ResponseEntity<?> getDishes(@RequestParam Long id){
+	public ResponseEntity<?> getDishes(@RequestParam Long restaurantId){
 		System.out.println("In Get of Restaurant/Menu/Dishes");
 		try {
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(restaurantService.getMenuDishes(id));
+					.body(restaurantService.getMenuDishes(restaurantId));
 		}
 		catch(RuntimeException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
 		}
 	}
 	@GetMapping("/menu/Dishes")
@@ -103,18 +114,18 @@ public class RestaurantController {
 					.body(restaurantService.getAvailableMenuDishes(id));
 		}
 		catch(RuntimeException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
 		}
 	}
 	
 	//toggle dish availability
 	
 	@PutMapping("/menu/dishes")
-	public ResponseEntity<?> toggleDishAvailability(@RequestParam long dishId){
+	public ResponseEntity<?> toggleDishAvailability(@RequestParam long menuId ,@RequestParam long dishId){
 		System.out.println("In Put of Menu/ToggleDish");
 		try {
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(new RestaurantApiResponseDTO("Success", restaurantService.DishAvailability(dishId)));
+					.body(new RestaurantApiResponseDTO("Success", restaurantService.DishAvailability(menuId,dishId)));
 		}
 		catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));

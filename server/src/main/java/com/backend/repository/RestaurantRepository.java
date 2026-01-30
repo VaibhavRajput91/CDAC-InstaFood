@@ -68,14 +68,15 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 	          AND md.isAvailable = true
 	""")
 	List<RestaurantMenuDishesDTO> findAvailableMenuDishesByRestaurantId(@Param("restaurantId") Long restaurantId);
+	
 	@Modifying
 	@Transactional
 	@Query("""
 	    UPDATE MenuDish md
 	    SET md.isAvailable = NOT md.isAvailable
-	    WHERE md.dish.id = :dishId
+	    WHERE md.dish.id = :dishId AND md.menu.id= :menuId
 	""")
-	int changeAvailability(@Param("dishId") Long dishId);
+	int changeAvailability(@Param("menuId") long menuId,@Param("dishId") long dishId);
 
 	@Modifying
 	@Transactional
