@@ -1,13 +1,13 @@
 import axios from 'axios'
 import { config } from '../config'
 
-export async function register(firstName, lastName, email, password, phone,role,city,postalCode,lineOne,lineTwo,state) {
+export async function register(firstName, lastName, email, password, phone, role, city, postalCode, lineOne, lineTwo, state, profilePicture) {
   try {
     // url to send the request
     const url = `${config.server}/user/sign-up`
 
     // create a body object
-    const body = { firstName, lastName, email, password, phone,role,city,postalCode,lineOne,lineTwo,state }
+    const body = { firstName, lastName, email, password, phone, role, city, postalCode, lineOne, lineTwo, state, profilePicture }
 
     // send POST request
     const response = await axios.post(url, body)
