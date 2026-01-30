@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -147,8 +148,8 @@ public class RestaurantController {
 				.body(restaurantService.getRestaurantDetailsById(restaurantId));
 	}
 	
-	@PatchMapping("/profile/restaurantId")
-	public ResponseEntity<?> updateRestaurantDetails(@RequestParam Long restaurantId,@RequestBody RestaurantUpdateDTO updatedRestaurantDetails){
+	@PatchMapping("/profile/restaurantId/{restaurantId}")
+	public ResponseEntity<?> updateRestaurantDetails(@PathVariable Long restaurantId, @RequestBody RestaurantUpdateDTO updatedRestaurantDetails){
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(restaurantService.updateRestaurantDetails(restaurantId, updatedRestaurantDetails));
 	}

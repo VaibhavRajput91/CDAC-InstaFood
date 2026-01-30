@@ -111,34 +111,15 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 	}
 
-	@Override
-	public String updateRestaurantDetails(Long restaurantId, RestaurantUpdateDTO updatedRestaurantDetails) {
-		Restaurant restaurant = restaurantRepository.findById(restaurantId)
-				.orElseThrow(() -> new RuntimeException("Restaurant not found"));
-		restaurant.setRestaurantName(updatedRestaurantDetails.getName());
-		restaurant.setOpeningTime(updatedRestaurantDetails.getOpeningTime());
-		restaurant.setClosingTime(updatedRestaurantDetails.getClosingTime());
-		User user = restaurant.getUser();
-		user.setPhone(updatedRestaurantDetails.getPhone());
-		Address address = user.getAddress();
-		address.setLineOne(updatedRestaurantDetails.getLineOne());
-		address.setLineTwo(updatedRestaurantDetails.getLineTwo());
-		address.setCity(updatedRestaurantDetails.getCity());
-		address.setState(updatedRestaurantDetails.getState());
-		address.setPostalCode(updatedRestaurantDetails.getPostalCode());
-		addressRepository.save(address);
-		userRepository.save(user);
-		restaurantRepository.save(restaurant);
-		
-		
-		return "Restaurant details updated successfully";
-	}
+	
 
 	@Override
 	public RestaurantDetailsDTO getRestaurantDetailsById(Long restaurantId) {
 		Restaurant restaurant = restaurantRepository.findById(restaurantId)
 				.orElseThrow(() -> new RuntimeException("Restaurant not found"));
+		
 		RestaurantDetailsDTO restaurantDetails = new RestaurantDetailsDTO();
+		restaurantDetails.setEmail(restaurant.getUser().getEmail());
 		restaurantDetails.setRestaurantName(restaurant.getRestaurantName());
 		restaurantDetails.setOpeningTime(restaurant.getOpeningTime());
 		restaurantDetails.setClosingTime(restaurant.getClosingTime());
@@ -156,7 +137,36 @@ public class RestaurantServiceImpl implements RestaurantService {
 		
 		return restaurantDetails;
 	}
-
+	
+	@Override
+	public String updateRestaurantDetails(Long restaurantId, RestaurantUpdateDTO updatedRestaurantDetails) {
+		Restaurant restaurant = restaurantRepository.findById(restaurantId)
+				.orElseThrow(() -> new RuntimeException("Restaurant not found"));
+		restaurant.setRestaurantName(updatedRestaurantDetails.getRestaurantName());
+		
+		User user = restaurant.getUser();
+		user.setFirstName(updatedRestaurantDetails.getFirstName());
+		user.setLastName(updatedRestaurantDetails.getLastName());
+		user.setPhone(updatedRestaurantDetails.getPhone());
+		
+		Address address = user.getAddress();
+		address.setLineOne(updatedRestaurantDetails.getLineOne());
+		address.setLineTwo(updatedRestaurantDetails.getLineTwo());
+		address.setCity(updatedRestaurantDetails.getCity());
+		address.setState(updatedRestaurantDetails.getState());
+		address.setPostalCode(updatedRestaurantDetails.getPostalCode());
+		
+		restaurant.setOpeningTime(updatedRestaurantDetails.getOpeningTime());
+		restaurant.setClosingTime(updatedRestaurantDetails.getClosingTime());
+		
+		addressRepository.save(address);
+		userRepository.save(user);
+		restaurantRepository.save(restaurant);
+		
+		
+		return "Restaurant details updated successfully";
+	}
+	
 	@Override
 	public DishDetailsDTO getDishDetailsById(Long menuId,Long dishId) {
 		DishDetailsDTO dishDetails = new DishDetailsDTO();

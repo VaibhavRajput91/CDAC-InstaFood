@@ -10,7 +10,7 @@ const api = axios.create({
 
 // Restaurant ID - In production, this would come from authentication
 // For now, using a mock restaurant ID
-export const RESTAURANT_ID = 1;
+export const RESTAURANT_ID = sessionStorage.getItem('restaurantId') || 1;
 export const MENU_ID = 1;
 
 // Restaurant API
@@ -24,7 +24,7 @@ export const restaurantAPI = {
 
   // Update restaurant profile
   updateProfile: (restaurantId, data) =>
-    api.patch(`/restaurant/profile/${restaurantId}`, data),
+    api.patch(`/restaurant/profile/restaurantId/${restaurantId}`, data),
 
   // Get restaurant statistics
   getStatistics: (restaurantId) =>

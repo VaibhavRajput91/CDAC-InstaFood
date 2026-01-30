@@ -16,8 +16,11 @@ public interface RestaurantService {
 	String deleteMenuDish(long menuId, long dishId);
 
 	List<RestaurantOrdersDTO> getAllOrdersByRestaurant(Long restaurantId);
-	String updateRestaurantDetails(Long restaurantId ,RestaurantUpdateDTO updatedRestaurantDetails);
+	
+	
 	RestaurantDetailsDTO getRestaurantDetailsById(Long restaurantId);
+	String updateRestaurantDetails(Long restaurantId ,RestaurantUpdateDTO updatedRestaurantDetails);
+	
 	DishDetailsDTO getDishDetailsById(Long menuId,Long dishId);
 	String updateDishDetails(Long menuId,Long dishId, DishUpdateDTO updatedDishDetails);
 	List<RestaurantListDTO> getAllRestaurants();
