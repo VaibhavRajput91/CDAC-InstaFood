@@ -1,4 +1,4 @@
-package com.backend.dto;
+package com.backend.dto.admin;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RestaurantStaticsDTO {
-	private Long totalOrders;
-	private Double totalRevenue;
-	private Double averageRating;
+public class DashboardTopItemDTO {
+
+	 private String itemName;
+	    private Long totalSold;
 }

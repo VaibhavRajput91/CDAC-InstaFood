@@ -31,4 +31,12 @@ public interface AdminService {
 	
 	TotalOrdersDetailsDTO getTotalOrdersDetails();
 
+	AdminDeliveryStatsDTO getDeliveryStatsData();
+
+	List<DashboardOrderStatusDTO> getOrderStatusStats();
+
+	List<DashboardOrdersPerDayDTO> getOrdersPerDayStats();
+
+	List<DashboardTopItemDTO> getTopSellingItemsStats();
+
 }

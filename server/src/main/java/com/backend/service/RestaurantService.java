@@ -5,16 +5,24 @@ import java.util.List;
 import com.backend.dto.*;
 
 public interface RestaurantService {
+	
+	String getRestaurantId(Long userId);
+	
 	RestaurantApiResponseDTO restaurantApply(RestaurantApplyDTO applyDTO);
-	RestaurantStaticsDTO restaurantStatics(Long id);
+	String adminApproval(Long restaurantId);
+	RestaurantStatisticsDTO restaurantStatistics(Long restaurantId);
+	
 	List<RestaurantMenuDishesDTO> getMenuDishes(Long id);
 	List<RestaurantMenuDishesDTO> getAvailableMenuDishes(Long id);
 	String DishAvailability(long dishId);
 	String deleteMenuDish(long menuId, long dishId);
 
 	List<RestaurantOrdersDTO> getAllOrdersByRestaurant(Long restaurantId);
-	String updateRestaurantDetails(Long restaurantId ,RestaurantUpdateDTO updatedRestaurantDetails);
+	
+	
 	RestaurantDetailsDTO getRestaurantDetailsById(Long restaurantId);
+	String updateRestaurantDetails(Long restaurantId ,RestaurantUpdateDTO updatedRestaurantDetails);
+	
 	DishDetailsDTO getDishDetailsById(Long menuId,Long dishId);
 	String updateDishDetails(Long menuId,Long dishId, DishUpdateDTO updatedDishDetails);
 	List<RestaurantListDTO> getAllRestaurants();

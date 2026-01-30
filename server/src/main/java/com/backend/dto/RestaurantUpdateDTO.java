@@ -12,15 +12,16 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class RestaurantUpdateDTO {
-	
-	private String name;
+	private String restaurantName;	
+	private String firstName;
+	private String lastName;
 	private String phone;
-	private String city;
-	private String postalCode;
 	private String lineOne;
 	private String lineTwo;
+	private String city;
 	private String state;
+	private String postalCode;
 	private LocalTime openingTime;
 	private LocalTime closingTime;
-
+	private String restaurantImage;
 }

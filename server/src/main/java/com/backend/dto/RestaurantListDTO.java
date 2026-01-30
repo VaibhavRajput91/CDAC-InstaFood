@@ -16,4 +16,5 @@ public class RestaurantListDTO {
 	private LocalTime openingTime;
 	private LocalTime closingTime;
 	private String postalCode;
+	private String restaurantImage;
 }

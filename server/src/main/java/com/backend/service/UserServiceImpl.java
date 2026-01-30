@@ -50,6 +50,19 @@ public class UserServiceImpl implements UserService {
 				);
 		Address address = modelMapper.map(userReq, Address.class);
 		address.setUser(newUser);
+		
+		if (userReq.getProfilePicture() != null && !userReq.getProfilePicture().isEmpty()) {
+			String base64Image = userReq.getProfilePicture();
+			if (base64Image.contains(",")) {
+				base64Image = base64Image.split(",")[1];
+			}
+			try {
+				newUser.setProfilePicture(java.util.Base64.getDecoder().decode(base64Image));
+			} catch (IllegalArgumentException e) {
+				throw new RuntimeException("Invalid profile picture format");
+			}
+		}
+
 		userRepository.save(newUser);
 		addressRepository.save(address);
 		UserResponseDTO responseUser = modelMapper.map(newUser, UserResponseDTO.class);
@@ -74,6 +87,19 @@ public class UserServiceImpl implements UserService {
 			existingUser.getAddress().setLineTwo(userReq.getLineTwo());
 			existingUser.getAddress().setPostalCode(userReq.getPostalCode());
 			existingUser.getAddress().setState(userReq.getState());
+
+			if (userReq.getProfilePicture() != null && !userReq.getProfilePicture().isEmpty()) {
+				String base64Image = userReq.getProfilePicture();
+				if (base64Image.contains(",")) {
+					base64Image = base64Image.split(",")[1];
+				}
+				try {
+					existingUser.setProfilePicture(java.util.Base64.getDecoder().decode(base64Image));
+				} catch (IllegalArgumentException e) {
+					throw new RuntimeException("Invalid profile picture format");
+				}
+			}
+
 			addressRepository.save(existingUser.getAddress());
 			UserResponseDTO responseUser = modelMapper.map(existingUser, UserResponseDTO.class);
 			responseUser.setPostalCode(existingUser.getAddress().getPostalCode());

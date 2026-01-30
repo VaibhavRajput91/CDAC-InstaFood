@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,18 @@ public class RestaurantController {
 		this.restaurantService=restaurantService;
 	}
 	
+	@GetMapping("/restaurantId")
+	public ResponseEntity<?> getRestaurantIdFromUserId(@RequestParam Long userId){
+		System.out.println("In Get of restaurant/restaurantId");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new RestaurantApiResponseDTO("Success",restaurantService.getRestaurantId(userId)));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
+	}
+	
 	//Apply Page
 
 	@PostMapping("/apply")
@@ -42,18 +55,30 @@ public class RestaurantController {
 		}
 	}
 	
+	@GetMapping("/apply/approve")
+	public ResponseEntity<?> approveByAdmin(@RequestParam Long restaurantId){
+		System.out.println("In Get of apply/approve");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(restaurantService.adminApproval(restaurantId));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
+	}
+	
 	
 	// menu page
 	
 	@GetMapping("/statistics")
-	public ResponseEntity<?> getStats(@RequestParam Long id){
+	public ResponseEntity<?> getStats(@RequestParam Long restaurantId){
 		System.out.println("In Get of Restaurant/Menu/Stats");
 		try {
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(restaurantService.restaurantStatics(id));
+					.body(restaurantService.restaurantStatistics(restaurantId));
 		}
 		catch(RuntimeException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
 		}
 	}
 
@@ -135,8 +160,8 @@ public class RestaurantController {
 				.body(restaurantService.getRestaurantDetailsById(restaurantId));
 	}
 	
-	@PatchMapping("/profile/restaurantId")
-	public ResponseEntity<?> updateRestaurantDetails(@RequestParam Long restaurantId,@RequestBody RestaurantUpdateDTO updatedRestaurantDetails){
+	@PatchMapping("/profile/restaurantId/{restaurantId}")
+	public ResponseEntity<?> updateRestaurantDetails(@PathVariable Long restaurantId, @RequestBody RestaurantUpdateDTO updatedRestaurantDetails){
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(restaurantService.updateRestaurantDetails(restaurantId, updatedRestaurantDetails));
 	}

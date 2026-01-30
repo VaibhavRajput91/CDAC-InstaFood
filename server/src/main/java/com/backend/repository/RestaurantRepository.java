@@ -15,15 +15,26 @@ import jakarta.transaction.Transactional;
 
 @Repository
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
+	
+	@Query("""
+		    SELECT r.id
+		    FROM Restaurant r
+		    WHERE r.user.id = :userId
+		""")
+	Long findRestaurantIdByUserId(@Param("userId") Long userId);
+
 	@Query(value="""
-			SELECT  COUNT(o.order_id) AS totalOrders,
-					SUM(o.total_amount) AS totalRevenue,
-					AVG(r.rating) AS averageRating
-			FROM orders o join reviews r
-			ON o.order_id = r.order_id
-			WHERE r.review_for = 'RESTAURANT_REVIEW' AND r.rating IS NOT NULL AND restaurant_id = :restaurant_id
+			SELECT
+				COUNT(DISTINCT o.order_id) AS totalOrders,
+				SUM(o.total_amount)        AS totalRevenue,
+				AVG(r.rating)              AS averageRating
+			FROM orders o
+				LEFT OUTER JOIN reviews r
+				ON o.order_id = r.order_id
+				AND r.review_for = 'RESTAURANT_REVIEW'
+			WHERE o.restaurant_id = :restaurant_id;
 	""",nativeQuery = true)
-	RestaurantStaticsProjectionDTO reviews(@Param("restaurant_id") Long restaurant_id);
+	RestaurantStatisticsProjectionDTO reviews(@Param("restaurant_id") Long restaurant_id);
 	
 	@Query("""
 	        SELECT new com.backend.dto.RestaurantMenuDishesDTO(

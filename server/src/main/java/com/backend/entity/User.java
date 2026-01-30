@@ -59,6 +59,10 @@ public class User extends BaseEntity implements UserDetails{
 	@Enumerated(EnumType.STRING)
 	private UserRole role;
 
+	@jakarta.persistence.Lob
+	@Column(columnDefinition = "LONGBLOB")
+	private byte[] profilePicture;
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(this.role.name());

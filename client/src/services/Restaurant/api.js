@@ -18,17 +18,20 @@ export const restaurantAPI = {
   // Apply for restaurant
   apply: (data) => api.post('/restaurant/apply', data),
 
+  getAdminApproveStatus: (restaurantId) =>
+    api.get(`/restaurant/apply/approve?restaurantId=${restaurantId}`),
+
   // Get restaurant profile
   getProfile: (restaurantId) =>
     api.get(`/restaurant/profile/restaurantId?restaurantId=${restaurantId}`),
 
   // Update restaurant profile
   updateProfile: (restaurantId, data) =>
-    api.patch(`/restaurant/profile/${restaurantId}`, data),
+    api.patch(`/restaurant/profile/restaurantId/${restaurantId}`, data),
 
   // Get restaurant statistics
   getStatistics: (restaurantId) =>
-    api.get(`/restaurant/statistics?id=${restaurantId}`),
+    api.get(`/restaurant/statistics?restaurantId=${restaurantId}`),
   // Get dishes
   getDishes: (restaurantId) =>
     api.get(`/restaurant/menu/dishes?id=${restaurantId}`),
