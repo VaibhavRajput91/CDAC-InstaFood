@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.backend.dto.admin.Admin_DeliveryRankingDTO;
 import com.backend.entity.Order;
@@ -24,8 +25,20 @@ public interface AdminDeliveryStatsRepository extends JpaRepository<Order, Long>
 	long countByOrderStatus(OrderStatus orderStatus);
 
 	    // Derived Query for Weekly Deliveries
-	    long countByOrderStatusAndCreatedOnAfter(OrderStatus orderStatus, LocalDate date);
-
+	    //long countByOrderStatusAndCreatedOnAfter(OrderStatus orderStatus, LocalDate date);
+	@Query("""
+	        SELECT COUNT(o)
+	        FROM Order o
+	        JOIN o.deliveryPartner dp
+	        WHERE o.orderStatus = :orderStatus
+	          AND o.createdOn > :date
+	          AND dp.status IN ('AVAILABLE', 'UNAVAILABLE')
+	       """)
+	long countByOrderStatusAndCreatedOnAfter(
+	        @Param("orderStatus") OrderStatus orderStatus,
+	        @Param("date") LocalDate date
+	);
+	
 	    @Query("""
 	            SELECT new com.backend.dto.admin.Admin_DeliveryRankingDTO(
 	                CONCAT(u.firstName, ' ', u.lastName),
