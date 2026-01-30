@@ -18,6 +18,9 @@ export const restaurantAPI = {
   // Apply for restaurant
   apply: (data) => api.post('/restaurant/apply', data),
 
+  getAdminApproveStatus: (restaurantId) =>
+    api.get(`/restaurant/apply/approve?restaurantId=${restaurantId}`),
+
   // Get restaurant profile
   getProfile: (restaurantId) =>
     api.get(`/restaurant/profile/restaurantId?restaurantId=${restaurantId}`),

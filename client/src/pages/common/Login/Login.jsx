@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../../services/common/login';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { config } from '../../../services/config';
+import { restaurantAPI } from '../../../services/Restaurant/api';
 
 function Login() {
   const navigate = useNavigate();
@@ -80,14 +81,18 @@ function Login() {
                   'Content-Type': 'application/json'
                 }
               });
-
-              // Handle response format from backend
               const restaurantId = restaurantIdResponse.data?.body;
               const restaurantIdNum = parseInt(restaurantId);
 
               if (restaurantIdNum && !isNaN(restaurantIdNum)) {
                 sessionStorage.setItem('restaurantId', restaurantIdNum);
-                navigate('/restaurant');
+                const applicationStatus = await restaurantAPI.getAdminApproveStatus(restaurantIdNum);
+                console.log("For Restaurant_Id:", restaurantIdNum, ", Application status:", applicationStatus.data);
+                if (applicationStatus.data === 'AVAILABLE' || applicationStatus.data === 'UNAVAILABLE') {
+                  navigate('/restaurant');
+                } else {
+                  navigate('/restaurant/apply/approve');
+                }
               }
               else {
                 console.warn("No restaurantId found in response:", restaurantIdResponse.data);
@@ -187,14 +192,6 @@ function Login() {
               />
             </div>
           </div>
-
-          {/* <div className="flex items-center justify-end">
-            <div className="text-sm">
-              <a href="#" className="font-bold text-orange-600 hover:text-orange-700 transition-colors">
-                Forgot password?
-              </a>
-            </div>
-          </div> */}
 
           <div className="flex flex-col gap-4">
             <button

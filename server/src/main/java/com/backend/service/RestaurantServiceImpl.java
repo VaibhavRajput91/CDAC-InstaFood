@@ -54,6 +54,14 @@ public class RestaurantServiceImpl implements RestaurantService {
 	}
 	
 	@Override
+	public String adminApproval(Long restaurantId) {
+		Restaurant restaurant=restaurantRepository.findById(restaurantId)
+				.orElseThrow(()-> new RuntimeException("Restaurant not found"));
+		return restaurant.getStatus().toString();
+	}
+	
+	
+	@Override
 	public RestaurantStatisticsDTO restaurantStatistics(Long restaurantId) {
 		RestaurantStatisticsProjectionDTO stats=restaurantRepository.reviews(restaurantId);
 		return new RestaurantStatisticsDTO(stats.getTotalOrders(), stats.getTotalRevenue(),stats.getAverageRating());

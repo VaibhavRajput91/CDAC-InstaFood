@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { UtensilsCrossed, CheckCircle } from 'lucide-react';
+import { UtensilsCrossed } from 'lucide-react';
 import Toast from '../../../components/restaurant/UI/Toast';
 import { restaurantAPI } from '../../../services/Restaurant/api';
 
@@ -24,7 +24,6 @@ export default function RestaurantApply() {
       ...prev,
       [name]: value,
     }));
-    // Clear error for this field
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
@@ -81,7 +80,6 @@ export default function RestaurantApply() {
     try {
       setSubmitting(true);
 
-      // Transform form data to match backend DTO
       const submitData = {
         userId: sessionStorage.getItem('userId'),
 
@@ -127,32 +125,11 @@ export default function RestaurantApply() {
   }, []);
 
   if (success) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-        <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-12 text-center max-w-md">
-          <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-12 h-12 text-green-600" />
-          </div>
-          <h2 className="font-bold text-2xl text-gray-900 mb-4">
-            Application Submitted!
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Thank you for applying to join Insta Food. We'll review your application and get back to you within 2-3 business days.
-          </p>
-          <button
-            onClick={() => navigate('/')}
-            className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
-          >
-            Go to Dashboard
-          </button>
-        </div>
-      </div>
-    );
+    navigate('/restaurant/apply/approve');
   }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-6">
-      {/* Logout button only (hide global navbar on this page) */}
       <div className="absolute right-6 top-6 z-50">
         <button
           onClick={() => {
