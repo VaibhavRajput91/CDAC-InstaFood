@@ -23,4 +23,5 @@ public class RestaurantUpdateDTO {
 	private String postalCode;
 	private LocalTime openingTime;
 	private LocalTime closingTime;
+	private String restaurantImage;
 }

@@ -40,4 +40,8 @@ public class Restaurant extends BaseEntity{
 	@Enumerated(EnumType.STRING)
 	private AvailabilityStatus status;
 
+	@jakarta.persistence.Lob
+	@Column(columnDefinition = "LONGBLOB")
+	private byte[] restaurantImage;
+
 }

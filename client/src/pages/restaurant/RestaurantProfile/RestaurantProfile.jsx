@@ -23,6 +23,7 @@ export default function RestaurantProfile() {
     postalCode: '',
     openingTime: '',
     closingTime: '',
+    restaurantImage: '',
   });
   const [originalData, setOriginalData] = useState({});
 
@@ -53,6 +54,7 @@ export default function RestaurantProfile() {
         postalCode: data.postalCode || '',
         openingTime: data.openingTime || '',
         closingTime: data.closingTime || '',
+        restaurantImage: data.restaurantImage || '',
       });
       setOriginalData(data);
     } catch (error) {
@@ -92,6 +94,7 @@ export default function RestaurantProfile() {
       postalCode: originalData.postalCode || '',
       openingTime: originalData.openingTime || '',
       closingTime: originalData.closingTime || '',
+      restaurantImage: originalData.restaurantImage || '',
     });
     setEditing(false);
   };
@@ -111,6 +114,7 @@ export default function RestaurantProfile() {
         postalCode: profileData.postalCode,
         openingTime: profileData.openingTime,
         closingTime: profileData.closingTime,
+        restaurantImage: profileData.restaurantImage,
       };
 
       await restaurantAPI.updateProfile(RESTAURANT_ID, updateData);
@@ -162,10 +166,43 @@ export default function RestaurantProfile() {
           {/* Profile Card */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="text-center">
-              <div className="w-24 h-24 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-4xl text-white font-bold">
-                  {profileData.firstName?.charAt(0) || ''}
-                </span>
+              <div className="relative group mb-4">
+                {profileData.restaurantImage ? (
+                    <img 
+                        src={profileData.restaurantImage} 
+                        alt="Restaurant" 
+                        className="w-32 h-32 object-cover rounded-xl mx-auto border-4 border-orange-100"
+                    />
+                ) : (
+                    <div className="w-24 h-24 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto">
+                        <span className="text-4xl text-white font-bold">
+                        {profileData.firstName?.charAt(0) || ''}
+                        </span>
+                    </div>
+                )}
+                
+                {editing && (
+                    <div className="mt-2">
+                        <label className="text-xs font-bold text-orange-600 uppercase cursor-pointer hover:underline">
+                            Change Image
+                            <input 
+                                type="file" 
+                                accept="image/*" 
+                                className="hidden"
+                                onChange={(e) => {
+                                    const file = e.target.files[0];
+                                    if (file) {
+                                        const reader = new FileReader();
+                                        reader.onloadend = () => {
+                                            setProfileData(prev => ({...prev, restaurantImage: reader.result}));
+                                        };
+                                        reader.readAsDataURL(file);
+                                    }
+                                }}
+                            />
+                        </label>
+                    </div>
+                )}
               </div>
               <h4 className="font-bold text-l text-gray-900 mb-1">
                 {profileData.firstName} {profileData.lastName}

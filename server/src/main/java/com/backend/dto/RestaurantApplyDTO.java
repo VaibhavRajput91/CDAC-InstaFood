@@ -22,5 +22,6 @@ public class RestaurantApplyDTO {
     private LocalTime openingTime;
     private LocalTime closingTime;
     private AvailabilityStatus status;
+    private String restaurantImage;
 }
 

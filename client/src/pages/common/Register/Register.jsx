@@ -17,7 +17,8 @@ function Register() {
     postalCode: '',
     lineOne: '',
     lineTwo: '',
-    state: ''
+    state: '',
+    profilePicture: ''
   });
 
   const handleChange = (e) => {
@@ -30,10 +31,10 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { firstName, lastName, email, password, phone, role, city, postalCode, lineOne, lineTwo, state } = formData;
+    const { firstName, lastName, email, password, phone, role, city, postalCode, lineOne, lineTwo, state, profilePicture } = formData;
     
     try {
-      const response = await register(firstName, lastName, email, password, phone, role, city, postalCode, lineOne, lineTwo, state);
+      const response = await register(firstName, lastName, email, password, phone, role, city, postalCode, lineOne, lineTwo, state, profilePicture);
       // Backend returns UserResponseDTO directly on success
       if (response && (response.id || response.email)) {
         toast.success('Registration successful! Redirecting to login...');
@@ -247,6 +248,31 @@ function Register() {
                 placeholder="123456"
                 value={formData.postalCode}
                 onChange={handleChange}
+              />
+            </div>
+            
+             {/* Profile Picture */}
+             <div className="group relative md:col-span-2">
+              <label htmlFor="profilePicture" className="block text-xs font-bold text-orange-500 uppercase tracking-widest mb-1 ml-1 group-focus-within:text-orange-600 transition-colors">Profile Picture</label>
+              <input
+                id="profilePicture"
+                name="profilePicture"
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      setFormData(prevState => ({
+                        ...prevState,
+                        profilePicture: reader.result
+                      }));
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+                className="block w-full px-4 py-3 bg-orange-50/30 border-2 border-orange-100/50 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:bg-white transition-all duration-300 sm:text-sm font-semibold shadow-sm"
               />
             </div>
           </div>
