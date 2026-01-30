@@ -23,6 +23,7 @@ import com.backend.repository.CategoryRepository;
 import com.backend.repository.DishRepository;
 import com.backend.repository.OrderRepository;
 import com.backend.repository.admin.AdminCustomerStatsRepository;
+import com.backend.repository.admin.AdminDashboardOrderRepository;
 import com.backend.repository.admin.AdminDeliveryStatsRepository;
 import com.backend.repository.admin.AdminProfileRepository;
 import com.backend.repository.admin.AdminRepositoryForRestaurant;
@@ -47,6 +48,7 @@ public class AdminServiceImpl implements AdminService{
 	private final DishRepository dishRepository;
 	private final CategoryRepository categoryRepository;
 	private final AdminDeliveryStatsRepository adminDeliveryRepository;
+	private final AdminDashboardOrderRepository adminDashboardOrderRepository;
 
 	
 	private final ModelMapper modelMapper;
@@ -310,6 +312,26 @@ AdminDeliveryStatsDTO dto = new AdminDeliveryStatsDTO();
 		
 		dto.setDeliveryPartnerRanking(ranking);
 		return dto;
+	}
+
+	@Override
+	public List<DashboardOrderStatusDTO> getOrderStatusStats() {
+		return adminDashboardOrderRepository.getOrderStatusCounts().stream()
+				.map(obj -> new DashboardOrderStatusDTO(obj[0].toString(), (Long) obj[1]))
+				.toList();
+	}
+
+	@Override
+	public List<DashboardOrdersPerDayDTO> getOrdersPerDayStats() {
+		return adminDashboardOrderRepository.getOrdersPerDay();
+
+	}
+
+	@Override
+	public List<DashboardTopItemDTO> getTopSellingItemsStats() {
+		return adminDashboardOrderRepository.getTopSellingItems().stream()
+				.map(obj -> new DashboardTopItemDTO(obj[0].toString(), (Long) obj[1]))
+				.toList();
 	}
 
 
