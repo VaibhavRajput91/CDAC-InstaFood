@@ -31,4 +31,6 @@ public interface AdminService {
 	
 	TotalOrdersDetailsDTO getTotalOrdersDetails();
 
+	AdminDeliveryStatsDTO getDeliveryStatsData();
+
 }

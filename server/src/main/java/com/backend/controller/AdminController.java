@@ -249,12 +249,12 @@ public class AdminController {
   {
 	  System.out.println("deliveryPartner Data");
 	  try {
-		    return ResponseEntity.ok("deliveryPartner Data");
+		    return ResponseEntity.ok(adminService.getDeliveryStatsData());
 	  }
 	  catch(RuntimeException e)
 	  {
 		  return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				  .body("Error");
+				  .body(e.getMessage());
 	  }
   }
 }
