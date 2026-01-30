@@ -180,7 +180,7 @@ export function OrdersList({ navigateTo }) {
                   }}
                   className="w-full bg-orange-500 text-white py-3 rounded-xl hover:bg-orange-600 transition-colors mt-3"
                 >
-                  View Details
+                  Details
                 </button>
               )}
             </div>

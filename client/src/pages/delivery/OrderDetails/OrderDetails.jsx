@@ -6,6 +6,7 @@ import { config } from '../../../services/config';
 export function OrderDetails({ navigateTo, orderId }) {
   const [orderDetails, setOrderDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [accepting, setAccepting] = useState(false);
 
   useEffect(() => {
     if (orderId) {
@@ -27,6 +28,38 @@ export function OrderDetails({ navigateTo, orderId }) {
     }
   };
 
+  const handleAcceptOrder = async () => {
+    const deliveryPartnerId = sessionStorage.getItem('deliveryPartnerId');
+    if (!deliveryPartnerId) {
+      alert("Delivery Partner ID not found. Please relogin.");
+      return;
+    }
+
+    setAccepting(true);
+    try {
+      // PATCH: ${config.server}/delivery/orders/accept?orderId=${from order key}&deliveryPartnerId=${from session storage}
+      const response = await axios.patch(
+        `${config.server}/delivery/orders/accept`,
+        {},
+        {
+          params: { orderId, deliveryPartnerId }
+        }
+      );
+
+      if (response.data.status === "SUCCESS") {
+        // Refresh details to update status and UI
+        await fetchOrderDetails();
+      } else {
+        alert("Failed to accept order: " + (response.data.message || "Unknown error"));
+      }
+    } catch (error) {
+      console.error("Error accepting order:", error);
+      alert("Error accepting order. Please try again.");
+    } finally {
+      setAccepting(false);
+    }
+  };
+
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-500">Loading details...</div>;
   }
@@ -35,7 +68,7 @@ export function OrderDetails({ navigateTo, orderId }) {
     return <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-500">Order not found</div>;
   }
 
-  const { pickup, drop, restaurantName, customerName, customerPhone, orderItems = [] } = orderDetails;
+  const { pickup, drop, restaurantName, customerName, customerPhone, orderItems = [], orderStatus } = orderDetails;
 
   // Calculate totals
   const itemTotal = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -164,21 +197,26 @@ export function OrderDetails({ navigateTo, orderId }) {
           </div>
         </div>
 
-        {/* Delivery Payout */}
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-4 text-white">
-          <p className="text-green-100 text-sm mb-1">Your Earnings</p>
-          <p className="text-3xl">₹45</p>
-        </div>
-
         {/* Action Buttons */}
         <div className="flex gap-3 pb-4">
-          <button className="flex-1 bg-white border-2 border-orange-500 text-orange-500 py-4 rounded-2xl hover:bg-orange-50 transition-colors">
+          {/* <button className="flex-1 bg-white border-2 border-orange-500 text-orange-500 py-4 rounded-2xl hover:bg-orange-50 transition-colors">
             Reject
-          </button>
-          <button className="flex-1 bg-orange-500 text-white py-4 rounded-2xl hover:bg-orange-600 transition-colors flex items-center justify-center gap-2">
-            <Navigation className="w-5 h-5" />
-            Accept & Navigate
-          </button>
+          </button> */}
+          {/* Only show Accept button if order is in 'AVAILABLE' or 'PLACED' status, or generally NOT accepted yet. 
+              Assuming 'AVAILABLE' is the status for new orders based on Dashboard logic.
+              Adjustment: If the user navigates from "New" list, it should be available. 
+              If the order is already ongoing, status might be 'ACCEPTED', 'OUT_FOR_DELIVERY', etc.
+          */}
+          {(!orderStatus || orderStatus === 'AVAILABLE' || orderStatus === 'PLACED') && (
+            <button
+              onClick={handleAcceptOrder}
+              disabled={accepting}
+              className={`flex-1 bg-orange-500 text-white py-4 rounded-2xl hover:bg-orange-600 transition-colors flex items-center justify-center gap-2 ${accepting ? 'opacity-70 cursor-not-allowed' : ''}`}
+            >
+              <Navigation className="w-5 h-5" />
+              {accepting ? 'Accepting...' : 'Accept Order'}
+            </button>
+          )}
         </div>
       </div>
     </div>
