@@ -24,4 +24,5 @@ public class RestaurantDetailsDTO {
 	private String postalCode;
 	private LocalTime openingTime;
 	private LocalTime closingTime;
+	private String restaurantImage;
 }

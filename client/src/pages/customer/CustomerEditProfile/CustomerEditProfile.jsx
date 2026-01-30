@@ -19,7 +19,8 @@ function CustomerEditProfile() {
     postalCode: '',
     lineOne: '',
     lineTwo: '',
-    state: ''
+    state: '',
+    profilePicture: ''
   });
 
   useEffect(() => {
@@ -38,7 +39,8 @@ function CustomerEditProfile() {
                         postalCode: response.postalCode || '',
                         lineOne: response.lineOne || '',
                         lineTwo: response.lineTwo || '',
-                        state: response.state || ''
+                        state: response.state || '',
+                        profilePicture: response.profilePicture || ''
                     });
                 }
             }
@@ -65,10 +67,10 @@ function CustomerEditProfile() {
     e.preventDefault();
     try {
         const userId = sessionStorage.getItem('userId');
-        const { firstName, lastName, phone, city, postalCode, lineOne, lineTwo, state } = formData;
+        const { firstName, lastName, phone, city, postalCode, lineOne, lineTwo, state, profilePicture } = formData;
         
         const response = await editProfile(
-            userId, firstName, lastName, phone, city, postalCode, lineOne, lineTwo, state
+            userId, firstName, lastName, phone, city, postalCode, lineOne, lineTwo, state, profilePicture
         );
 
         if (response) {
@@ -99,8 +101,26 @@ function CustomerEditProfile() {
         <div className="bg-white shadow rounded-lg overflow-hidden border border-orange-100">
           
           <div className="bg-white p-6 flex flex-col items-center border-b border-orange-200">
-             <div className="mb-4">
+              <div className="mb-4 relative group">
                 <ProfileAvatar user={formData} />
+                <div className="mt-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Update Photograph</label>
+                    <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                                const reader = new FileReader();
+                                reader.onloadend = () => {
+                                    setFormData(prev => ({...prev, profilePicture: reader.result}));
+                                };
+                                reader.readAsDataURL(file);
+                            }
+                        }}
+                        className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
+                    />
+                </div>
             </div>
             <h2 className="text-xl font-bold text-gray-900">Edit Profile</h2>
           </div>

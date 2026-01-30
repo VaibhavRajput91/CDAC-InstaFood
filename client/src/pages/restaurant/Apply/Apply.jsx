@@ -15,6 +15,7 @@ export default function RestaurantApply() {
     openingTime: '',
     closingTime: '',
     status: 'PENDING',
+    restaurantImage: '',
   });
   const [errors, setErrors] = useState({});
 
@@ -89,6 +90,7 @@ export default function RestaurantApply() {
         openingTime: formData.openingTime,
         closingTime: formData.closingTime,
         status: formData.status,
+        restaurantImage: formData.restaurantImage,
       };
 
       await restaurantAPI.apply(submitData);
@@ -251,6 +253,32 @@ export default function RestaurantApply() {
                       <p className="mt-1 text-sm text-red-600">{errors.closingTime}</p>
                     )}
                   </div>
+                </div>
+
+                <div>
+                  <label htmlFor="restaurantImage" className="block font-medium text-gray-700 mb-2">
+                    Restaurant Image (Banner/Logo)
+                  </label>
+                  <input
+                    type="file"
+                    id="restaurantImage"
+                    name="restaurantImage"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setFormData(prev => ({ ...prev, restaurantImage: reader.result }));
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                  <p className="mt-1 text-xs text-gray-400">
+                    Upload a high-quality image of your restaurant or logo
+                  </p>
                 </div>
 
                 <input

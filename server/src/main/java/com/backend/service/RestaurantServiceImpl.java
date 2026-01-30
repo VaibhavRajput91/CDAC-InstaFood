@@ -47,6 +47,18 @@ public class RestaurantServiceImpl implements RestaurantService {
 		eligibleRestaurant.setOpeningTime(applyDTO.getOpeningTime());
 		eligibleRestaurant.setClosingTime(applyDTO.getClosingTime());
 		eligibleRestaurant.setStatus(applyDTO.getStatus());
+
+		if (applyDTO.getRestaurantImage() != null && !applyDTO.getRestaurantImage().isEmpty()) {
+			String base64Image = applyDTO.getRestaurantImage();
+			if (base64Image.contains(",")) {
+				base64Image = base64Image.split(",")[1];
+			}
+			try {
+				eligibleRestaurant.setRestaurantImage(java.util.Base64.getDecoder().decode(base64Image));
+			} catch (IllegalArgumentException e) {
+				throw new RuntimeException("Invalid restaurant image format");
+			}
+		}
 		
 		Restaurant saved=restaurantRepository.save(eligibleRestaurant);
 		
@@ -134,6 +146,11 @@ public class RestaurantServiceImpl implements RestaurantService {
 			restaurantDetails.setState(address.getState());
 			restaurantDetails.setPostalCode(address.getPostalCode());		
 		}
+
+		if (restaurant.getRestaurantImage() != null) {
+			String base64Image = java.util.Base64.getEncoder().encodeToString(restaurant.getRestaurantImage());
+			restaurantDetails.setRestaurantImage("data:image/jpeg;base64," + base64Image);
+		}
 		
 		return restaurantDetails;
 	}
@@ -158,6 +175,18 @@ public class RestaurantServiceImpl implements RestaurantService {
 		
 		restaurant.setOpeningTime(updatedRestaurantDetails.getOpeningTime());
 		restaurant.setClosingTime(updatedRestaurantDetails.getClosingTime());
+
+		if (updatedRestaurantDetails.getRestaurantImage() != null && !updatedRestaurantDetails.getRestaurantImage().isEmpty()) {
+			String base64Image = updatedRestaurantDetails.getRestaurantImage();
+			if (base64Image.contains(",")) {
+				base64Image = base64Image.split(",")[1];
+			}
+			try {
+				restaurant.setRestaurantImage(java.util.Base64.getDecoder().decode(base64Image));
+			} catch (IllegalArgumentException e) {
+				throw new RuntimeException("Invalid restaurant image format");
+			}
+		}
 		
 		addressRepository.save(address);
 		userRepository.save(user);
@@ -236,6 +265,10 @@ public class RestaurantServiceImpl implements RestaurantService {
 			if (address != null) {
 				dto.setPostalCode(address.getPostalCode());
 			}
+			if (restaurant.getRestaurantImage() != null) {
+				String base64Image = java.util.Base64.getEncoder().encodeToString(restaurant.getRestaurantImage());
+				dto.setRestaurantImage("data:image/jpeg;base64," + base64Image);
+			}
 			restaurantDTOs.add(dto);
 			// You can add dto to a list and return the list if needed
 		}
@@ -257,6 +290,10 @@ public class RestaurantServiceImpl implements RestaurantService {
 			Address address = restaurant.getUser().getAddress();
 			if (address != null) {
 				dto.setPostalCode(address.getPostalCode());
+			}
+			if (restaurant.getRestaurantImage() != null) {
+				String base64Image = java.util.Base64.getEncoder().encodeToString(restaurant.getRestaurantImage());
+				dto.setRestaurantImage("data:image/jpeg;base64," + base64Image);
 			}
 			restaurantDTOs.add(dto);
 		}

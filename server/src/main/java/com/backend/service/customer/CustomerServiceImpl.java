@@ -60,6 +60,12 @@ public class CustomerServiceImpl implements CustomerService {
 		userProfile.setLineTwo(addr.getLineTwo());
 		userProfile.setPostalCode(addr.getPostalCode());
 		userProfile.setState(addr.getState());
+		
+		if (user.getProfilePicture() != null) {
+			String base64Image = java.util.Base64.getEncoder().encodeToString(user.getProfilePicture());
+			userProfile.setProfilePicture("data:image/jpeg;base64," + base64Image); 
+		}
+		
 		return userProfile;
 	}
 	@Override
