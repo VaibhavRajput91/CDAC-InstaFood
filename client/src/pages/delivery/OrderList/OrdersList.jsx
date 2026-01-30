@@ -21,22 +21,38 @@ export function OrdersList({ navigateTo }) {
     let params = { deliveryPartnerId };
 
     if (activeTab === 'new') {
-      url = `${config.server}/delivery/orders/available`;
-      // Available API doesn't use status or deliveryPartnerId params for filtering usually, or at least based on Dashboard it didn't use params.
-      // Dashboard usage: fetch(`${config.server}/delivery/orders/available`)
+      url = `${config.server}/delivery/orders/available?deliveryPartnerId=${deliveryPartnerId}`;
       params = {};
     } else {
-      let status = 'ACCEPTED'; // Default fallback, though expected tabs are ongoing/completed
-      if (activeTab === 'ongoing') status = 'OUT_FOR_DELIVERY';
+      // New API: ${config.server}/delivery/order/${deliveryPartnerId}?status=${...}
+      url = `${config.server}/delivery/orders/${deliveryPartnerId}`;
+
+      let status = 'ASSIGNED';
+      if (activeTab === 'ongoing') status = 'ASSIGNED';
       if (activeTab === 'completed') status = 'DELIVERED';
-      params.status = status;
+
+      params = { status };
     }
 
     setLoading(true);
     try {
       const response = await axios.get(url, { params });
 
-      const mappedOrders = response.data.map(order => ({
+      let ordersData = [];
+      if (activeTab === 'new') {
+        // Assuming available API still returns array directly as per user instruction "only for the ongoing and completed orders only"
+        ordersData = response.data;
+      } else {
+        // New API returns { status: "...", data: [...] }
+        ordersData = response.data.data || [];
+      }
+
+      // Constraint: Show only one ongoing order
+      if (activeTab === 'ongoing' && ordersData.length > 0) {
+        ordersData = [ordersData[0]];
+      }
+
+      const mappedOrders = ordersData.map(order => ({
         id: order.orderId,
         restaurant: order.restaurantName,
         address: order.restaurantAddress,
@@ -45,7 +61,7 @@ export function OrdersList({ navigateTo }) {
         distance: '2.5 km', // Mock data
         time: '20 min',     // Mock data
         status: order.orderStatus,
-        completedAt: order.time // Mock data as API doesn't return it
+        completedAt: order.time // Mock data
       }));
 
       setOrders(mappedOrders);

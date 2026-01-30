@@ -86,7 +86,7 @@ export function Wallet({ navigateTo }) {
         if (!dpId) return;
 
         const res = await axios.get(`${config.server}/delivery/wallet/earnings-trend`, {
-          params: { deliveryPartnerId: 1, range: period }
+          params: { deliveryPartnerId: sessionStorage.deliveryPartnerId, range: period }
         });
 
         // Backend returns: [today, yesterday, ..., 6-steps-ago]

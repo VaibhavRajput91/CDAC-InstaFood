@@ -63,25 +63,35 @@ export function Dashboard({ navigateTo }) {
       })
       .catch(err => console.error("Error fetching summary:", err));
 
-    // Fetch available orders
-    fetch(`${config.server}/delivery/orders/available`)
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          // Add default distance/time if not present in API, as UI expects it
-          const mappedOrders = data.map(order => ({
-            ...order, // keep original data
-            id: order.orderId,
-            restaurant: order.restaurantName,
-            distance: '2 km', // Mock distance
-            time: '20 min',   // Mock time
-            payout: order.totalAmount,
-            itemCount: order.items?.length || 0
-          }));
-          setAvailableOrders(mappedOrders.slice(0, 5));
-        }
-      })
-      .catch(err => console.error("Error fetching available orders:", err));
+    const fetchAvailableOrders = () => {
+      fetch(`${config.server}/delivery/orders/available?deliveryPartnerId=${deliveryPartnerId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            // Add default distance/time if not present in API, as UI expects it
+            const mappedOrders = data.map(order => ({
+              ...order, // keep original data
+              id: order.orderId,
+              restaurant: order.restaurantName,
+              distance: '2 km', // Mock distance
+              time: '20 min',   // Mock time
+              payout: order.totalAmount,
+              itemCount: order.items?.length || 0
+            }));
+            setAvailableOrders(mappedOrders.slice(0, 5));
+          }
+        })
+        .catch(err => console.error("Error fetching available orders:", err));
+    };
+
+    // Initial fetch
+    fetchAvailableOrders();
+
+    // Auto-refresh every 30 seconds
+    const intervalId = setInterval(fetchAvailableOrders, 30000);
+
+    // Cleanup interval on unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
@@ -164,18 +174,14 @@ export function Dashboard({ navigateTo }) {
         <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-3xl p-6 text-white shadow-lg">
           <p className="text-orange-100 mb-1">Today's Earnings</p>
           <h2 className="text-4xl mb-4">₹{summary.todayOrderStats.todayEarnings}</h2>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-orange-100 text-sm">Orders</p>
+              <p className="text-orange-100 text-sm">Today Orders</p>
               <p className="text-xl">{summary.todayOrderStats.todayOrderCount}</p>
             </div>
             <div>
               <p className="text-orange-100 text-sm">Avg/Order</p>
               <p className="text-xl">₹{summary.todayOrderStats.avgOrderPayout}</p>
-            </div>
-            <div>
-              <p className="text-orange-100 text-sm">Total Earnings</p>
-              <p className="text-xl">₹{summary.miscStats.totalEarnings}</p>
             </div>
           </div>
         </div>

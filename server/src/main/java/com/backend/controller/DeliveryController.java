@@ -1,4 +1,5 @@
 package com.backend.controller;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,225 +29,232 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/delivery")
-@RequiredArgsConstructor 
+@RequiredArgsConstructor
 public class DeliveryController {
-	
+
 	// dependencies
 	private final DeliveryOrderService orderService;
 	private final DeliveryWalletService deliveryWalletService;
 	private final DeliveryProfileService deliveryProfileService;
 	private final ApplyForDeliveryService applyForDeliveryService;
 	private final DeliveryDashboardService deliveryDashboardService;
-	
-	@PostMapping("/apply")
-	public ResponseEntity<?> addPartner(@RequestBody DeliveryPartnerApplyDto applyDto, @RequestParam Long userId){
-		System.out.println("In Post add-partner");
+
+	@PutMapping("/apply")
+	public ResponseEntity<?> addPartner(@RequestBody DeliveryPartnerApplyDto applyDto, @RequestParam Long userId) {
+		System.out.println("In put add-partner");
 		try {
 			System.out.print(applyDto.toString());
 			applyForDeliveryService.applyForDeliveryPartner(userId, applyDto);
 			return ResponseEntity.ok("success");
-		}
-		catch(RuntimeException e) { 
+		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body("Error : " + e.getMessage());
 		}
 	}
-	
+
 	@GetMapping("/delivery-id")
-	public ResponseEntity<?> getDeliveryPartnerId(@RequestParam Long userId){
+	public ResponseEntity<?> getDeliveryPartnerId(@RequestParam Long userId) {
 		System.out.println("In Get delivery-id");
 		try {
 			return ResponseEntity.status(HttpStatus.OK).body(deliveryProfileService.getDeliveryPartnerId(userId));
-		}
-		catch(RuntimeException e) {
+		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error:" + e.getMessage());
 		}
 	}
-	
+
 	@GetMapping("/wallet/summary")
-	public ResponseEntity<?> walletSummary(@RequestParam Long deliveryPartnerId){
+	public ResponseEntity<?> walletSummary(@RequestParam Long deliveryPartnerId) {
 		System.out.println("In Get wallet/summary");
-		
+
 		try {
 			DeliveryWalletSummaryDto walletSummary = deliveryWalletService.getWalletSummary(deliveryPartnerId);
 			return ResponseEntity.status(HttpStatus.OK).body(walletSummary);
-		}
-		catch(RuntimeException e) {
+		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body("Error");
 		}
 	}
 
 	@GetMapping("/wallet/transactions")
-	public ResponseEntity<?> walletTransactions(@RequestParam Long deliveryPartnerId, @RequestParam int size){
+	public ResponseEntity<?> walletTransactions(@RequestParam Long deliveryPartnerId, @RequestParam int size) {
 		System.out.println("In Get wallet/transactions?size");
 		try {
 			return ResponseEntity.ok(deliveryWalletService.getTransactions(deliveryPartnerId, size));
-		}
-		catch(RuntimeException e) {
+		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body("Error");
 		}
 	}
-	
+
 	@PutMapping("/wallet/cash-out")
-	public ResponseEntity<?> walletCashOut(@RequestBody demo demo_dto_id_and_zerobalance){
+	public ResponseEntity<?> walletCashOut(@RequestBody demo demo_dto_id_and_zerobalance) {
 		System.out.println("In Put wallet/cash-out");
 		try {
 			return ResponseEntity.ok("wallet balance 0 i.e. transferred to user account");
-		}
-		catch(RuntimeException e) {
+		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body("Error");
 		}
 	}
-	
+
 	@GetMapping("/wallet/earnings-trend")
-	public ResponseEntity<?> walletEarningsTrend(@RequestParam String range, @RequestParam Long deliveryPartnerId){
+	public ResponseEntity<?> walletEarningsTrend(@RequestParam String range, @RequestParam Long deliveryPartnerId) {
 		System.out.println("In Get Wallet/Earinings-Trend");
 		try {
-			return ResponseEntity.status(HttpStatus.OK).body(deliveryWalletService.getEarningsList(range, deliveryPartnerId));
-		}
-		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(deliveryWalletService.getEarningsList(range, deliveryPartnerId));
+		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body("Error");
 		}
 	}
-	
-	
-	
+
 	@GetMapping("/details")
-	public ResponseEntity<?> profile(@RequestParam Long deliveryPartnerId){
+	public ResponseEntity<?> profile(@RequestParam Long deliveryPartnerId) {
 		System.out.println("In Get details");
 		try {
-			return ResponseEntity.status(HttpStatus.OK).body(deliveryProfileService.getDeliveryPartnerProfile(deliveryPartnerId));
-		}
-		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(deliveryProfileService.getDeliveryPartnerProfile(deliveryPartnerId));
+		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body("Error : " + e.getMessage());
 		}
 	}
-	
+
 	@PutMapping("/edit-details")
-	public  ResponseEntity<?> editProfile(@RequestBody DeliveryProfileDto profileDto, @RequestParam Long deliveryPartnerId){
+	public ResponseEntity<?> editProfile(@RequestBody DeliveryProfileDto profileDto,
+			@RequestParam Long deliveryPartnerId) {
 		System.out.println("In Put Edit-Details");
 		try {
-			return ResponseEntity.status(HttpStatus.OK).body(deliveryProfileService.updateDeliveryPartnerProfile(deliveryPartnerId, profileDto));	
-		}
-		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(deliveryProfileService.updateDeliveryPartnerProfile(deliveryPartnerId, profileDto));
+		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body("Error : " + e.getMessage());
 		}
 	}
-	
-	
+
 	@GetMapping("/orders")
-	public ResponseEntity<?> orders(@RequestParam Long deliveryPartnerId, @RequestParam OrderStatus status){
+	public ResponseEntity<?> orders(@RequestParam Long deliveryPartnerId, @RequestParam OrderStatus status) {
 		System.out.println("In Get Orders");
-		try{
+		try {
 			return ResponseEntity
 					.status(HttpStatus.OK)
 					.body(orderService.getTodayOrdersList(deliveryPartnerId, status));
-		}
-		catch(RuntimeException e) {
+		} catch (RuntimeException e) {
 			System.out.print(e.getMessage());
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body("error : " + e.getMessage());
 		}
 	}
-	
+
 	@GetMapping("/orders/order-details")
-	public ResponseEntity<?> orderDetails(@RequestParam Long orderId){
+	public ResponseEntity<?> orderDetails(@RequestParam Long orderId) {
 		System.out.println("In Get Orders/order-details");
-		try{
+		try {
 			return ResponseEntity
 					.status(HttpStatus.OK)
 					.body(orderService.getOrderDetails(orderId));
-		}
-		catch(RuntimeException e) {
+		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body("Error : " + e.getMessage());
 		}
 	}
-	
+
 	@GetMapping("orders/history")
-	public ResponseEntity<?> orderHistory(@RequestParam Long id){
+	public ResponseEntity<?> orderHistory(@RequestParam Long id) {
 		System.out.print("In delivery order history");
 		try {
 			return ResponseEntity
 					.status(HttpStatus.OK)
 					.body(orderService.getOrdersHistory(id, 20));
-		}
-		catch(RuntimeException e) {
+		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body("Error : " + e.getMessage());
 		}
 	}
-	
+
 	@GetMapping("/dashboard/summary")
-	public ResponseEntity<?> dashboardSummary(@RequestParam Long deliveryPartnerId){
+	public ResponseEntity<?> dashboardSummary(@RequestParam Long deliveryPartnerId) {
 		System.out.println("In Get dashboard/summary");
 		try {
 			return ResponseEntity.ok(deliveryDashboardService.getDeliveryDashboardSummary(deliveryPartnerId));
-		}
-		catch(RuntimeException e) {
+		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body("Error : " + e.getMessage());
 		}
 	}
-	
+
 	@GetMapping("/status")
-	public ResponseEntity<?> status(@RequestParam Long deliveryPartnerId){
+	public ResponseEntity<?> status(@RequestParam Long deliveryPartnerId) {
 		System.out.println("In Get status");
 		try {
-			return ResponseEntity.status(HttpStatus.OK).body(deliveryDashboardService.getDeliveryPartnerStatus(deliveryPartnerId));
-		}
-		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(deliveryDashboardService.getDeliveryPartnerStatus(deliveryPartnerId));
+		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body("Error:" + e.getMessage());
 		}
 	}
-	
+
 	@PatchMapping("/status")
-	public ResponseEntity<?> statusUpadate(@RequestParam Long deliveryPartnerId){
+	public ResponseEntity<?> statusUpadate(@RequestParam Long deliveryPartnerId) {
 		System.out.println("In Patch status update");
-		try {  
-			return ResponseEntity.status(HttpStatus.OK).body(deliveryDashboardService.toggleDeliveryPartnerStatus(deliveryPartnerId));
-		}
-		catch(RuntimeException e) {
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(deliveryDashboardService.toggleDeliveryPartnerStatus(deliveryPartnerId));
+		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body("Error");
 		}
 	}
-	
-	
+
 	@GetMapping("/orders/available")
-	public ResponseEntity<?> ordersAvailable(){
+	public ResponseEntity<?> ordersAvailable(@RequestParam Long deliveryPartnerId) {
 		System.out.println("In Get orders-available");
-		
+
 		try {
-			return ResponseEntity.status(HttpStatus.OK).body(deliveryDashboardService.getNewAvailableDeliveryRequests());
-		}
-		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(deliveryDashboardService.getNewAvailableDeliveryRequests(deliveryPartnerId));
+		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body("Error : " + e.getMessage());
 		}
 	}
-	
-	
+
+	@GetMapping("/orders/{deliveryPartnerId}")
+	public ResponseEntity<?> getOrders(@PathVariable Long deliveryPartnerId, @RequestParam OrderStatus status) {
+		System.out.println("In get : orders by delivery partner id and status");
+		try {
+			return ResponseEntity.status(HttpStatus.OK).body(orderService.getOrdersByStatus(deliveryPartnerId, status));
+		} catch (RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body("Error : " + e.getMessage());
+		}
+	}
+
 	@PatchMapping("/orders/accept")
-	public ResponseEntity<?> orderAccept(@RequestParam Long orderId, @RequestParam Long deliveryPartnerId){
+	public ResponseEntity<?> orderAccept(@RequestParam Long orderId, @RequestParam Long deliveryPartnerId) {
 		System.out.println("In Get order-accept");
-		try { 
-			return ResponseEntity.status(HttpStatus.OK).body(deliveryDashboardService.acceptDeliveryRequest(deliveryPartnerId, orderId));
-		}
-		catch(RuntimeException e) {
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(deliveryDashboardService.acceptDeliveryRequest(deliveryPartnerId, orderId));
+		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body("Error : " + e.getMessage());
 		}
 	}
-	
-	
-	//delivery/notifications/unread-count (maintain notification count) {optional} 
-	
+
+	@PatchMapping("/orders/delivered/{orderId}")
+	public ResponseEntity<?> orderDelivered(@PathVariable Long orderId) {
+		System.out.println("In Patch : order delivered");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(orderService.deliverOrder(orderId));
+		} catch (RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body("Error : " + e.getMessage());
+		}
+	}
+
 }

@@ -13,7 +13,7 @@ public interface DeliveryDashboardService {
 	public DeliveryDashboardSummaryDto getDeliveryDashboardSummary(Long deliveryPartnerId);
 	
 	// method to get new available delivery requests
-	public List<DeliveryOrderDto> getNewAvailableDeliveryRequests();
+	public List<DeliveryOrderDto> getNewAvailableDeliveryRequests(Long deliveryPartnerId);
 	
 	// accept a delivery request
 	public DeliveryResponseDto acceptDeliveryRequest(Long deliveryPartnerId, Long orderId);
