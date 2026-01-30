@@ -33,7 +33,7 @@ export function Apply({ navigateTo }) {
     setSuccess(false);
     const userId = sessionStorage.getItem('userId');
     try {
-      const res = await axios.post(`${config.server}/delivery/apply?userId=${userId}`, form);
+      const res = await axios.put(`${config.server}/delivery/apply?userId=${userId}`, form);
 
       if (res.status === 200) {
         // Fetch the deliveryPartnerId after successful application
@@ -45,7 +45,7 @@ export function Apply({ navigateTo }) {
             sessionStorage.setItem('deliveryPartnerId', deliveryPartnerId);
             setSuccess(true);
             setTimeout(() => {
-              navigateTo && navigateTo('dashboard');
+              navigateTo && navigateTo('approval-pending');
             }, 1500);
           } else {
             setError('Application submitted but failed to retrieve Delivery Partner ID. Please try logging in again.');

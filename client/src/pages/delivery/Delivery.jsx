@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Dashboard } from './Dashboard/Dashboard';
 import { OrdersList } from './OrderList/OrdersList';
 import { OrderDetails } from './OrderDetails/OrderDetails';
@@ -10,14 +11,47 @@ import { Apply } from './Apply';
 import { Settings } from './Settings';
 import { Support } from '../common/ContactUs/Support';
 import { Notifications } from './Notifications';
+import { ApprovalPending } from './ApprovalPending';
+import { config } from '../../services/config';
 
 export default function Delivery() {
-  const [currentScreen, setCurrentScreen] = useState(() => {
-    return sessionStorage.getItem('deliveryPartnerId') ? 'dashboard' : 'apply';
-  });
+  const [currentScreen, setCurrentScreen] = useState('loading'); // Start with loading to check status
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [registeredAsDeliveryPartner, setRegisteredAsDeliveryPartner] = useState(!!sessionStorage.getItem('deliveryPartnerId'));
   const [isLoggedIn, setIsLoggedIn] = useState(true);
+
+  useEffect(() => {
+    checkInitialStatus();
+  }, []);
+
+  const checkInitialStatus = async () => {
+    const deliveryPartnerId = sessionStorage.getItem('deliveryPartnerId');
+    if (!deliveryPartnerId) {
+      setCurrentScreen('apply');
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${config.server}/delivery/status`, {
+        params: { deliveryPartnerId }
+      });
+
+      if (response.data.status === 'PENDING') {
+        setCurrentScreen('approval-pending');
+      } else if (response.data.status === 'REJECTED') {
+        setCurrentScreen('apply');
+      } else {
+        setCurrentScreen('dashboard');
+      }
+    } catch (error) {
+      console.error("Error checking initial status:", error);
+      // Fallback: If error, maybe dashboard or keep at loading? 
+      // Let's assume dashboard so old users aren't blocked by API error, 
+      // OR better, 'approval-pending' with error state? 
+      // Given existing flow, if we have ID, let's try dashboard.
+      setCurrentScreen('dashboard');
+    }
+  };
 
   const navigateTo = (screen, orderId) => {
     if (orderId) {
@@ -30,8 +64,12 @@ export default function Delivery() {
 
 
     switch (currentScreen) {
+      case 'loading':
+        return <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-500">Loading...</div>;
       case 'apply':
         return <Apply navigateTo={navigateTo} />
+      case 'approval-pending':
+        return <ApprovalPending navigateTo={navigateTo} />
       case 'dashboard':
         return <Dashboard navigateTo={navigateTo} />;
       case 'orders':

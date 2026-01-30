@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.backend.dto.delivery.DeliveryOrderDetailsDto;
 import com.backend.dto.delivery.DeliveryOrderDto;
+import com.backend.dto.delivery.DeliveryResponseDto;
 import com.backend.dto.delivery.OrderItemDto;
 import com.backend.entity.DeliveryStatus;
 import com.backend.entity.Order;
@@ -119,5 +120,24 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
 		}
 		return orderDtos;
 	}
+
+
+
+	@Override
+	public DeliveryResponseDto deliverOrder(Long orderId) {
+		orderRepository.updateOrderStatus(orderId, OrderStatus.DELIVERED);
+		return new DeliveryResponseDto("SUCCESS", "Order Updated Successfully to delivered", null);
+	}
+
+
+
+	@Override
+	public DeliveryResponseDto getOrdersByStatus(Long deliveryPartnerId, OrderStatus status) {
+		List<Order> orders = orderRepository.findByDeliveryPartnerIdAndOrderStatus(deliveryPartnerId, status);
+		List<DeliveryOrderDto> orderDtos = this.mapOrderList(orders);
+		return new DeliveryResponseDto("SUCCESS", null, orderDtos);
+	}
+	
+	
 	
 }
