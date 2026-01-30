@@ -12,19 +12,16 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class RestaurantDetailsDTO {
-	
+	private String email;
 	private String restaurantName;	
-	private LocalTime openingTime;
-	private LocalTime closingTime;
 	private String firstName;
 	private String lastName;
 	private String phone;
 	private String lineOne;
-	private String city;
-	private String postalCode;
 	private String lineTwo;
+	private String city;
 	private String state;
-	
-	
-
+	private String postalCode;
+	private LocalTime openingTime;
+	private LocalTime closingTime;
 }

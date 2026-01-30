@@ -74,14 +74,23 @@ function Login() {
           } else if (roles.includes('ROLE_RESTAURANT')) {
             try {
               console.log("Fetching restaurantId for userId:", userId);
-              const restaurantIdResponse = await axios.get(`${config.server}/restaurant/restaurantId?userId=${userId}`);
-              const restaurantId = restaurantIdResponse.data?.body ? parseInt(restaurantIdResponse.data.body) : null;
+              const restaurantIdResponse = await axios.get(`${config.server}/restaurant/restaurantId?userId=${userId}`, {
+                headers: {
+                  Authorization: `Bearer ${response.token}`,
+                  'Content-Type': 'application/json'
+                }
+              });
 
-              if (restaurantId) {
-                sessionStorage.setItem('restaurantId', restaurantId);
+              // Handle response format from backend
+              const restaurantId = restaurantIdResponse.data?.body;
+              const restaurantIdNum = parseInt(restaurantId);
+
+              if (restaurantIdNum && !isNaN(restaurantIdNum)) {
+                sessionStorage.setItem('restaurantId', restaurantIdNum);
                 navigate('/restaurant');
               }
               else {
+                console.warn("No restaurantId found in response:", restaurantIdResponse.data);
                 sessionStorage.removeItem('restaurantId');
                 navigate('/restaurant/apply');
               }

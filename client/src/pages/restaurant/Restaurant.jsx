@@ -11,13 +11,10 @@ import ManageMenu from './ManageMenu/ManageMenu';
 import Revenue from './Revenue/Revenue';
 import AddDish from './AddDish/AddDish';
 import EditDish from './EditDish/EditDish';
-import RestaurantNavbar from '../../components/restaurant/RestaurantNavbar/RestaurantNavbar';
 
 function Restaurant() {
   return (
     <div>
-      <RestaurantNavbar />
-
       <Routes>
         <Route
           path="/"

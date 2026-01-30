@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { MapPin, Phone, Mail, Clock, Edit2, Save, X } from 'lucide-react';
+import { Edit2, Save, X } from 'lucide-react';
 import LoadingSkeleton from '../../../components/restaurant/UI/LoadingSkeleton';
 import Toast from '../../../components/restaurant/UI/Toast';
 import { restaurantAPI, RESTAURANT_ID } from '../../../services/Restaurant/api';
+import RestaurantNavbar from '../../../components/restaurant/RestaurantNavbar/RestaurantNavbar';
 
 export default function RestaurantProfile() {
   const [loading, setLoading] = useState(true);
@@ -10,6 +11,7 @@ export default function RestaurantProfile() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState(null);
   const [profileData, setProfileData] = useState({
+    email: '',
     restaurantName: '',
     firstName: '',
     lastName: '',
@@ -34,6 +36,7 @@ export default function RestaurantProfile() {
       const response = await restaurantAPI.getProfile(RESTAURANT_ID);
       const data = response.data;
       setProfileData({
+        email: data.email || '',
         restaurantName: data.restaurantName || '',
         firstName: data.firstName || '',
         lastName: data.lastName || '',
@@ -72,6 +75,7 @@ export default function RestaurantProfile() {
 
   const handleCancel = () => {
     setProfileData({
+      email: originalData.email || '',
       restaurantName: originalData.restaurantName || '',
       firstName: originalData.firstName || '',
       lastName: originalData.lastName || '',
@@ -106,7 +110,6 @@ export default function RestaurantProfile() {
       };
 
       await restaurantAPI.updateProfile(RESTAURANT_ID, updateData);
-
       setOriginalData(updateData);
       setEditing(false);
       setToast({
@@ -135,6 +138,7 @@ export default function RestaurantProfile() {
 
   return (
     <>
+      <RestaurantNavbar />
       <br />
       <div className="space-y-6 mx-4 md:mx-8 lg:mx-12">
         <div className="flex items-center justify-between">
@@ -156,32 +160,15 @@ export default function RestaurantProfile() {
             <div className="text-center">
               <div className="w-24 h-24 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-4xl text-white font-bold">
-                  {profileData.restaurantName.charAt(0)}
+                  {profileData.firstName?.charAt(0) || ''}
                 </span>
               </div>
-              <h3 className="font-bold text-xl text-gray-900 mb-1">
-                {profileData.restaurantName}
-              </h3>
-              <p className="text-gray-600">
+              <h4 className="font-bold text-l text-gray-900 mb-1">
                 {profileData.firstName} {profileData.lastName}
+              </h4>
+              <p className="text-gray-600">
+                {profileData.email}
               </p>
-            </div>
-
-            <div className="mt-6 space-y-3">
-              <div className="flex items-center gap-3 text-gray-700">
-                <Phone className="w-5 h-5 text-orange-600" />
-                <span className="text-sm">{profileData.phone}</span>
-              </div>
-              <div className="flex items-center gap-3 text-gray-700">
-                <MapPin className="w-5 h-5 text-orange-600" />
-                <span className="text-sm">{profileData.city}, {profileData.state}</span>
-              </div>
-              <div className="flex items-center gap-3 text-gray-700">
-                <Clock className="w-5 h-5 text-orange-600" />
-                <span className="text-sm">
-                  {profileData.openingTime} - {profileData.closingTime}
-                </span>
-              </div>
             </div>
           </div>
 
@@ -208,6 +195,24 @@ export default function RestaurantProfile() {
                 </div>
 
                 <div>
+                  <label htmlFor="phone" className="block font-medium text-gray-700 mb-2">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={profileData.phone}
+                    onChange={handleChange}
+                    disabled={!editing}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent disabled:bg-gray-50 disabled:text-gray-600"
+                  />
+                </div>
+              </div>
+
+              {/* Last Name and Phone */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
                   <label htmlFor="firstName" className="block font-medium text-gray-700 mb-2">
                     First Name
                   </label>
@@ -221,10 +226,7 @@ export default function RestaurantProfile() {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent disabled:bg-gray-50 disabled:text-gray-600"
                   />
                 </div>
-              </div>
 
-              {/* Last Name and Phone */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="lastName" className="block font-medium text-gray-700 mb-2">
                     Last Name
@@ -240,20 +242,7 @@ export default function RestaurantProfile() {
                   />
                 </div>
 
-                <div>
-                  <label htmlFor="phone" className="block font-medium text-gray-700 mb-2">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={profileData.phone}
-                    onChange={handleChange}
-                    disabled={!editing}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent disabled:bg-gray-50 disabled:text-gray-600"
-                  />
-                </div>
+
               </div>
 
               {/* Address */}
@@ -373,7 +362,7 @@ export default function RestaurantProfile() {
                 <div className="flex gap-3 pt-4">
                   <button
                     onClick={handleCancel}
-                    className="flex items-center gap-2 flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-2 flex-1 px-4 py-2 border border-gray-700 text-gray-00 rounded-lg hover:bg-gray-100 transition-colors"
                     disabled={saving}
                   >
                     <X className="w-4 h-4" />
