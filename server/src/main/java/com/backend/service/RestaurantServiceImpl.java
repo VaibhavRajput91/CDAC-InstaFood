@@ -54,9 +54,9 @@ public class RestaurantServiceImpl implements RestaurantService {
 	}
 	
 	@Override
-	public RestaurantStaticsDTO restaurantStatics(Long id) {
-		RestaurantStaticsProjectionDTO stats=restaurantRepository.reviews(id);
-		return new RestaurantStaticsDTO(stats.getTotalOrders(), stats.getTotalRevenue(),stats.getAverageRating());
+	public RestaurantStatisticsDTO restaurantStatistics(Long restaurantId) {
+		RestaurantStatisticsProjectionDTO stats=restaurantRepository.reviews(restaurantId);
+		return new RestaurantStatisticsDTO(stats.getTotalOrders(), stats.getTotalRevenue(),stats.getAverageRating());
 	}
 	
 	@Override
