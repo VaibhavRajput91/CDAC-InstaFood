@@ -55,6 +55,18 @@ public class RestaurantController {
 		}
 	}
 	
+	@GetMapping("/apply/approve")
+	public ResponseEntity<?> approveByAdmin(@RequestParam Long restaurantId){
+		System.out.println("In Get of apply/approve");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(restaurantService.adminApproval(restaurantId));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
+	}
+	
 	
 	// menu page
 	

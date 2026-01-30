@@ -9,6 +9,7 @@ public interface RestaurantService {
 	String getRestaurantId(Long userId);
 	
 	RestaurantApiResponseDTO restaurantApply(RestaurantApplyDTO applyDTO);
+	String adminApproval(Long restaurantId);
 	RestaurantStatisticsDTO restaurantStatistics(Long restaurantId);
 	
 	List<RestaurantMenuDishesDTO> getMenuDishes(Long id);

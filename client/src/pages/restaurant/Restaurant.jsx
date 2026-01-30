@@ -11,6 +11,7 @@ import ManageMenu from './ManageMenu/ManageMenu';
 import Revenue from './Revenue/Revenue';
 import AddDish from './AddDish/AddDish';
 import EditDish from './EditDish/EditDish';
+import AdminApprove from './Apply/AdminApprove/AdminApprove';
 
 function Restaurant() {
   return (
@@ -22,6 +23,8 @@ function Restaurant() {
         />
         <Route path="/statistics" element={<RestaurantDashboard />} />
         <Route path="/apply" element={<Apply />} />
+        <Route path="/apply/approve" element={<AdminApprove />}
+        />
         <Route path="/order-details" element={<RestaurantOrderDetails />} />
         <Route path="/orders" element={<RestaurantOrders />} />
         <Route path="/profile" element={<RestaurantProfile />} />
