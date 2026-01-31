@@ -13,21 +13,17 @@ import org.springframework.transaction.annotation.Transactional;
 import com.backend.dto.*;
 import com.backend.entity.*;
 import com.backend.repository.*;
-import com.backend.repository.restaurant.RestaurantMenuDishRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class RestaurantServiceImpl implements RestaurantService {
-
-    private final RestaurantMenuDishRepository restaurantMenuDishRepository;
 	
 	private final RestaurantRepository restaurantRepository;
 	private final UserRepository userRepository;
 	private final OrderRepository orderRepository;
 	private final AddressRepository addressRepository;
-	private final DishRepository dishRepository;
 	private final MenuRepository menuRepository;
 	private final MenuDishRepository menuDishRepository; 
 	

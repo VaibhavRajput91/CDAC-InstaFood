@@ -11,11 +11,11 @@ export default function RestaurantNavbar() {
     };
 
     const handleLogout = () => {
-    // Clear session storage
-    sessionStorage.clear();
-    // Redirect to login page
-    navigate('/');
-  };
+        // Clear session storage
+        sessionStorage.clear();
+        // Redirect to login page
+        navigate('/');
+    };
 
     return (
         <>
@@ -34,7 +34,7 @@ export default function RestaurantNavbar() {
                         {/* Desktop Menu */}
                         <ul className="hidden lg:flex items-center space-x-1">
                             <li>
-                                <Link to="/restaurant" className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors">
+                                <Link to="/restaurant/statistics" className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors">
                                     <Home className="w-5 h-5" />
                                     <span>Dashboard</span>
                                 </Link>
@@ -51,12 +51,6 @@ export default function RestaurantNavbar() {
                                     <span>Menu</span>
                                 </Link>
                             </li>
-                            {/* <li>
-                                <Link to="/restaurant/revenue" className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors">
-                                    <BarChart3 className="w-5 h-5" />
-                                    <span>Revenue</span>
-                                </Link>
-                            </li> */}
                             <li>
                                 <Link to="/restaurant/profile" className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors">
                                     <User className="w-5 h-5" />
@@ -98,7 +92,7 @@ export default function RestaurantNavbar() {
                             <ul className="space-y-2">
                                 <li>
                                     <Link
-                                        to="/restaurant"
+                                        to="/restaurant/statistics"
                                         className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
                                         onClick={() => setIsOpen(false)}
                                     >
@@ -118,7 +112,7 @@ export default function RestaurantNavbar() {
                                 </li>
                                 <li>
                                     <Link
-                                        to="/restaurant/menu"
+                                        to="/restaurant/menu/dishes"
                                         className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
                                         onClick={() => setIsOpen(false)}
                                     >
@@ -126,16 +120,7 @@ export default function RestaurantNavbar() {
                                         <span>Menu</span>
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link
-                                        to="/restaurant/revenue"
-                                        className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
-                                        onClick={() => setIsOpen(false)}
-                                    >
-                                        <BarChart3 className="w-5 h-5" />
-                                        <span>Revenue</span>
-                                    </Link>
-                                </li>
+
                                 <li>
                                     <Link
                                         to="/restaurant/profile"
@@ -146,16 +131,7 @@ export default function RestaurantNavbar() {
                                         <span>Profile</span>
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link
-                                        to="/restaurant/settings"
-                                        className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
-                                        onClick={() => setIsOpen(false)}
-                                    >
-                                        <Settings className="w-5 h-5" />
-                                        <span>Settings</span>
-                                    </Link>
-                                </li>
+
                                 <li className="pt-2 border-t border-white border-opacity-20">
                                     <button
                                         onClick={() => {
