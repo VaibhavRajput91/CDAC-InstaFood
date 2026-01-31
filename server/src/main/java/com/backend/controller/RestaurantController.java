@@ -150,13 +150,19 @@ public class RestaurantController {
 	
 	// add dish page
 	
-	@GetMapping("/dish/menuId/dishId")
+	@GetMapping("/menu/dishes/edit")
 	public ResponseEntity<?> getDish(@RequestParam Long menuId,@RequestParam Long dishId){
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(restaurantService.getDishDetailsById(menuId,dishId));
+		System.out.println("In Get of menu/dishes/edit");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(restaurantService.getDishDetailsById(menuId,dishId));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
 	}
 	
-	@PatchMapping("/dish/menuId/dishId")
+	@PatchMapping("/menu/dishes/edit")
 	public ResponseEntity<?> updateDish(@RequestParam Long menuId,@RequestParam Long dishid,@RequestBody DishUpdateDTO updatedDish){
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(restaurantService.updateDishDetails(menuId,dishid, updatedDish));

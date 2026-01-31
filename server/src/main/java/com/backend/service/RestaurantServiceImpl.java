@@ -13,13 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 import com.backend.dto.*;
 import com.backend.entity.*;
 import com.backend.repository.*;
-
+import com.backend.repository.restaurant.RestaurantMenuDishRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class RestaurantServiceImpl implements RestaurantService {
+
+    private final RestaurantMenuDishRepository restaurantMenuDishRepository;
 	
 	private final RestaurantRepository restaurantRepository;
 	private final UserRepository userRepository;
@@ -27,6 +29,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 	private final AddressRepository addressRepository;
 	private final DishRepository dishRepository;
 	private final MenuRepository menuRepository;
+	private final MenuDishRepository menuDishRepository; 
 	
 	@Override
 	public String getRestaurantId(Long userId) {
@@ -208,54 +211,24 @@ public class RestaurantServiceImpl implements RestaurantService {
 		DishDetailsDTO dishDetails = new DishDetailsDTO();
 		Menu menu = menuRepository.findById(menuId)
 				.orElseThrow(() -> new RuntimeException("Menu not found"));
-			List<MenuDish> menudishes = menu.getMenuDishes();
-			for (MenuDish md : menudishes) {
-				if (md.getDish().getId().equals(dishId)) {
-					Dish dish = md.getDish();
-					dishDetails.setId(dish.getId());
-					dishDetails.setName(dish.getName());
-					dishDetails.setDescription(md.getDescription());
-					dishDetails.setPrice(md.getPrice());
-				}
+		List<MenuDish> menudishes = menu.getMenuDishes();
+		for (MenuDish md : menudishes) {
+			if (md.getDish().getId().equals(dishId)) {
+				Dish dish = md.getDish();
+				dishDetails.setId(dish.getId());
+				dishDetails.setName(dish.getName());
+				dishDetails.setDescription(md.getDescription());
+				dishDetails.setPrice(md.getPrice());
+				dishDetails.setAvailable(md.isAvailable());
 			}
-			return dishDetails;
-			
+		}
+		return dishDetails;	
 	}
 
 	@Override
-	public String updateDishDetails(Long menuId, Long dishId, DishUpdateDTO updatedDishDetails) {
-	    Menu menu = menuRepository.findById(menuId)
-	            .orElseThrow(() -> new RuntimeException("Menu not found"));
-
-	    List<MenuDish> menuDishes = menu.getMenuDishes();
-	    if (menuDishes == null || menuDishes.isEmpty()) {
-	        throw new RuntimeException("No dishes found in this menu");
-	    }
-
-	    MenuDish target = menuDishes.stream()
-	            .filter(md -> md.getDish() != null && dishId.equals(md.getDish().getId()))
-	            .findFirst()
-	            .orElseThrow(() -> new RuntimeException("Dish not found in menu"));
-
-	    // Update MenuDish fields (description, price)
-	    if (updatedDishDetails.getDescription() != null) {
-	        target.setDescription(updatedDishDetails.getDescription());
-	    }
-	    if (updatedDishDetails.getPrice() != null) {
-	        target.setPrice(updatedDishDetails.getPrice());
-	    }
-
-	    // Update Dish entity (name) if provided
-	    if (updatedDishDetails.getName() != null) {
-	        Dish dish = target.getDish();
-	        dish.setName(updatedDishDetails.getName());
-	        dishRepository.save(dish); // persist dish changes
-	    }
-
-	    // Persist Menu/MenuDish changes to ensure description/price are saved
-	    menuRepository.save(menu);
-
-	    return "Dish details updated successfully";
+	public String updateDishDetails(Long menuId, Long dishId, DishUpdateDTO dto) {
+		menuDishRepository.updateDishDetails(menuId, dishId, dto.getDescription(), dto.getPrice());
+		return "Dish details updated successfully";
 	}
 
 	@Override
