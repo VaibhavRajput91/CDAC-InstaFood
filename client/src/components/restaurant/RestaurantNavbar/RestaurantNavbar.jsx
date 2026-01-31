@@ -61,9 +61,6 @@ export default function RestaurantNavbar() {
 
                         {/* Desktop Actions */}
                         <div className="hidden lg:flex items-center gap-4">
-                            {/* <Link to="/restaurant/settings" className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors">
-                                <Settings className="w-5 h-5" />
-                            </Link> */}
                             <button
                                 onClick={handleLogout}
                                 className="flex items-center gap-2 px-4 py-2 bg-white text-orange-600 rounded-lg hover:bg-gray-100 transition-colors font-medium"
