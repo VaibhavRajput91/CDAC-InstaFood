@@ -50,11 +50,11 @@ export const restaurantAPI = {
 
   // Get dish details
   getDishDetails: (menuId, dishId) =>
-    api.get(`/restaurant/dish/menuId/dishId?menuId=${menuId}&dishId=${dishId}`),
+    api.get(`/restaurant/menu/dishes/edit?menuId=${menuId}&dishId=${dishId}`),
 
   // Update dish
   updateDish: (menuId, dishId, data) =>
-    api.patch(`/restaurant/dish/menuId/dishId?menuId=${menuId}&dishid=${dishId}`, data),
+    api.patch(`/restaurant/menu/dishes/edit?menuId=${menuId}&dishid=${dishId}`, data),
 
   // Get orders
   getOrders: (size = 10) =>
