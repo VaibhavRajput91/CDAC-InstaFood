@@ -69,16 +69,30 @@ export const restaurantAPI = {
     api.get(`/restaurant/orders?size=${size}`),
 
   // Get new placed orders for a restaurant
-  getNewOrders: (restaurantId) =>
-    api.get(`/restaurant/orders/new?restaurantId=${restaurantId}`),
+  getAllPlacedOrdersList: (restaurantId) =>
+    api.get(`/restaurant/orders/placed?restaurantId=${restaurantId}`),
 
-  // Get completed orders
-  getAllCompletedOrdersList: (restaurantId) =>
-    api.get(`/restaurant/orders/completed?restaurantId=${restaurantId}`),
+  getAllAcceptedOrdersList: (restaurantId) =>
+    api.get(`/restaurant/orders/accepted?restaurantId=${restaurantId}`),
 
+  getAllPreparingOrdersList: (restaurantId) =>
+    api.get(`/restaurant/orders/preparing?restaurantId=${restaurantId}`),
+
+  getAllAssignedOrdersList: (restaurantId) =>
+    api.get(`/restaurant/orders/assigned?restaurantId=${restaurantId}`),
+
+  getAllDeliveredOrdersList: (restaurantId) =>
+    api.get(`/restaurant/orders/delivered?restaurantId=${restaurantId}`),
+
+  acceptingOrder: (orderId) =>
+    api.put(`/restaurant/orders/placed?orderId=${orderId}`),
+  preparingOrder: (orderId) =>
+    api.put(`/restaurant/orders/preparing?orderId=${orderId}`),
   // Toggle restaurant availability
   toggleRestaurantAvailability: (restaurantId) =>
     api.put(`/restaurant/availability?restaurantId=${restaurantId}`),
+
+
 };
 
 // Response interceptor for error handling

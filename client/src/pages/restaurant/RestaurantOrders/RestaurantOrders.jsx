@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
-import { ShoppingBag, Clock, DollarSign, User, MapPin, RefreshCw } from 'lucide-react';
+import { ShoppingBag, Clock, User, MapPin, RefreshCw } from 'lucide-react';
 import Toast from '../../../components/restaurant/UI/Toast';
 import { restaurantAPI } from '../../../services/Restaurant/api';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 export default function RestaurantOrders() {
-  const [activeTab, setActiveTab] = useState('new');
+  const [activeTab, setActiveTab] = useState('Placed');
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchOrders();
@@ -17,30 +19,33 @@ export default function RestaurantOrders() {
     try {
       setLoading(true);
       let ordersData = [];
+      const restaurantId = sessionStorage.getItem('restaurantId');
+      console.log('Fetching orders for tab:', activeTab, 'restaurantId:', restaurantId);
 
-      if (activeTab === 'completed') {
-        // Fetch completed orders from backend
-        const restaurantId = sessionStorage.getItem('restaurantId');
-        if (restaurantId) {
-          const response = await restaurantAPI.getAllCompletedOrdersList(restaurantId);
+      if (restaurantId) {
+        const tabLower = activeTab.toLowerCase();
+        if (tabLower === 'placed') {
+          const response = await restaurantAPI.getAllPlacedOrdersList(restaurantId);
+          ordersData = response.data || [];
+        } else if (tabLower === 'accepted') {
+          const response = await restaurantAPI.getAllAcceptedOrdersList(restaurantId);
+          ordersData = response.data || [];
+        } else if (tabLower === 'preparing') {
+          const response = await restaurantAPI.getAllPreparingOrdersList(restaurantId);
+          ordersData = response.data || [];
+        } else if (tabLower === 'assigned') {
+          const response = await restaurantAPI.getAllAssignedOrdersList(restaurantId);
+          ordersData = response.data || [];
+        } else if (tabLower === 'delivered') {
+          const response = await restaurantAPI.getAllDeliveredOrdersList(restaurantId);
           ordersData = response.data || [];
         }
-      } else if (activeTab === 'new') {
-        // Fetch new placed orders from backend; if restaurantId missing, fall back to getOrders()
-        const restaurantId = sessionStorage.getItem('restaurantId');
-        if (restaurantId) {
-          const response = await restaurantAPI.getNewOrders(restaurantId);
-          ordersData = response.data || [];
-        } else {
-          console.warn('restaurantId not found in sessionStorage — falling back to getOrders() for New tab');
-          const response = await restaurantAPI.getOrders();
-          ordersData = response.data || [];
-        }
+
       } else {
-        // Fetch all orders for filtering (ongoing)
-        const response = await restaurantAPI.getOrders();
-        ordersData = response.data || [];
+        console.warn('restaurantId not found in sessionStorage');
       }
+
+      console.log('Orders fetched:', ordersData);
 
       // Map orders from backend DTO to frontend format
       const mappedOrders = ordersData.map(order => {
@@ -65,114 +70,15 @@ export default function RestaurantOrders() {
           orderDate: order.orderDate || order.createdOn,
           items: itemsArray,
           deliveryExecutiveName: order.deliveryExecutiveName,
+          lastUpdated: order.deliveryDateTime || order.lastUpdated || order.deliveryDate || order.deliveryTime,
         };
       });
 
-      // Filter by active tab (backend already returns correct status for new/completed)
-      const filteredOrders = mappedOrders.filter(order => {
-        if (activeTab === 'new') {
-          return ['PLACED', 'pending'].includes(order.status);
-        } else if (activeTab === 'ongoing') {
-          return ['ASSIGNED', 'PREPARING', 'preparing', 'ready'].includes(order.status);
-        } else if (activeTab === 'completed') {
-          return ['DELIVERED', 'delivered', 'CANCELLED', 'cancelled'].includes(order.status);
-        }
-        return true;
-      });
-
+      console.log('Mapped orders:', mappedOrders);
       setOrders(mappedOrders);
     } catch (error) {
-      // Mock data
-      const mockOrders = [
-        {
-          id: 'ORD-001',
-          customerName: 'John Doe',
-          customerPhone: '+1 (555) 123-4567',
-          status: 'pending',
-          items: [
-            { name: 'Margherita Pizza', quantity: 2, price: 12.99 },
-            { name: 'Caesar Salad', quantity: 1, price: 7.99 },
-          ],
-          total: 33.97,
-          orderDate: '2026-01-26T10:30:00',
-          deliveryAddress: '123 Main St, Apt 4B, New York, NY 10001',
-        },
-        {
-          id: 'ORD-002',
-          customerName: 'Jane Smith',
-          customerPhone: '+1 (555) 234-5678',
-          status: 'preparing',
-          items: [
-            { name: 'Chicken Burger', quantity: 1, price: 9.99 },
-            { name: 'Fish & Chips', quantity: 1, price: 14.99 },
-          ],
-          total: 24.98,
-          orderDate: '2026-01-26T11:15:00',
-          deliveryAddress: '456 Oak Ave, Brooklyn, NY 11201',
-        },
-        {
-          id: 'ORD-003',
-          customerName: 'Mike Johnson',
-          customerPhone: '+1 (555) 345-6789',
-          status: 'ready',
-          items: [
-            { name: 'Spaghetti Carbonara', quantity: 1, price: 13.99 },
-          ],
-          total: 13.99,
-          orderDate: '2026-01-26T11:45:00',
-          deliveryAddress: '789 Elm St, Queens, NY 11354',
-        },
-        {
-          id: 'ORD-004',
-          customerName: 'Sarah Williams',
-          customerPhone: '+1 (555) 456-7890',
-          status: 'delivered',
-          items: [
-            { name: 'Margherita Pizza', quantity: 1, price: 12.99 },
-            { name: 'Chocolate Brownie', quantity: 2, price: 6.99 },
-          ],
-          total: 26.97,
-          orderDate: '2026-01-26T09:00:00',
-          deliveryAddress: '321 Pine St, Manhattan, NY 10002',
-        },
-        {
-          id: 'ORD-005',
-          customerName: 'Tom Brown',
-          customerPhone: '+1 (555) 567-8901',
-          status: 'cancelled',
-          items: [
-            { name: 'Caesar Salad', quantity: 1, price: 7.99 },
-          ],
-          total: 7.99,
-          orderDate: '2026-01-26T08:30:00',
-          deliveryAddress: '654 Maple Dr, Bronx, NY 10451',
-        },
-      ];
-
-      const filteredMockOrders = mockOrders.filter(order => {
-        if (activeTab === 'new') {
-          return ['pending'].includes(order.status);
-        } else if (activeTab === 'ongoing') {
-          return ['preparing', 'ready'].includes(order.status);
-        } else if (activeTab === 'completed') {
-          return ['delivered', 'cancelled'].includes(order.status);
-        }
-        return true;
-      });
-
-      const mappedOrders = filteredMockOrders.map(order => ({
-        id: order.id,
-        customerName: order.customerName,
-        customerPhone: order.customerPhone,
-        address: order.deliveryAddress,
-        total: order.total,
-        itemsCount: order.items ? order.items.length : 0,
-        status: order.status,
-        orderDate: order.orderDate,
-        items: order.items,
-      }));
-
-      setOrders(mappedOrders);
+      console.error('Error fetching orders:', error);
+      setOrders([]);
     } finally {
       setLoading(false);
     }
@@ -181,71 +87,82 @@ export default function RestaurantOrders() {
   const getCardBorderColor = (status) => {
     switch (status) {
       case 'PLACED':
-      case 'pending':
+        return 'border-l-4 border-l-gray-400 bg-gray-50/20';
+      case 'ACCEPTED':
         return 'border-l-4 border-l-yellow-500 bg-yellow-50/30';
-      case 'ASSIGNED':
       case 'PREPARING':
-      case 'preparing':
         return 'border-l-4 border-l-blue-500 bg-blue-50/30';
-      case 'ready':
+      case 'ASSIGNED':
         return 'border-l-4 border-l-green-500 bg-green-50/30';
       case 'DELIVERED':
-      case 'delivered':
-        return 'border-l-4 border-l-green-600 bg-green-50/40';
-      case 'CANCELLED':
-      case 'cancelled':
-        return 'border-l-4 border-l-red-500 bg-red-50/30';
+        return 'border-l-4 border-l-indigo-500 bg-purple-50/30';
       default:
-        return 'border-l-4 border-l-gray-400 bg-gray-50/20';
+        return 'border-l-4 border-l-red-400 bg-gray-50/20';
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending':
       case 'PLACED':
+        return 'bg-gray-50 text-gray-700';
+      case 'ACCEPTED':
         return 'bg-yellow-50 text-yellow-700';
-      case 'preparing':
       case 'PREPARING':
         return 'bg-blue-50 text-blue-700';
-      case 'ready':
-        return 'bg-green-50 text-green-700';
-      case 'delivered':
+      case 'ASSIGNED':
+        return 'bg-indigo-50 text-indigo-700';
       case 'DELIVERED':
-        return 'bg-gray-50 text-gray-700';
-      case 'cancelled':
-      case 'CANCELLED':
-        return 'bg-red-50 text-red-700';
+        return 'bg-green-50 text-green-700';
       default:
-        return 'bg-gray-50 text-gray-700';
+        return 'bg-red-50 text-red-700';
     }
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
   };
 
   const formatFullDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
       year: 'numeric'
+    });
+  };
+
+  const formatDateTime = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
     });
   };
 
   const handleAcceptOrder = async (orderId) => {
     try {
       console.log('Accepting order:', orderId);
-      // TODO: Call API to accept order
-      // await restaurantAPI.acceptOrder(orderId);
       setToast({ message: 'Order accepted!', type: 'success' });
-      fetchOrders(); // Refresh list
+      await restaurantAPI.acceptingOrder(orderId);
+      setActiveTab('Accepted');
+      fetchOrders();
     } catch (error) {
       setToast({ message: 'Failed to accept order', type: 'error' });
       console.error('Error accepting order:', error);
+    }
+  };
+  const handleStartPreparing = async (orderId) => {
+    try {
+      console.log('Starting preparation for order:', orderId);
+      setToast({ message: 'Order preparation started!', type: 'success' });
+      await restaurantAPI.preparingOrder(orderId);
+      setActiveTab('Preparing');
+      fetchOrders();
+    } catch (error) {
+      setToast({ message: 'Failed to start preparation', type: 'error' });
+      console.error('Error starting preparation:', error);
     }
   };
 
@@ -254,7 +171,27 @@ export default function RestaurantOrders() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 p-4 sticky top-0 z-10">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl font-semibold">Orders</h1>
+          {/* <h1 className="text-xl font-semibold">Orders</h1> */}
+          <h2 className="font-bold text-2xl text-gray-900">Restaurant Orders</h2>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex items-center justify-between pb-2">
+          <div className="flex-1 flex gap-3 justify-center">
+            {['Placed', 'Accepted', 'Preparing', 'Assigned', 'Delivered'].map((status) => (
+              <button
+                key={status}
+                onClick={() => setActiveTab(status)}
+                className={`px-8 py-3 rounded-xl transition-all font-semibold text-base ${activeTab === status
+                  ? 'bg-orange-500 text-white shadow-lg shadow-orange-200'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+              >
+                {status.charAt(0).toUpperCase() + status.slice(1)}
+              </button>
+            ))}
+          </div>
+
           <button
             onClick={fetchOrders}
             disabled={loading}
@@ -263,22 +200,6 @@ export default function RestaurantOrders() {
           >
             <RefreshCw className={`w-5 h-5 text-gray-600 ${loading ? 'animate-spin' : ''}`} />
           </button>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex gap-3 justify-center pb-2">
-          {['new', 'ongoing', 'completed'].map((status) => (
-            <button
-              key={status}
-              onClick={() => setActiveTab(status)}
-              className={`px-8 py-3 rounded-xl transition-all font-semibold text-base ${activeTab === status
-                ? 'bg-orange-500 text-white shadow-lg shadow-orange-200'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-            >
-              {status.charAt(0).toUpperCase() + status.slice(1)}
-            </button>
-          ))}
         </div>
       </div>
 
@@ -336,8 +257,7 @@ export default function RestaurantOrders() {
                   {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                 </div>
                 <div className="flex items-center gap-1 text-xs text-gray-500">
-                  <Clock className="w-4 h-4" />
-                  {formatFullDate(order.orderDate)}
+                  <p className="text-sm text-gray-700 mt-1">Ordered on: {formatFullDate(order.orderDate)}</p>
                 </div>
               </div>
 
@@ -373,21 +293,39 @@ export default function RestaurantOrders() {
               )}
 
               {/* Delivery Executive Info for Completed Orders */}
-              {activeTab === 'completed' && order.deliveryExecutiveName && (
+              {activeTab === 'Assigned' && order.deliveryExecutiveName && (
                 <div className="mt-3 pt-3 border-t border-gray-100">
-                  <p className="text-xs text-gray-600 font-medium">Delivered by:</p>
-                  <p className="text-xs text-gray-500">{order.deliveryExecutiveName}</p>
+                  <p className="text-sm text-gray-600 font-medium">Delivery Executive:</p>
+                  <p className="text-sm text-blue-900 font-semibold">{order.deliveryExecutiveName}</p>
                 </div>
               )}
-
-              {/* Accept Button for New Orders */}
-              {activeTab === 'new' && (
+              {/* Delivery Executive Info for Completed Orders */}
+              {activeTab === 'Delivered' && order.deliveryExecutiveName && (
+                <div className="mt-3 pt-3 border-t border-gray-100">
+                  <p className="text-sm text-gray-600 font-medium">Delivery Executive:</p>
+                  <p className="text-sm text-blue-900 font-semibold">{order.deliveryExecutiveName}</p>
+                  {order.lastUpdated && (
+                    <p className="text-sm text-gray-500 mt-1">Delivered at: {formatDateTime(order.lastUpdated)}</p>
+                  )}
+                </div>
+              )}
+              {activeTab === 'Placed' && (
                 <div className="flex justify-end mt-4">
                   <button
                     onClick={() => handleAcceptOrder(order.id)}
                     className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-2 px-6 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-95"
                   >
                     ✓ Accept Order
+                  </button>
+                </div>
+              )}
+              {activeTab === 'Accepted' && (
+                <div className="flex justify-end mt-4">
+                  <button
+                    onClick={() => handleStartPreparing(order.id)}
+                    className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-2 px-6 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-95"
+                  >
+                    Start Preparing
                   </button>
                 </div>
               )}
