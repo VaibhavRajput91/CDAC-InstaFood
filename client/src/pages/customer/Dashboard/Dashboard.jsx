@@ -26,6 +26,7 @@ function Dashboard() {
         openingTime: r.openingTime,
         closingTime: r.closingTime,
         pincode: r.postalCode,
+        restaurantImage: r.restaurantImage,
       }))
 
       setRestaurants(mappedRestaurants)
@@ -97,19 +98,34 @@ function Dashboard() {
               <div
                 key={restaurant.id}
                 onClick={() => navigate(`/customer/menu/${restaurant.id}`)}
-                className="bg-white rounded-lg shadow-md border border-orange-100 p-4 cursor-pointer hover:shadow-lg transition-shadow duration-300"
+                className="bg-white rounded-lg shadow-md border border-orange-100 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
               >
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  {restaurant.name}
-                </h3>
+                <div className="h-40 w-full bg-orange-100 relative">
+                    {restaurant.restaurantImage ? (
+                        <img 
+                            src={restaurant.restaurantImage} 
+                            alt={restaurant.name} 
+                            className="w-full h-full object-cover"
+                        />
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center text-orange-200">
+                             <span className="text-4xl font-bold opacity-20">{restaurant.name.charAt(0)}</span>
+                        </div>
+                    )}
+                </div>
+                <div className="p-4">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    {restaurant.name}
+                    </h3>
 
-                <p className="text-sm text-gray-600">
-                  ⏰ {restaurant.openingTime} – {restaurant.closingTime}
-                </p>
+                    <p className="text-sm text-gray-600">
+                    ⏰ {restaurant.openingTime} – {restaurant.closingTime}
+                    </p>
 
-                <p className="text-xs text-gray-400 mt-2">
-                  Pincode: {restaurant.pincode}
-                </p>
+                    <p className="text-xs text-gray-400 mt-2">
+                    Pincode: {restaurant.pincode}
+                    </p>
+                </div>
               </div>
             ))}
           </div>

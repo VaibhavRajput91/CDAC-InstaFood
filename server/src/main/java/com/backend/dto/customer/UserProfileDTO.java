@@ -26,6 +26,8 @@ public class UserProfileDTO {
 	private String lineOne;
 	private String lineTwo;
 	private String state; 
+	private String profilePicture;
 	
+
 
 }

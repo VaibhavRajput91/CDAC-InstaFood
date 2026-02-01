@@ -56,12 +56,12 @@ public class AdminController {
 	{
 	   System.out.println("In Order Status");
 	   try {
-		   return ResponseEntity.ok("Displaying Order Status");
+		   return ResponseEntity.ok(adminService.getOrderStatusStats());
 	   }
 	   catch(RuntimeException e)
 	   {
 		   return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				   .body("Error");
+				   .body(e.getMessage());
 	   }
 		
 	}
@@ -72,13 +72,13 @@ public class AdminController {
 		System.out.println("In GET dashboard/orders-per-day");
 		try
 		{
-			return ResponseEntity.ok("Displaying Orders Per Day");
+			return ResponseEntity.ok(adminService.getOrdersPerDayStats());
 		
 		}
 		catch(RuntimeException e)
 		{
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("Error");
+					.body(e.getMessage());
 		}
 		
 	
@@ -89,12 +89,12 @@ public class AdminController {
 	{
 		System.out.println("In GET dashboard/top-items");
 		try {
-			return ResponseEntity.ok("Displaying Top selling items");
+			return ResponseEntity.ok(adminService.getTopSellingItemsStats());
 		}
 		catch(RuntimeException e)
 		{
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("Error");
+					.body(e.getMessage());
 		}
 	}
 	
@@ -249,12 +249,12 @@ public class AdminController {
   {
 	  System.out.println("deliveryPartner Data");
 	  try {
-		    return ResponseEntity.ok("deliveryPartner Data");
+		    return ResponseEntity.ok(adminService.getDeliveryStatsData());
 	  }
 	  catch(RuntimeException e)
 	  {
 		  return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				  .body("Error");
+				  .body(e.getMessage());
 	  }
   }
 }

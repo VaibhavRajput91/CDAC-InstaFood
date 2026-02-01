@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { config } from '../config';
 
-export async function editProfile(userId, firstName, lastName, phone, city, postalCode, lineOne, lineTwo, state) {
+export async function editProfile(userId, firstName, lastName, phone, city, postalCode, lineOne, lineTwo, state, profilePicture) {
   try {
     const url = `${config.server}/user/updateUser`
     const body = {
@@ -12,7 +12,8 @@ export async function editProfile(userId, firstName, lastName, phone, city, post
       postalCode,
       lineOne,
       lineTwo,
-      state
+      state,
+      profilePicture
     }
 
     const response = await axios.put(url, body, {

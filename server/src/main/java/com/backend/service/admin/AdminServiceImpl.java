@@ -15,6 +15,7 @@ import com.backend.dto.TotalOrdersDetailsDTO;
 import com.backend.dto.admin.*;
 import com.backend.entity.AvailabilityStatus;
 import com.backend.entity.DeliveryPartner;
+import com.backend.entity.OrderStatus;
 import com.backend.entity.Restaurant;
 import com.backend.entity.User;
 import com.backend.entity.UserRole;
@@ -22,6 +23,8 @@ import com.backend.repository.CategoryRepository;
 import com.backend.repository.DishRepository;
 import com.backend.repository.OrderRepository;
 import com.backend.repository.admin.AdminCustomerStatsRepository;
+import com.backend.repository.admin.AdminDashboardOrderRepository;
+import com.backend.repository.admin.AdminDeliveryStatsRepository;
 import com.backend.repository.admin.AdminProfileRepository;
 import com.backend.repository.admin.AdminRepositoryForRestaurant;
 import com.backend.repository.admin.DeliveryPartnerApprovalRepository;
@@ -44,6 +47,8 @@ public class AdminServiceImpl implements AdminService{
 	private final OrderRepository orderRepository;
 	private final DishRepository dishRepository;
 	private final CategoryRepository categoryRepository;
+	private final AdminDeliveryStatsRepository adminDeliveryRepository;
+	private final AdminDashboardOrderRepository adminDashboardOrderRepository;
 
 	
 	private final ModelMapper modelMapper;
@@ -288,6 +293,45 @@ public class AdminServiceImpl implements AdminService{
 		totalOrdersDetailsDTO.setTotalDishesOffered(dishRepository.getTotalDishesOfAllRestaurants());
 		totalOrdersDetailsDTO.setTotalCategoriesOffered(categoryRepository.getTotalCategoriesOfDishes());
 		return totalOrdersDetailsDTO;
+	}
+
+	@Override
+	public AdminDeliveryStatsDTO getDeliveryStatsData() {
+AdminDeliveryStatsDTO dto = new AdminDeliveryStatsDTO();
+		
+		dto.setTotalDeliveries(adminDeliveryRepository.countByOrderStatus(OrderStatus.DELIVERED));
+		dto.setWeeklyDeliveries(adminDeliveryRepository.countByOrderStatusAndCreatedOnAfter(
+				OrderStatus.DELIVERED, LocalDate.now().minusDays(7)));
+		
+		List<Admin_DeliveryRankingDTO> ranking = adminDeliveryRepository.getDeliveryPartnerRanking();
+		
+		// Calculate rank in Java
+		for (int i = 0; i < ranking.size(); i++) {
+			ranking.get(i).setRank((long) (i + 1));
+		}
+		
+		dto.setDeliveryPartnerRanking(ranking);
+		return dto;
+	}
+
+	@Override
+	public List<DashboardOrderStatusDTO> getOrderStatusStats() {
+		return adminDashboardOrderRepository.getOrderStatusCounts().stream()
+				.map(obj -> new DashboardOrderStatusDTO(obj[0].toString(), (Long) obj[1]))
+				.toList();
+	}
+
+	@Override
+	public List<DashboardOrdersPerDayDTO> getOrdersPerDayStats() {
+		return adminDashboardOrderRepository.getOrdersPerDay();
+
+	}
+
+	@Override
+	public List<DashboardTopItemDTO> getTopSellingItemsStats() {
+		return adminDashboardOrderRepository.getTopSellingItems().stream()
+				.map(obj -> new DashboardTopItemDTO(obj[0].toString(), (Long) obj[1]))
+				.toList();
 	}
 
 

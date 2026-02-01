@@ -6,7 +6,8 @@ import LoadingSkeleton from '../../../components/restaurant/UI/LoadingSkeleton';
 import EmptyState from '../../../components/restaurant/UI/EmptyState';
 import ConfirmModal from '../../../components/restaurant/UI/ConfirmModal';
 import Toast from '../../../components/restaurant/UI/Toast';
-import { restaurantAPI, MENU_ID, RESTAURANT_ID } from '../../../services/Restaurant/api';
+import { MENU_ID, restaurantAPI } from '../../../services/Restaurant/api';
+import RestaurantNavbar from '../../../components/restaurant/RestaurantNavbar/RestaurantNavbar';
 
 
 export default function MenuDishes() {
@@ -38,7 +39,21 @@ export default function MenuDishes() {
   const fetchDishes = async () => {
     try {
       setLoading(true);
+      const RESTAURANT_ID = sessionStorage.getItem('restaurantId');
       const response = await restaurantAPI.getDishes(RESTAURANT_ID);
+
+      // Try to fetch and store menuId (don't fail if this errors)
+      try {
+        const menuResponse = await restaurantAPI.getMenuId(RESTAURANT_ID);
+        const menuId = parseInt(menuResponse.data);
+        console.log('Fetched menuId:', menuId);
+        if (menuId && !isNaN(menuId)) {
+          sessionStorage.setItem('menuId', menuId);
+        }
+      } catch (menuErr) {
+        console.warn('Failed to fetch menuId:', menuErr);
+      }
+
       console.log('API Response:', response);
       console.log('Response Data:', response.data);
 
@@ -56,13 +71,12 @@ export default function MenuDishes() {
     } catch (error) {
       console.error('Fetch error:', error);
       setToast({
-        message: 'Failed to load dishes. Using mock data.',
+        message: 'Failed to load dishes. Please try again.',
         type: 'error',
       });
-      // Mock data on error
-      const mockDishes = [];
-      setDishes(mockDishes);
-      setFilteredDishes(mockDishes);
+      // Empty array on error (no mock data)
+      setDishes([]);
+      setFilteredDishes([]);
     } finally {
       setLoading(false);
     }
@@ -70,7 +84,8 @@ export default function MenuDishes() {
 
   const handleToggleAvailability = async (dishId, currentStatus) => {
     try {
-      const response = await restaurantAPI.toggleDish(dishId);
+      const MENU_ID = sessionStorage.getItem('menuId');
+      const response = await restaurantAPI.toggleDish(MENU_ID, dishId);
       console.log('Toggle response:', response);
 
       if (response.status === 200) {
@@ -109,6 +124,7 @@ export default function MenuDishes() {
 
     try {
       setDeleteLoading(true);
+      const MENU_ID = sessionStorage.getItem('menuId');
       await restaurantAPI.deleteDish(MENU_ID, deleteModal.dish.dishId);
 
       // Remove from list
@@ -149,12 +165,11 @@ export default function MenuDishes() {
 
   return (
     <>
-
       <br />
       <div className="space-y-6 pl-4 sm:pl-6 lg:pl-8">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mr-4">
           <h2 className="font-bold text-2xl text-gray-900">Menu Management</h2>
-          <button className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
+          <button onClick={() => navigate('/restaurant/add-dish')} className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
             <Plus className="w-4 h-4" />
             Add New Dish
           </button>
@@ -169,13 +184,6 @@ export default function MenuDishes() {
               searchTerm
                 ? 'No dishes match your search. Try different keywords.'
                 : 'Start by adding your first dish to the menu.'
-            }
-            action={
-              !searchTerm && (
-                <button className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
-                  Add First Dish
-                </button>
-              )
             }
           />
         ) : (

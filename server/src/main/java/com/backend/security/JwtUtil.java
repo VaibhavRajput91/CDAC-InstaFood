@@ -122,7 +122,7 @@ public class JwtUtil {
 	}
 
 	
-
+     
 	public Authentication populateAuthenticationTokenFromJWT(String jwt) {
 		// validate JWT n retrieve JWT body (claims)
 		Claims payloadClaims = validateJwtToken(jwt);

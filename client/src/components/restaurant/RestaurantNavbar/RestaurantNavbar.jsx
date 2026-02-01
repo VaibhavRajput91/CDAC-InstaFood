@@ -1,21 +1,55 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, LogOut, Home, ShoppingBag, UtensilsCrossed, BarChart3, User, Settings } from 'lucide-react';
+import { Menu, X, LogOut, Home, ShoppingBag, UtensilsCrossed, User, Power } from 'lucide-react';
+import { restaurantAPI } from '../../../services/Restaurant/api';
+import Toast from '../UI/Toast';
 
 export default function RestaurantNavbar() {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
+    const [isAvailable, setIsAvailable] = useState(true);
+    const [toggleLoading, setToggleLoading] = useState(false);
+    const [toast, setToast] = useState(null);
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
 
+    const handleToggleAvailability = async () => {
+        try {
+            setToggleLoading(true);
+            const restaurantId = sessionStorage.getItem('restaurantId');
+            if (!restaurantId) {
+                setToast({
+                    message: 'Restaurant ID not found',
+                    type: 'error',
+                });
+                return;
+            }
+
+            const response = await restaurantAPI.toggleRestaurantAvailability(restaurantId);
+            setIsAvailable((prev) => !prev);
+            setToast({
+                message: response.data?.data || 'Availability updated successfully',
+                type: 'success',
+            });
+        } catch (error) {
+            console.error('Toggle availability error:', error);
+            setToast({
+                message: 'Failed to update availability',
+                type: 'error',
+            });
+        } finally {
+            setToggleLoading(false);
+        }
+    };
+
     const handleLogout = () => {
-    // Clear session storage
-    sessionStorage.clear();
-    // Redirect to login page
-    navigate('/');
-  };
+        // Clear session storage
+        sessionStorage.clear();
+        // Redirect to login page
+        navigate('/');
+    };
 
     return (
         <>
@@ -51,12 +85,7 @@ export default function RestaurantNavbar() {
                                     <span>Menu</span>
                                 </Link>
                             </li>
-                            {/* <li>
-                                <Link to="/restaurant/revenue" className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors">
-                                    <BarChart3 className="w-5 h-5" />
-                                    <span>Revenue</span>
-                                </Link>
-                            </li> */}
+
                             <li>
                                 <Link to="/restaurant/profile" className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors">
                                     <User className="w-5 h-5" />
@@ -67,9 +96,19 @@ export default function RestaurantNavbar() {
 
                         {/* Desktop Actions */}
                         <div className="hidden lg:flex items-center gap-4">
-                            {/* <Link to="/restaurant/settings" className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors">
-                                <Settings className="w-5 h-5" />
-                            </Link> */}
+                            {/* Toggle Availability */}
+                            <button
+                                onClick={handleToggleAvailability}
+                                disabled={toggleLoading}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors font-medium ${isAvailable
+                                    ? 'bg-green-500 text-white hover:bg-green-600'
+                                    : 'bg-gray-500 text-white hover:bg-gray-600'
+                                    } disabled:opacity-50`}
+                                title={isAvailable ? 'Restaurant is open' : 'Restaurant is closed'}
+                            >
+                                <Power className="w-5 h-5" />
+                                <span className="hidden sm:inline">{isAvailable ? 'Open' : 'Closed'}</span>
+                            </button>
                             <button
                                 onClick={handleLogout}
                                 className="flex items-center gap-2 px-4 py-2 bg-white text-orange-600 rounded-lg hover:bg-gray-100 transition-colors font-medium"
@@ -118,7 +157,7 @@ export default function RestaurantNavbar() {
                                 </li>
                                 <li>
                                     <Link
-                                        to="/restaurant/menu"
+                                        to="/restaurant/menu/dishes"
                                         className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
                                         onClick={() => setIsOpen(false)}
                                     >
@@ -126,16 +165,7 @@ export default function RestaurantNavbar() {
                                         <span>Menu</span>
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link
-                                        to="/restaurant/revenue"
-                                        className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
-                                        onClick={() => setIsOpen(false)}
-                                    >
-                                        <BarChart3 className="w-5 h-5" />
-                                        <span>Revenue</span>
-                                    </Link>
-                                </li>
+
                                 <li>
                                     <Link
                                         to="/restaurant/profile"
@@ -146,16 +176,23 @@ export default function RestaurantNavbar() {
                                         <span>Profile</span>
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link
-                                        to="/restaurant/settings"
-                                        className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
-                                        onClick={() => setIsOpen(false)}
+
+                                <li className="pt-2 border-t border-white border-opacity-20">
+                                    <button
+                                        onClick={() => {
+                                            handleToggleAvailability();
+                                        }}
+                                        disabled={toggleLoading}
+                                        className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-colors font-medium ${isAvailable
+                                                ? 'bg-green-500 text-white hover:bg-green-600'
+                                                : 'bg-gray-500 text-white hover:bg-gray-600'
+                                            } disabled:opacity-50`}
                                     >
-                                        <Settings className="w-5 h-5" />
-                                        <span>Settings</span>
-                                    </Link>
+                                        <Power className="w-5 h-5" />
+                                        <span>{isAvailable ? 'Open' : 'Closed'}</span>
+                                    </button>
                                 </li>
+
                                 <li className="pt-2 border-t border-white border-opacity-20">
                                     <button
                                         onClick={() => {
@@ -173,6 +210,13 @@ export default function RestaurantNavbar() {
                     )}
                 </div>
             </nav>
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast(null)}
+                />
+            )}
         </>
     );
 }

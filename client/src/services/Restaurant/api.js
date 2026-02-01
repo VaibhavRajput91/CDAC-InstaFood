@@ -18,41 +18,59 @@ export const restaurantAPI = {
   // Apply for restaurant
   apply: (data) => api.post('/restaurant/apply', data),
 
+  getAdminApproveStatus: (restaurantId) =>
+    api.get(`/restaurant/apply/approve?restaurantId=${restaurantId}`),
+
   // Get restaurant profile
   getProfile: (restaurantId) =>
     api.get(`/restaurant/profile/restaurantId?restaurantId=${restaurantId}`),
 
   // Update restaurant profile
   updateProfile: (restaurantId, data) =>
-    api.patch(`/restaurant/profile/${restaurantId}`, data),
+    api.patch(`/restaurant/profile/restaurantId/${restaurantId}`, data),
 
   // Get restaurant statistics
   getStatistics: (restaurantId) =>
-    api.get(`/restaurant/statistics?id=${restaurantId}`),
+    api.get(`/restaurant/statistics?restaurantId=${restaurantId}`),
   // Get dishes
   getDishes: (restaurantId) =>
-    api.get(`/restaurant/menu/dishes?id=${restaurantId}`),
+    api.get(`/restaurant/menu/dishes?restaurantId=${restaurantId}`),
+
+  getMenuId: (restaurantId) =>
+    api.get(`/restaurant/menu?restaurantId=${restaurantId}`),
 
   // Toggle dish availability
-  toggleDish: (dishId) =>
+  toggleDish: (menuId, dishId) =>
     // Backend toggles availability via PUT /restaurant/menu/dishes?dishId={dishId}
-    api.put(`/restaurant/menu/dishes?dishId=${dishId}`),
+    api.put(`/restaurant/menu/dishes?menuId=${menuId}&dishId=${dishId}`),
 
   // Delete dish
   deleteDish: (menuId, dishId) =>
-    api.delete(`/restaurant/menu?menuId=${menuId}&dishId=${dishId}`),
+    api.delete(`/restaurant/menu/dishes?menuId=${menuId}&dishId=${dishId}`),
 
   // Get dish details
   getDishDetails: (menuId, dishId) =>
-    api.get(`/restaurant/dish/menuId/dishId?menuId=${menuId}&dishId=${dishId}`),
+    api.get(`/restaurant/menu/dishes/edit?menuId=${menuId}&dishId=${dishId}`),
 
   // Update dish
   updateDish: (menuId, dishId, data) =>
-    api.patch(`/restaurant/dish/menuId/dishId?menuId=${menuId}&dishid=${dishId}`, data),
+    api.patch(`/restaurant/menu/dishes/edit?menuId=${menuId}&dishid=${dishId}`, data),
+
+  // Add new dish
+  addDish: (menuId, data) =>
+    api.post(`/restaurant/menu/dishes/add?menuId=${menuId}`, data),
+
+  // Get categories (for dishes)
+  getCategories: () =>
+    api.get('/restaurant/menu/dishes/add/categories'),
 
   // Get orders
   getOrders: (size = 10) =>
     api.get(`/restaurant/orders?size=${size}`),
+
+  // Toggle restaurant availability
+  toggleRestaurantAvailability: (restaurantId) =>
+    api.put(`/restaurant/availability?restaurantId=${restaurantId}`),
 };
 
 // Response interceptor for error handling

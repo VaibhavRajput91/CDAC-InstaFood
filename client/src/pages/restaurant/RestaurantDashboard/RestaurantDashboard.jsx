@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { IndianRupee, ShoppingBag, TrendingUp } from 'lucide-react';
-import StatCard from '../../../components/restaurant/UI/StatCard';
 import LoadingSkeleton from '../../../components/restaurant/UI/LoadingSkeleton';
 import Toast from '../../../components/restaurant/UI/Toast';
-import { restaurantAPI, RESTAURANT_ID } from '../../../services/Restaurant/api';
+import { restaurantAPI } from '../../../services/Restaurant/api';
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -17,18 +16,16 @@ export default function Dashboard() {
   const fetchStatistics = async () => {
     try {
       setLoading(true);
+      const RESTAURANT_ID = sessionStorage.getItem('restaurantId');
+      if (!RESTAURANT_ID) {
+        throw new Error("Restaurant ID missing");
+      }
       const response = await restaurantAPI.getStatistics(RESTAURANT_ID);
       setStats(response.data);
     } catch (error) {
       setToast({
         message: 'Failed to load statistics. Using mock data.',
         type: 'error',
-      });
-      // Use mock data on error
-      setStats({
-        totalOrders: 0,
-        totalRevenue: 0,
-        averageRating: 0,
       });
     } finally {
       setLoading(false);
@@ -38,7 +35,6 @@ export default function Dashboard() {
   if (loading) {
     return (
       <>
-        {/* <RestaurantNavbar /> */}
         <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
           <h2 className="font-bold text-2xl text-gray-900">Dashboard Overview</h2>
           <LoadingSkeleton type="card" count={4} />
@@ -50,7 +46,6 @@ export default function Dashboard() {
 
   return (
     <>
-      {/* <RestaurantNavbar /> */}
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
         <div className="flex items-center justify-between">
           <div>
@@ -76,7 +71,6 @@ export default function Dashboard() {
             </div>
             <div className="space-y-1">
               <p className="text-3xl font-bold text-gray-900">{stats?.totalOrders || 0}</p>
-              {/* <p className="text-gray-500 text-sm">Orders Received</p> */}
               <p className="text-green-600 font-medium text-sm">Orders Received</p>
             </div>
           </div>
@@ -102,7 +96,7 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="space-y-1">
-              <p className="text-3xl font-bold text-gray-900">{stats?.averageRating ? stats.averageRating.toFixed(1) : 0}/5</p>
+              <p className="text-3xl font-bold text-gray-900">{stats?.averageRating ? stats.averageRating.toFixed(1) : '1.0'}/5</p>
               {/* <p className="text-gray-500 text-sm">customer satisfaction</p> */}
               <p className="text-green-600 font-medium text-sm">Customer Satisfaction</p>
             </div>

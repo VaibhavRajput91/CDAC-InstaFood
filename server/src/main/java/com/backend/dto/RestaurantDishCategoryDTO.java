@@ -1,17 +1,15 @@
 package com.backend.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
-public class DishDetailsDTO {
-	
+public class RestaurantDishCategoryDTO {
 	private Long id;
-	private String name;
-	private String description;
-	private Double price;
-	private boolean isAvailable;
+    private String name;
 }

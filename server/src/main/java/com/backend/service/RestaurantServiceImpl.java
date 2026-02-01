@@ -6,29 +6,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.backend.dto.*;
 import com.backend.entity.*;
+import com.backend.entity.Category;
 import com.backend.repository.*;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class RestaurantServiceImpl implements RestaurantService {
-	
+
 	private final RestaurantRepository restaurantRepository;
 	private final UserRepository userRepository;
 	private final OrderRepository orderRepository;
 	private final AddressRepository addressRepository;
 	private final DishRepository dishRepository;
 	private final MenuRepository menuRepository;
+	private final MenuDishRepository menuDishRepository; 
+	private final CategoryRepository categoryRepository; 
 	
-	
+	@Override
+	public String getRestaurantId(Long userId) {
+		Long id=restaurantRepository.findRestaurantIdByUserId(userId);
+		return id.toString();
+	}
 
 	@Override
 	public RestaurantApiResponseDTO restaurantApply(RestaurantApplyDTO applyDTO) {
@@ -43,6 +50,18 @@ public class RestaurantServiceImpl implements RestaurantService {
 		eligibleRestaurant.setOpeningTime(applyDTO.getOpeningTime());
 		eligibleRestaurant.setClosingTime(applyDTO.getClosingTime());
 		eligibleRestaurant.setStatus(applyDTO.getStatus());
+
+		if (applyDTO.getRestaurantImage() != null && !applyDTO.getRestaurantImage().isEmpty()) {
+			String base64Image = applyDTO.getRestaurantImage();
+			if (base64Image.contains(",")) {
+				base64Image = base64Image.split(",")[1];
+			}
+			try {
+				eligibleRestaurant.setRestaurantImage(java.util.Base64.getDecoder().decode(base64Image));
+			} catch (IllegalArgumentException e) {
+				throw new RuntimeException("Invalid restaurant image format");
+			}
+		}
 		
 		Restaurant saved=restaurantRepository.save(eligibleRestaurant);
 		
@@ -50,26 +69,33 @@ public class RestaurantServiceImpl implements RestaurantService {
 	}
 	
 	@Override
-	public RestaurantStaticsDTO restaurantStatics(Long id) {
-		RestaurantStaticsProjectionDTO stats=restaurantRepository.reviews(id);
-		return new RestaurantStaticsDTO(stats.getTotalOrders(), stats.getTotalRevenue(),stats.getAverageRating());
+	public String adminApproval(Long restaurantId) {
+		Restaurant restaurant=restaurantRepository.findById(restaurantId)
+				.orElseThrow(()-> new RuntimeException("Restaurant not found"));
+		return restaurant.getStatus().toString();
+	}
+	
+	
+	@Override
+	public RestaurantStatisticsDTO restaurantStatistics(Long restaurantId) {
+		RestaurantStatisticsProjectionDTO stats=restaurantRepository.reviews(restaurantId);
+		return new RestaurantStatisticsDTO(stats.getTotalOrders(), stats.getTotalRevenue(),stats.getAverageRating());
 	}
 	
 	@Override
-	public List<RestaurantMenuDishesDTO> getMenuDishes(Long id) {
-		return restaurantRepository.findMenuDishesByRestaurantId(id);
+	public List<RestaurantMenuDishesDTO> getMenuDishes(Long restaurantId) {
+		return restaurantRepository.findMenuDishesByRestaurantId(restaurantId);
 	}
 	@Override
 	public List<RestaurantMenuDishesDTO> getAvailableMenuDishes(Long id) {
-		// TODO Auto-generated method stub
 		return restaurantRepository.findAvailableMenuDishesByRestaurantId(id);
 		
 	}
 	
 	
 	@Override
-	public String DishAvailability(long dishId) {
-		int rowsAffected=restaurantRepository.changeAvailability(dishId);
+	public String DishAvailability(long menuId,long dishId) {
+		int rowsAffected=restaurantRepository.changeAvailability(menuId,dishId);
 		return "Rows Affected : "+rowsAffected;
 	}
 	
@@ -107,34 +133,15 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 	}
 
-	@Override
-	public String updateRestaurantDetails(Long restaurantId, RestaurantUpdateDTO updatedRestaurantDetails) {
-		Restaurant restaurant = restaurantRepository.findById(restaurantId)
-				.orElseThrow(() -> new RuntimeException("Restaurant not found"));
-		restaurant.setRestaurantName(updatedRestaurantDetails.getName());
-		restaurant.setOpeningTime(updatedRestaurantDetails.getOpeningTime());
-		restaurant.setClosingTime(updatedRestaurantDetails.getClosingTime());
-		User user = restaurant.getUser();
-		user.setPhone(updatedRestaurantDetails.getPhone());
-		Address address = user.getAddress();
-		address.setLineOne(updatedRestaurantDetails.getLineOne());
-		address.setLineTwo(updatedRestaurantDetails.getLineTwo());
-		address.setCity(updatedRestaurantDetails.getCity());
-		address.setState(updatedRestaurantDetails.getState());
-		address.setPostalCode(updatedRestaurantDetails.getPostalCode());
-		addressRepository.save(address);
-		userRepository.save(user);
-		restaurantRepository.save(restaurant);
-		
-		
-		return "Restaurant details updated successfully";
-	}
+	
 
 	@Override
 	public RestaurantDetailsDTO getRestaurantDetailsById(Long restaurantId) {
 		Restaurant restaurant = restaurantRepository.findById(restaurantId)
 				.orElseThrow(() -> new RuntimeException("Restaurant not found"));
+		
 		RestaurantDetailsDTO restaurantDetails = new RestaurantDetailsDTO();
+		restaurantDetails.setEmail(restaurant.getUser().getEmail());
 		restaurantDetails.setRestaurantName(restaurant.getRestaurantName());
 		restaurantDetails.setOpeningTime(restaurant.getOpeningTime());
 		restaurantDetails.setClosingTime(restaurant.getClosingTime());
@@ -149,63 +156,79 @@ public class RestaurantServiceImpl implements RestaurantService {
 			restaurantDetails.setState(address.getState());
 			restaurantDetails.setPostalCode(address.getPostalCode());		
 		}
+
+		if (restaurant.getRestaurantImage() != null) {
+			String base64Image = java.util.Base64.getEncoder().encodeToString(restaurant.getRestaurantImage());
+			restaurantDetails.setRestaurantImage("data:image/jpeg;base64," + base64Image);
+		}
 		
 		return restaurantDetails;
 	}
+	
+	@Override
+	public String updateRestaurantDetails(Long restaurantId, RestaurantUpdateDTO updatedRestaurantDetails) {
+		Restaurant restaurant = restaurantRepository.findById(restaurantId)
+				.orElseThrow(() -> new RuntimeException("Restaurant not found"));
+		restaurant.setRestaurantName(updatedRestaurantDetails.getRestaurantName());
+		
+		User user = restaurant.getUser();
+		user.setFirstName(updatedRestaurantDetails.getFirstName());
+		user.setLastName(updatedRestaurantDetails.getLastName());
+		user.setPhone(updatedRestaurantDetails.getPhone());
+		
+		Address address = user.getAddress();
+		address.setLineOne(updatedRestaurantDetails.getLineOne());
+		address.setLineTwo(updatedRestaurantDetails.getLineTwo());
+		address.setCity(updatedRestaurantDetails.getCity());
+		address.setState(updatedRestaurantDetails.getState());
+		address.setPostalCode(updatedRestaurantDetails.getPostalCode());
+		
+		restaurant.setOpeningTime(updatedRestaurantDetails.getOpeningTime());
+		restaurant.setClosingTime(updatedRestaurantDetails.getClosingTime());
 
+		if (updatedRestaurantDetails.getRestaurantImage() != null && !updatedRestaurantDetails.getRestaurantImage().isEmpty()) {
+			String base64Image = updatedRestaurantDetails.getRestaurantImage();
+			if (base64Image.contains(",")) {
+				base64Image = base64Image.split(",")[1];
+			}
+			try {
+				restaurant.setRestaurantImage(java.util.Base64.getDecoder().decode(base64Image));
+			} catch (IllegalArgumentException e) {
+				throw new RuntimeException("Invalid restaurant image format");
+			}
+		}
+		
+		addressRepository.save(address);
+		userRepository.save(user);
+		restaurantRepository.save(restaurant);
+		
+		
+		return "Restaurant details updated successfully";
+	}
+	
 	@Override
 	public DishDetailsDTO getDishDetailsById(Long menuId,Long dishId) {
 		DishDetailsDTO dishDetails = new DishDetailsDTO();
 		Menu menu = menuRepository.findById(menuId)
 				.orElseThrow(() -> new RuntimeException("Menu not found"));
-			List<MenuDish> menudishes = menu.getMenuDishes();
-			for (MenuDish md : menudishes) {
-				if (md.getDish().getId().equals(dishId)) {
-					Dish dish = md.getDish();
-					dishDetails.setId(dish.getId());
-					dishDetails.setName(dish.getName());
-					dishDetails.setDescription(md.getDescription());
-					dishDetails.setPrice(md.getPrice());
-				}
+		List<MenuDish> menudishes = menu.getMenuDishes();
+		for (MenuDish md : menudishes) {
+			if (md.getDish().getId().equals(dishId)) {
+				Dish dish = md.getDish();
+				dishDetails.setId(dish.getId());
+				dishDetails.setName(dish.getName());
+				dishDetails.setDescription(md.getDescription());
+				dishDetails.setPrice(md.getPrice());
+				dishDetails.setAvailable(md.isAvailable());
 			}
-			return dishDetails;
-			
+		}
+		return dishDetails;	
 	}
 
 	@Override
-	public String updateDishDetails(Long menuId, Long dishId, DishUpdateDTO updatedDishDetails) {
-	    Menu menu = menuRepository.findById(menuId)
-	            .orElseThrow(() -> new RuntimeException("Menu not found"));
-
-	    List<MenuDish> menuDishes = menu.getMenuDishes();
-	    if (menuDishes == null || menuDishes.isEmpty()) {
-	        throw new RuntimeException("No dishes found in this menu");
-	    }
-
-	    MenuDish target = menuDishes.stream()
-	            .filter(md -> md.getDish() != null && dishId.equals(md.getDish().getId()))
-	            .findFirst()
-	            .orElseThrow(() -> new RuntimeException("Dish not found in menu"));
-
-	    // Update MenuDish fields (description, price)
-	    if (updatedDishDetails.getDescription() != null) {
-	        target.setDescription(updatedDishDetails.getDescription());
-	    }
-	    if (updatedDishDetails.getPrice() != null) {
-	        target.setPrice(updatedDishDetails.getPrice());
-	    }
-
-	    // Update Dish entity (name) if provided
-	    if (updatedDishDetails.getName() != null) {
-	        Dish dish = target.getDish();
-	        dish.setName(updatedDishDetails.getName());
-	        dishRepository.save(dish); // persist dish changes
-	    }
-
-	    // Persist Menu/MenuDish changes to ensure description/price are saved
-	    menuRepository.save(menu);
-
-	    return "Dish details updated successfully";
+	public String updateDishDetails(Long menuId, Long dishId, DishUpdateDTO dto) {
+		menuDishRepository.updateDishDetails(menuId, dishId, dto.getDescription(), dto.getPrice());
+		return "Dish details updated successfully";
 	}
 
 	@Override
@@ -221,6 +244,10 @@ public class RestaurantServiceImpl implements RestaurantService {
 			Address address = restaurant.getUser().getAddress();
 			if (address != null) {
 				dto.setPostalCode(address.getPostalCode());
+			}
+			if (restaurant.getRestaurantImage() != null) {
+				String base64Image = java.util.Base64.getEncoder().encodeToString(restaurant.getRestaurantImage());
+				dto.setRestaurantImage("data:image/jpeg;base64," + base64Image);
 			}
 			restaurantDTOs.add(dto);
 			// You can add dto to a list and return the list if needed
@@ -244,8 +271,81 @@ public class RestaurantServiceImpl implements RestaurantService {
 			if (address != null) {
 				dto.setPostalCode(address.getPostalCode());
 			}
+			if (restaurant.getRestaurantImage() != null) {
+				String base64Image = java.util.Base64.getEncoder().encodeToString(restaurant.getRestaurantImage());
+				dto.setRestaurantImage("data:image/jpeg;base64," + base64Image);
+			}
 			restaurantDTOs.add(dto);
 		}
 		return restaurantDTOs;
+	}
+
+	@Override
+	public Long getMenuIdByRestaurantId(Long restaurantId) {
+		Restaurant restaurant = restaurantRepository.findById(restaurantId)
+	            .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+
+	    Menu menu = menuRepository.findByRestaurant(restaurant)
+	            .orElseGet(() -> {
+	                Menu newMenu = new Menu();
+	                newMenu.setRestaurant(restaurant);
+	                newMenu.setActive(true);
+	                return menuRepository.save(newMenu);
+	            });
+
+	    return menu.getId();
+	}
+	
+	@Override
+	public List<RestaurantDishCategoryDTO> getDishCategories() {
+	    return categoryRepository.findAll()
+	            .stream()
+	            .map(c -> {
+	            	RestaurantDishCategoryDTO dto = new RestaurantDishCategoryDTO();
+	                dto.setId(c.getId());
+	                dto.setName(c.getName());
+	                return dto;
+	            })
+	            .toList();
+	}
+
+	@Override
+	public String addNewDish(Long menuId, RestaurantAddDishDTO dishDTO) {
+		Menu menu = menuRepository.findById(menuId)
+	            .orElseThrow(() -> new RuntimeException("Menu not found"));
+		
+		Dish dish=new Dish();
+		dish.setName(dishDTO.getName());
+	    
+	    Set<Category> managedCategories = categoryRepository
+	            .findAllById(dishDTO.getCategoryIds())
+	            .stream()
+	            .collect(Collectors.toSet());
+
+	    dish.setCategories(managedCategories);
+	    
+	    Dish savedDish=dishRepository.save(dish);
+	    MenuDish menuDish = new MenuDish();
+
+	    MenuDishId id = new MenuDishId();
+	    id.setMenuId(menu.getId());
+	    id.setDishId(savedDish.getId());
+
+	    menuDish.setId(id);
+	    menuDish.setMenu(menu);
+	    menuDish.setDish(savedDish);
+	    menuDish.setDescription(dishDTO.getDescription());
+	    menuDish.setPrice(dishDTO.getPrice());
+	    menuDish.setAvailable(true);
+
+	    menuDishRepository.save(menuDish);
+
+	    return "Dish added successfully";
+	}
+
+	@Override
+	public String RestaurantAvailability(Long restaurantId) {
+		int rowsAffected=restaurantRepository.changeRestaurantAvailability(restaurantId);
+		return "Rows Affected : "+rowsAffected;
 	}
 }

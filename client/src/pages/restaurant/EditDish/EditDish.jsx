@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router';
-import { ArrowLeft, Save } from 'lucide-react';
+import { Save } from 'lucide-react';
 import LoadingSkeleton from '../../../components/restaurant/UI/LoadingSkeleton';
 import Toast from '../../../components/restaurant/UI/Toast';
-import { restaurantAPI } from '../../../services/Restaurant/api';
+import { MENU_ID, restaurantAPI } from '../../../services/Restaurant/api';
 
 export default function EditDish() {
   const { menuId, dishId } = useParams();
@@ -13,8 +13,8 @@ export default function EditDish() {
 
   // Debug: Log the parameters
   useEffect(() => {
-    console.log('EditDish - menuId:', menuId, 'dishId:', dishId);
-  }, [menuId, dishId]);
+    console.log('EditDish - menuId:', MENU_ID, 'dishId:', dishId);
+  }, [MENU_ID, dishId]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState(null);
@@ -29,28 +29,14 @@ export default function EditDish() {
 
   useEffect(() => {
     fetchDishDetails();
-  }, [menuId, dishId]);
+  }, [MENU_ID, dishId]);
 
   const fetchDishDetails = async () => {
     try {
       setLoading(true);
-
-      // If dish data was passed through navigation state, use it
-      if (dishFromState) {
-        console.log('Using dish data from navigation state:', dishFromState);
-        setFormData({
-          name: dishFromState.name || '',
-          description: dishFromState.description || '',
-          price: dishFromState.price || '',
-          isAvailable: (dishFromState.isAvailable ?? dishFromState.available) !== false,
-          dishId: dishFromState.dishId ?? dishId,
-        });
-        return;
-      }
-
-      // Otherwise, fetch from API
-      console.log('Fetching dish details - menuId:', menuId, 'dishId:', dishId);
-      const response = await restaurantAPI.getDishDetails(menuId, dishId);
+      const MENU_ID = sessionStorage.getItem("menuId");
+      console.log('Fetching dish details - menuId:', MENU_ID, 'dishId:', dishId);
+      const response = await restaurantAPI.getDishDetails(MENU_ID, dishId);
       console.log('Dish details response:', response.data);
       setFormData({
         name: response.data.name || '',
@@ -123,12 +109,10 @@ export default function EditDish() {
 
     try {
       setSaving(true);
-      await restaurantAPI.updateDish(menuId, dishId, {
-        dishId: formData.dishId,
-        name: formData.name,
+      const MENU_ID = sessionStorage.getItem("menuId");
+      await restaurantAPI.updateDish(MENU_ID, dishId, {
         description: formData.description,
         price: parseFloat(formData.price),
-        isAvailable: !!formData.isAvailable,
       });
 
       setToast({
@@ -138,11 +122,18 @@ export default function EditDish() {
 
       // Navigate back after a short delay
       setTimeout(() => {
-        navigate('/menu');
+        navigate('/restaurant/menu/dishes');
       }, 1500);
     } catch (error) {
+      console.error('Update dish error:', error);
+      console.error('Update dish response:', error.response?.status, error.response?.data);
+
+      const serverMessage = error.response?.data?.message ||
+        // Some backends return validation errors in different shapes
+        (typeof error.response?.data === 'string' ? error.response.data : null);
+
       setToast({
-        message: 'Failed to update dish',
+        message: serverMessage || 'Failed to update dish',
         type: 'error',
       });
     } finally {
@@ -150,26 +141,11 @@ export default function EditDish() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <h2 className="font-bold text-2xl text-gray-900">Edit Dish</h2>
-        <LoadingSkeleton type="card" count={1} />
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-8 px-4">
       <div className="w-full max-w-2xl space-y-6">
         <div className="flex items-center justify-start gap-4">
-          <button
-            onClick={() => navigate('/restaurant/menu/dishes')}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
-          </button>
-          <h2 className="font-bold text-2xl text-gray-900">Edit Dish</h2>
+          <h2 className="font-bold text-2xl text-gray-900">Edit Dish Details</h2>
         </div>
 
         <form onSubmit={handleSubmit} className="w-full">
@@ -239,22 +215,6 @@ export default function EditDish() {
                   <p className="mt-1 text-sm text-red-600">{errors.price}</p>
                 )}
               </div>
-            </div>
-
-            {/* Availability */}
-            <div className="text-left">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="isAvailable"
-                  checked={formData.isAvailable}
-                  onChange={handleChange}
-                  className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
-                />
-                <span className="font-medium text-gray-700">
-                  Dish is available for ordering
-                </span>
-              </label>
             </div>
 
             {/* Actions */}

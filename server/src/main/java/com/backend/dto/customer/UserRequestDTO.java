@@ -36,7 +36,8 @@ public class UserRequestDTO {
 	private String postalCode;
 	@NotBlank
 	private String lineOne;
-	@NotBlank
 	private String lineTwo;
 	private String state;
+	
+	private String profilePicture;
 }

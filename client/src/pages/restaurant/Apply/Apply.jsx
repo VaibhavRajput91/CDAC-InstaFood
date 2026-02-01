@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { UtensilsCrossed, CheckCircle } from 'lucide-react';
+import { UtensilsCrossed } from 'lucide-react';
 import Toast from '../../../components/restaurant/UI/Toast';
 import { restaurantAPI } from '../../../services/Restaurant/api';
 
@@ -15,6 +15,7 @@ export default function RestaurantApply() {
     openingTime: '',
     closingTime: '',
     status: 'PENDING',
+    restaurantImage: '',
   });
   const [errors, setErrors] = useState({});
 
@@ -24,7 +25,6 @@ export default function RestaurantApply() {
       ...prev,
       [name]: value,
     }));
-    // Clear error for this field
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
@@ -63,34 +63,6 @@ export default function RestaurantApply() {
       newErrors.closingTime = 'Closing time must be after opening time';
     }
 
-    // if (!formData.ownerName.trim()) {
-    //   newErrors.ownerName = 'Owner name is required';
-    // }
-
-    // if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email)) {
-    //   newErrors.email = 'Valid email is required';
-    // }
-
-    // if (!formData.phone.trim()) {
-    //   newErrors.phone = 'Phone number is required';
-    // }
-
-    // if (!formData.address.trim()) {
-    //   newErrors.address = 'Address is required';
-    // }
-
-    // if (!formData.city.trim()) {
-    //   newErrors.city = 'City is required';
-    // }
-
-    // if (!formData.state.trim()) {
-    //   newErrors.state = 'State is required';
-    // }
-
-    // if (!formData.cuisineType.trim()) {
-    //   newErrors.cuisineType = 'Cuisine type is required';
-    // }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -109,14 +81,14 @@ export default function RestaurantApply() {
     try {
       setSubmitting(true);
 
-      // Transform form data to match backend DTO
       const submitData = {
         userId: sessionStorage.getItem('userId'),
-        // userId: formData.userId ? parseInt(formData.userId) : null,
+
         restaurantName: formData.restaurantName,
         openingTime: formData.openingTime,
         closingTime: formData.closingTime,
         status: formData.status,
+        restaurantImage: formData.restaurantImage,
       };
 
       await restaurantAPI.apply(submitData);
@@ -127,10 +99,20 @@ export default function RestaurantApply() {
         type: 'success',
       });
 
-      // Reset form after short delay
+      // Reset form and navigate after delay
       setTimeout(() => {
-        navigate('/');
-      }, 3000);
+        setFormData({
+          userId: '',
+          restaurantName: '',
+          openingTime: '',
+          closingTime: '',
+          status: 'PENDING',
+          restaurantImage: '',
+        });
+        setErrors({});
+        setSuccess(false);
+        navigate('/restaurant/apply/approve');
+      }, 1500);
     } catch (error) {
       setToast({
         message: 'Failed to submit application. Please try again.',
@@ -141,32 +123,41 @@ export default function RestaurantApply() {
     }
   };
 
+  // Hide global navbar when this page mounts and restore on unmount
+  useEffect(() => {
+    const navs = Array.from(document.querySelectorAll('nav'));
+    const hidden = [];
+    navs.forEach((n) => {
+      const cls = n.className || '';
+      if (cls.includes('bg-red-600') || cls.includes('fixed bottom-0') || cls.includes('md:hidden')) {
+        hidden.push({ el: n, original: n.style.display });
+        n.style.display = 'none';
+      }
+    });
+    return () => {
+      hidden.forEach((h) => {
+        h.el.style.display = h.original || '';
+      });
+    };
+  }, []);
+
   if (success) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-        <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-12 text-center max-w-md">
-          <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-12 h-12 text-green-600" />
-          </div>
-          <h2 className="font-bold text-2xl text-gray-900 mb-4">
-            Application Submitted!
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Thank you for applying to join Insta Food. We'll review your application and get back to you within 2-3 business days.
-          </p>
-          <button
-            onClick={() => navigate('/')}
-            className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
-          >
-            Go to Dashboard
-          </button>
-        </div>
-      </div>
-    );
+
   }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-6">
+      <div className="absolute right-6 top-6 z-50">
+        <button
+          onClick={() => {
+            sessionStorage.clear();
+            navigate('/');
+          }}
+          className="px-4 py-2 bg-white border border-orange-400 text-orange-600 rounded-lg shadow-sm hover:bg-orange-50"
+        >
+          Logout
+        </button>
+      </div>
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -256,203 +247,40 @@ export default function RestaurantApply() {
                   </div>
                 </div>
 
+                <div>
+                  <label htmlFor="restaurantImage" className="block font-medium text-gray-700 mb-2">
+                    Restaurant Image (Banner/Logo)
+                  </label>
+                  <input
+                    type="file"
+                    id="restaurantImage"
+                    name="restaurantImage"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setFormData(prev => ({ ...prev, restaurantImage: reader.result }));
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                  <p className="mt-1 text-xs text-gray-400">
+                    Upload a high-quality image of your restaurant or logo
+                  </p>
+                </div>
+
                 <input
                   type="hidden"
                   id="status"
                   name="status"
                   value={formData.status}
                 />
-
-                {/* <div>
-                  <label htmlFor="cuisineType" className="block font-medium text-gray-700 mb-2">
-                    Cuisine Type *
-                  </label>
-                  <input
-                    type="text"
-                    id="cuisineType"
-                    name="cuisineType"
-                    value={formData.cuisineType}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${errors.cuisineType ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    placeholder="e.g., Italian, Chinese, Mexican"
-                  />
-                  {errors.cuisineType && (
-                    <p className="mt-1 text-sm text-red-600">{errors.cuisineType}</p>
-                  )}
-                </div> */}
-
-                {/* <div>
-                  <label htmlFor="description" className="block font-medium text-gray-700 mb-2">
-                    Restaurant Description
-                  </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    rows={3}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    placeholder="Tell us about your restaurant"
-                  />
-                </div> */}
               </div>
             </div>
-
-            {/* Owner Details
-            <div>
-              <h3 className="font-semibold text-lg text-gray-900 mb-4 pb-2 border-b border-gray-200">
-                Owner Details
-              </h3>
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="ownerName" className="block font-medium text-gray-700 mb-2">
-                    Owner Name *
-                  </label>
-                  <input
-                    type="text"
-                    id="ownerName"
-                    name="ownerName"
-                    value={formData.ownerName}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${errors.ownerName ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    placeholder="Enter owner name"
-                  />
-                  {errors.ownerName && (
-                    <p className="mt-1 text-sm text-red-600">{errors.ownerName}</p>
-                  )}
-                </div>
-              </div>
-            </div> */}
-
-            {/* Contact Information */}
-            {/* <div>
-              <h3 className="font-semibold text-lg text-gray-900 mb-4 pb-2 border-b border-gray-200">
-                Contact Information
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="email" className="block font-medium text-gray-700 mb-2">
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${errors.email ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    placeholder="email@example.com"
-                  />
-                  {errors.email && (
-                    <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label htmlFor="phone" className="block font-medium text-gray-700 mb-2">
-                    Phone Number *
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${errors.phone ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    placeholder="+1 (555) 123-4567"
-                  />
-                  {errors.phone && (
-                    <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
-                  )}
-                </div>
-              </div>
-            </div> */}
-
-            {/* Address */}
-            {/* <div>
-              <h3 className="font-semibold text-lg text-gray-900 mb-4 pb-2 border-b border-gray-200">
-                Address
-              </h3>
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="address" className="block font-medium text-gray-700 mb-2">
-                    Street Address *
-                  </label>
-                  <input
-                    type="text"
-                    id="address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${errors.address ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    placeholder="123 Main Street"
-                  />
-                  {errors.address && (
-                    <p className="mt-1 text-sm text-red-600">{errors.address}</p>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label htmlFor="city" className="block font-medium text-gray-700 mb-2">
-                      City *
-                    </label>
-                    <input
-                      type="text"
-                      id="city"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleChange}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${errors.city ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                      placeholder="City"
-                    />
-                    {errors.city && (
-                      <p className="mt-1 text-sm text-red-600">{errors.city}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label htmlFor="state" className="block font-medium text-gray-700 mb-2">
-                      State *
-                    </label>
-                    <input
-                      type="text"
-                      id="state"
-                      name="state"
-                      value={formData.state}
-                      onChange={handleChange}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${errors.state ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                      placeholder="State"
-                    />
-                    {errors.state && (
-                      <p className="mt-1 text-sm text-red-600">{errors.state}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label htmlFor="zipCode" className="block font-medium text-gray-700 mb-2">
-                      ZIP Code
-                    </label>
-                    <input
-                      type="text"
-                      id="zipCode"
-                      name="zipCode"
-                      value={formData.zipCode}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                      placeholder="12345"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div> */}
 
             {/* Submit Button */}
             <div className="pt-6">
@@ -463,12 +291,6 @@ export default function RestaurantApply() {
               >
                 {submitting ? 'Submitting Application...' : 'Submit Application'}
               </button>
-              <p className="text-center text-sm text-gray-600 mt-4">
-                Already have an account?{' '}
-                <a href="/" className="text-orange-600 hover:text-orange-700 font-medium">
-                  Go to Dashboard
-                </a>
-              </p>
             </div>
           </div>
         </form>
