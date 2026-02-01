@@ -98,6 +98,21 @@ export default function RestaurantApply() {
         message: 'Application submitted successfully!',
         type: 'success',
       });
+
+      // Reset form and navigate after delay
+      setTimeout(() => {
+        setFormData({
+          userId: '',
+          restaurantName: '',
+          openingTime: '',
+          closingTime: '',
+          status: 'PENDING',
+          restaurantImage: '',
+        });
+        setErrors({});
+        setSuccess(false);
+        navigate('/restaurant/apply/approve');
+      }, 1500);
     } catch (error) {
       setToast({
         message: 'Failed to submit application. Please try again.',
@@ -127,7 +142,7 @@ export default function RestaurantApply() {
   }, []);
 
   if (success) {
-    navigate('/restaurant/apply/approve');
+
   }
 
   return (

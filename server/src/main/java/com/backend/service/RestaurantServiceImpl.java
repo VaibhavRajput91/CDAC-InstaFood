@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.backend.dto.*;
 import com.backend.entity.*;
+import com.backend.entity.Category;
 import com.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +29,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 	private final DishRepository dishRepository;
 	private final MenuRepository menuRepository;
 	private final MenuDishRepository menuDishRepository; 
+	private final CategoryRepository categoryRepository; 
 	
 	@Override
 	public String getRestaurantId(Long userId) {
@@ -279,11 +282,70 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 	@Override
 	public Long getMenuIdByRestaurantId(Long restaurantId) {
-		Restaurant restaurant=restaurantRepository.findById(restaurantId)
-				.orElseThrow(()->new RuntimeException("Restaurant not found"));
-		Menu menu=menuRepository.findByRestaurant(restaurant)
-				.orElseThrow(()->new RuntimeException("Menu not found"));
-		return menu.getId();
+		Restaurant restaurant = restaurantRepository.findById(restaurantId)
+	            .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+
+	    Menu menu = menuRepository.findByRestaurant(restaurant)
+	            .orElseGet(() -> {
+	                Menu newMenu = new Menu();
+	                newMenu.setRestaurant(restaurant);
+	                newMenu.setActive(true);
+	                return menuRepository.save(newMenu);
+	            });
+
+	    return menu.getId();
+	}
+	
+	@Override
+	public List<RestaurantDishCategoryDTO> getDishCategories() {
+	    return categoryRepository.findAll()
+	            .stream()
+	            .map(c -> {
+	            	RestaurantDishCategoryDTO dto = new RestaurantDishCategoryDTO();
+	                dto.setId(c.getId());
+	                dto.setName(c.getName());
+	                return dto;
+	            })
+	            .toList();
 	}
 
+	@Override
+	public String addNewDish(Long menuId, RestaurantAddDishDTO dishDTO) {
+		Menu menu = menuRepository.findById(menuId)
+	            .orElseThrow(() -> new RuntimeException("Menu not found"));
+		
+		Dish dish=new Dish();
+		dish.setName(dishDTO.getName());
+	    
+	    Set<Category> managedCategories = categoryRepository
+	            .findAllById(dishDTO.getCategoryIds())
+	            .stream()
+	            .collect(Collectors.toSet());
+
+	    dish.setCategories(managedCategories);
+	    
+	    Dish savedDish=dishRepository.save(dish);
+	    MenuDish menuDish = new MenuDish();
+
+	    MenuDishId id = new MenuDishId();
+	    id.setMenuId(menu.getId());
+	    id.setDishId(savedDish.getId());
+
+	    menuDish.setId(id);
+	    menuDish.setMenu(menu);
+	    menuDish.setDish(savedDish);
+	    menuDish.setDescription(dishDTO.getDescription());
+	    menuDish.setPrice(dishDTO.getPrice());
+	    menuDish.setAvailable(true);
+
+	    menuDishRepository.save(menuDish);
+
+	    return "Dish added successfully";
+	}
+
+	@Override
+	public String RestaurantAvailability(Long restaurantId) {
+		int rowsAffected=restaurantRepository.changeRestaurantAvailability(restaurantId);
+		return "Rows Affected : "+rowsAffected;
+	}
 }

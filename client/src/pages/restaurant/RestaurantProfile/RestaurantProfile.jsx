@@ -3,7 +3,6 @@ import { Edit2, Save, X } from 'lucide-react';
 import LoadingSkeleton from '../../../components/restaurant/UI/LoadingSkeleton';
 import Toast from '../../../components/restaurant/UI/Toast';
 import { restaurantAPI } from '../../../services/Restaurant/api';
-import RestaurantNavbar from '../../../components/restaurant/RestaurantNavbar/RestaurantNavbar';
 
 export default function RestaurantProfile() {
   const [loading, setLoading] = useState(true);
@@ -146,7 +145,6 @@ export default function RestaurantProfile() {
 
   return (
     <>
-      <RestaurantNavbar />
       <br />
       <div className="space-y-6 mx-4 md:mx-8 lg:mx-12">
         <div className="flex items-center justify-between">
@@ -168,40 +166,40 @@ export default function RestaurantProfile() {
             <div className="text-center">
               <div className="relative group mb-4">
                 {profileData.restaurantImage ? (
-                    <img 
-                        src={profileData.restaurantImage} 
-                        alt="Restaurant" 
-                        className="w-32 h-32 object-cover rounded-xl mx-auto border-4 border-orange-100"
-                    />
+                  <img
+                    src={profileData.restaurantImage}
+                    alt="Restaurant"
+                    className="w-32 h-32 object-cover rounded-xl mx-auto border-4 border-orange-100"
+                  />
                 ) : (
-                    <div className="w-24 h-24 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto">
-                        <span className="text-4xl text-white font-bold">
-                        {profileData.firstName?.charAt(0) || ''}
-                        </span>
-                    </div>
+                  <div className="w-24 h-24 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto">
+                    <span className="text-4xl text-white font-bold">
+                      {profileData.firstName?.charAt(0) || ''}
+                    </span>
+                  </div>
                 )}
-                
+
                 {editing && (
-                    <div className="mt-2">
-                        <label className="text-xs font-bold text-orange-600 uppercase cursor-pointer hover:underline">
-                            Change Image
-                            <input 
-                                type="file" 
-                                accept="image/*" 
-                                className="hidden"
-                                onChange={(e) => {
-                                    const file = e.target.files[0];
-                                    if (file) {
-                                        const reader = new FileReader();
-                                        reader.onloadend = () => {
-                                            setProfileData(prev => ({...prev, restaurantImage: reader.result}));
-                                        };
-                                        reader.readAsDataURL(file);
-                                    }
-                                }}
-                            />
-                        </label>
-                    </div>
+                  <div className="mt-2">
+                    <label className="text-xs font-bold text-orange-600 uppercase cursor-pointer hover:underline">
+                      Change Image
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setProfileData(prev => ({ ...prev, restaurantImage: reader.result }));
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
                 )}
               </div>
               <h4 className="font-bold text-l text-gray-900 mb-1">

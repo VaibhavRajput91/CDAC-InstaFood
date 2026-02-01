@@ -67,6 +67,17 @@ public class RestaurantController {
 		}
 	}
 	
+	@PutMapping("/availability")
+	public ResponseEntity<?> toggleRestaurantAvailability(@RequestParam long restaurantId){
+		System.out.println("In Put of Menu/ToggleDish");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new RestaurantApiResponseDTO("Success", restaurantService.RestaurantAvailability(restaurantId)));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
+	}
 	
 	// menu page
 	
@@ -148,7 +159,30 @@ public class RestaurantController {
 		}
 	}
 	
-	// add dish page
+	@GetMapping("/menu/dishes/add/categories")
+	public ResponseEntity<?> getDish(){
+		System.out.println("In Get of menu/dishes/add/categories");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(restaurantService.getDishCategories());
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
+	}
+	
+	
+	@PostMapping("/menu/dishes/add")
+	public ResponseEntity<?> addDish(@RequestParam Long menuId, @RequestBody RestaurantAddDishDTO dishDTO){
+		System.out.println("In Get of menu/dishes/add");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(restaurantService.addNewDish(menuId,dishDTO));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
+	}
 	
 	@GetMapping("/menu/dishes/edit")
 	public ResponseEntity<?> getDish(@RequestParam Long menuId,@RequestParam Long dishId){
@@ -161,6 +195,8 @@ public class RestaurantController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
 		}
 	}
+	
+	
 	
 	@PatchMapping("/menu/dishes/edit")
 	public ResponseEntity<?> updateDish(@RequestParam Long menuId,@RequestParam Long dishid,@RequestBody DishUpdateDTO updatedDish){

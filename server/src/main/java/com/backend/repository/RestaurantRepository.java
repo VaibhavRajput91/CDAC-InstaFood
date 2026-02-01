@@ -22,6 +22,22 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 		    WHERE r.user.id = :userId
 		""")
 	Long findRestaurantIdByUserId(@Param("userId") Long userId);
+	
+	@Modifying
+    @Transactional
+    @Query("""
+        UPDATE Restaurant r
+        SET r.status = CASE
+            WHEN r.status = com.backend.entity.AvailabilityStatus.AVAILABLE
+                THEN com.backend.entity.AvailabilityStatus.UNAVAILABLE
+            WHEN r.status = com.backend.entity.AvailabilityStatus.UNAVAILABLE
+                THEN com.backend.entity.AvailabilityStatus.AVAILABLE
+            ELSE r.status
+        END
+        WHERE r.id = :restaurantId
+    """)
+    int changeRestaurantAvailability(@Param("restaurantId") Long restaurantId);
+	
 
 	@Query(value="""
 			SELECT
@@ -91,6 +107,9 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 	List<Restaurant> findAll();
 	
 	List<Restaurant> findByUserAddressPostalCode(String postalCode);
+	
+	
+	
 }
 
 
