@@ -68,6 +68,14 @@ export const restaurantAPI = {
   getOrders: (size = 10) =>
     api.get(`/restaurant/orders?size=${size}`),
 
+  // Get new placed orders for a restaurant
+  getNewOrders: (restaurantId) =>
+    api.get(`/restaurant/orders/new?restaurantId=${restaurantId}`),
+
+  // Get completed orders
+  getAllCompletedOrdersList: (restaurantId) =>
+    api.get(`/restaurant/orders/completed?restaurantId=${restaurantId}`),
+
   // Toggle restaurant availability
   toggleRestaurantAvailability: (restaurantId) =>
     api.put(`/restaurant/availability?restaurantId=${restaurantId}`),

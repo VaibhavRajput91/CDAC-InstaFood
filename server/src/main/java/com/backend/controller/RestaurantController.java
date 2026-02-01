@@ -221,11 +221,18 @@ public class RestaurantController {
 	
 	// orders page
 	
-	@GetMapping("/orders")
-	public ResponseEntity<?> getOrdersList(@RequestParam Long size){
+	@GetMapping("/orders/completed")
+	public ResponseEntity<?> getAllCompletedOrdersList(@RequestParam Long restaurantId){
 		return ResponseEntity.status(HttpStatus.OK)
-				.body(restaurantService.getAllOrdersByRestaurant(size));
+				.body(restaurantService.getAllCompletedOrders(restaurantId));
 	}
+	
+	@GetMapping("/orders/new")
+	public ResponseEntity<?> getAllNewPlacedOrdersList(@RequestParam Long restaurantId){
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(restaurantService.getNewPlacedOrders(restaurantId));
+	}
+	
 	@GetMapping("/list-restaurants")
 	public ResponseEntity<?> getRestaurantsList(@RequestParam(required = false) String postalCode){
 		if (postalCode != null && !postalCode.isEmpty()) {
