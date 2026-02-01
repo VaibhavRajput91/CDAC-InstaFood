@@ -1,9 +1,11 @@
 package com.backend.service.delivery;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -53,50 +55,45 @@ public class DeliveryDashboardServiceImpl implements DeliveryDashboardService {
 	}
 
 	@Override
-	public List<DeliveryOrderDto> getNewAvailableDeliveryRequests(Long deliveryPartnerId) { // Updated signature in
-																							// interface separately?
-																							// Check step.
-		// Wait, I need to update the interface method signature too if I haven't.
-		// User didn't explicitly ask for interface update in plan, but it's required
-		// for compilation.
-		// I'll update interface in next tool call if missed.
-		// Assuming signature is updated or I will do it.
+	public List<DeliveryOrderDto> getNewAvailableDeliveryRequests(Long deliveryPartnerId) {
 
-		DeliveryPartner partner = deliveryProfileRepository.findById(deliveryPartnerId)
-				.orElseThrow(() -> new RuntimeException("Delivery Partner not found"));
+	    DeliveryPartner partner = deliveryProfileRepository.findById(deliveryPartnerId)
+	            .orElseThrow(() -> new RuntimeException("Delivery Partner not found"));
 
-		String postalCode = partner.getUser().getAddress().getPostalCode();
+	    String postalCode = partner.getUser().getAddress().getPostalCode();
 
-		List<Order> orders = deliveryOrderRepository
-				.findByOrderStatusAndCreatedOnAndRestaurantUserAddressPostalCodeOrderByCreatedOnDesc(
-						OrderStatus.ACCEPTED,
-						java.time.LocalDate.now(),
-						postalCode);
+	    LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
 
-		List<DeliveryOrderDto> orderDtos = orders.stream()
-				.map(order -> {
-					DeliveryOrderDto dto = new DeliveryOrderDto();
-					dto.setOrderId(order.getId());
-					dto.setRestaurantName(order.getRestaurant().getRestaurantName());
-					dto.setRestaurantAddress(order.getRestaurant().getUser().getAddress().getLineOne());
-					dto.setTotalAmount(order.getTotalAmount());
-					Set<OrderItemDto> items = new HashSet<>();
-					for (OrderItem item : order.getOrderItems()) {
-						OrderItemDto orderItemDto = new OrderItemDto();
-						orderItemDto.setDishId(item.getDish().getId());
-						orderItemDto.setDishName(item.getDish().getName());
-						orderItemDto.setPrice(item.getPrice());
-						orderItemDto.setQuantity(item.getQuantity());
+	    List<Order> orders = deliveryOrderRepository.findAvailableOrders(
+	            OrderStatus.ACCEPTED,
+	            oneHourAgo,
+	            postalCode
+	    );
 
-						items.add(orderItemDto);
-					}
-					dto.setItems(items);
-					dto.setOrderStatus(OrderStatus.ACCEPTED);
-					return dto;
-				})
-				.toList();
-		return orderDtos;
+	    return orders.stream().map(order -> {
+	        DeliveryOrderDto dto = new DeliveryOrderDto();
+	        dto.setOrderId(order.getId());
+	        dto.setRestaurantName(order.getRestaurant().getRestaurantName());
+	        dto.setRestaurantAddress(
+	                order.getRestaurant().getUser().getAddress().getLineOne()
+	        );
+	        dto.setTotalAmount(order.getTotalAmount());
+
+	        Set<OrderItemDto> items = order.getOrderItems().stream().map(item -> {
+	            OrderItemDto itemDto = new OrderItemDto();
+	            itemDto.setDishId(item.getDish().getId());
+	            itemDto.setDishName(item.getDish().getName());
+	            itemDto.setPrice(item.getPrice());
+	            itemDto.setQuantity(item.getQuantity());
+	            return itemDto;
+	        }).collect(Collectors.toSet());
+
+	        dto.setItems(items);
+	        dto.setOrderStatus(order.getOrderStatus());
+	        return dto;
+	    }).toList();
 	}
+
 
 	@Override
 	@Transactional

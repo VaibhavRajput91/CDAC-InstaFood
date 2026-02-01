@@ -1,6 +1,7 @@
 package com.backend.repository.delivery;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,10 +21,20 @@ import jakarta.transaction.Transactional;
 
 public interface DeliveryOrderRepository extends JpaRepository<Order, Long> {
 
-	public List<Order> findByOrderStatusAndCreatedOnAndRestaurantUserAddressPostalCodeOrderByCreatedOnDesc(
-			OrderStatus status,
-			LocalDate createdOn,
-			String postalCode);
+	@Query("""
+			    SELECT DISTINCT o
+			    FROM Order o
+			    LEFT JOIN FETCH o.orderItems oi
+			    LEFT JOIN FETCH oi.dish
+			    WHERE o.orderStatus = :status
+			      AND o.lastUpdated >= :cutoffTime
+			      AND o.restaurant.user.address.postalCode = :postalCode
+			    ORDER BY o.lastUpdated DESC
+			""")
+	List<Order> findAvailableOrders(
+			@Param("status") OrderStatus status,
+			@Param("cutoffTime") LocalDateTime cutoffTime,
+			@Param("postalCode") String postalCode);
 
 	public List<Order> findByDeliveryPartnerIdAndCreatedOnAndOrderStatusOrderByLastUpdatedDesc(
 			Long deliveryPartnerId,
@@ -44,16 +55,16 @@ public interface DeliveryOrderRepository extends JpaRepository<Order, Long> {
 
 	public List<Order> findByDeliveryPartnerIdAndOrderStatus(Long deliveryPartnerId, OrderStatus status);
 
-	@Query(value = "select sum(total_amount)*0.25 from orders where delivery_partner_id=?1 and created_at >= CURDATE() and created_at < CURDATE() + INTERVAL 1 DAY", nativeQuery = true)
+	@Query(value = "select count(order_id) * 30.0 from orders where delivery_partner_id=?1 and order_status = 'DELIVERED' and created_at >= CURDATE() and created_at < CURDATE() + INTERVAL 1 DAY", nativeQuery = true)
 	public Optional<Double> getTodayPayout(Long deliveryPartnerId);
 
-	@Query(value = "select count(order_id) from orders where delivery_partner_id=?1 and created_at >= CURDATE() and created_at < CURDATE() + INTERVAL 1 DAY", nativeQuery = true)
+	@Query(value = "select count(order_id) from orders where delivery_partner_id=?1 and order_status = 'DELIVERED' and created_at >= CURDATE() and created_at < CURDATE() + INTERVAL 1 DAY", nativeQuery = true)
 	public Optional<Integer> getTodayOrderCount(Long deliveryPartnerId);
 
-	@Query(value = "select avg(total_amount)*0.25 from orders where delivery_partner_id=?1 and created_at >= CURDATE() and created_at < CURDATE() + INTERVAL 1 DAY", nativeQuery = true)
+	@Query(value = "select if(count(order_id) > 0, 30.0, 0.0) from orders where delivery_partner_id=?1 and order_status = 'DELIVERED' and created_at >= CURDATE() and created_at < CURDATE() + INTERVAL 1 DAY", nativeQuery = true)
 	public Optional<Double> getAvgOrderPayout(Long deliveryPartnerId);
 
-	@Query(value = "select sum(total_amount)*0.25 from orders where delivery_partner_id=?1 and order_status = 'DELIVERED'", nativeQuery = true)
+	@Query(value = "select count(order_id) * 30.0 from orders where delivery_partner_id=?1 and order_status = 'DELIVERED'", nativeQuery = true)
 	public Optional<Double> getTotalPayout(Long deliveryPartnerId);
 
 	@Query(value = "select count(order_id) from orders where delivery_partner_id=?1 and order_status = 'DELIVERED'", nativeQuery = true)

@@ -61,11 +61,11 @@ public class DeliveryProfileServiceImpl implements DeliveryProfileService {
 			deliveryPartner.setLicenseNumber(profileDto.getLicenseNumber());
 			deliveryPartner.setModel(profileDto.getVehicleDetails().getVehicleModel());
 			deliveryPartner.setVehicleType(profileDto.getVehicleDetails().getVehicleType());
-			deliveryPartner.getUser().getAddress().setLineOne(profileDto.getAddress().getLineOne());
-			deliveryPartner.getUser().getAddress().setLineTwo(profileDto.getAddress().getLineTwo());
-			deliveryPartner.getUser().getAddress().setCity(profileDto.getAddress().getCity());
-			deliveryPartner.getUser().getAddress().setState(profileDto.getAddress().getState());
-			deliveryPartner.getUser().getAddress().setPostalCode(profileDto.getAddress().getPostalCode());
+//			deliveryPartner.getUser().getAddress().setLineOne(profileDto.getAddress().getLineOne());
+//			deliveryPartner.getUser().getAddress().setLineTwo(profileDto.getAddress().getLineTwo());
+//			deliveryPartner.getUser().getAddress().setCity(profileDto.getAddress().getCity());
+//			deliveryPartner.getUser().getAddress().setState(profileDto.getAddress().getState());
+//			deliveryPartner.getUser().getAddress().setPostalCode(profileDto.getAddress().getPostalCode());
 			
 			DeliveryPartner updatedPartner = deliveryProfileRepository.save(deliveryPartner);
 			
@@ -78,11 +78,11 @@ public class DeliveryProfileServiceImpl implements DeliveryProfileService {
 			updatedProfileDto.setLicenseNumber(updatedPartner.getLicenseNumber());
 			updatedProfileDto.getVehicleDetails().setVehicleModel(updatedPartner.getModel());
 			updatedProfileDto.getVehicleDetails().setVehicleType(updatedPartner.getVehicleType());
-			updatedProfileDto.getAddress().setLineOne(updatedPartner.getUser().getAddress().getLineOne());
-			updatedProfileDto.getAddress().setLineTwo(updatedPartner.getUser().getAddress().getLineTwo());
-			updatedProfileDto.getAddress().setCity(updatedPartner.getUser().getAddress().getCity());
-			updatedProfileDto.getAddress().setPostalCode(updatedPartner.getUser().getAddress().getPostalCode());
-			updatedProfileDto.getAddress().setState(updatedPartner.getUser().getAddress().getState());
+//			updatedProfileDto.getAddress().setLineOne(updatedPartner.getUser().getAddress().getLineOne());
+//			updatedProfileDto.getAddress().setLineTwo(updatedPartner.getUser().getAddress().getLineTwo());
+//			updatedProfileDto.getAddress().setCity(updatedPartner.getUser().getAddress().getCity());
+//			updatedProfileDto.getAddress().setPostalCode(updatedPartner.getUser().getAddress().getPostalCode());
+//			updatedProfileDto.getAddress().setState(updatedPartner.getUser().getAddress().getState());
 			
 			return updatedProfileDto;
 		}

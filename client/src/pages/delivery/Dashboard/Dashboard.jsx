@@ -17,6 +17,7 @@ import { config } from '../../../services/config';
 export function Dashboard({ navigateTo }) {
   const [isOnline, setIsOnline] = useState(false);
   const [loadingStatus, setLoadingStatus] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [summary, setSummary] = useState({
     todayOrderStats: {
       todayEarnings: 0,
@@ -29,6 +30,32 @@ export function Dashboard({ navigateTo }) {
     }
   });
   const [availableOrders, setAvailableOrders] = useState([]);
+
+  const fetchAvailableOrders = () => {
+    const deliveryPartnerId = sessionStorage.getItem('deliveryPartnerId');
+    if (!deliveryPartnerId) return;
+
+    setRefreshing(true);
+    fetch(`${config.server}/delivery/orders/available?deliveryPartnerId=${deliveryPartnerId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          // Add default distance/time if not present in API, as UI expects it
+          const mappedOrders = data.map(order => ({
+            ...order, // keep original data
+            id: order.orderId,
+            restaurant: order.restaurantName,
+            distance: '2 km', // Mock distance
+            time: '20 min',   // Mock time
+            payout: order.totalAmount,
+            itemCount: order.items?.length || 0
+          }));
+          setAvailableOrders(mappedOrders.slice(0, 5));
+        }
+      })
+      .catch(err => console.error("Error fetching available orders:", err))
+      .finally(() => setRefreshing(false));
+  };
 
   useEffect(() => {
     const deliveryPartnerId = sessionStorage.getItem('deliveryPartnerId');
@@ -63,35 +90,10 @@ export function Dashboard({ navigateTo }) {
       })
       .catch(err => console.error("Error fetching summary:", err));
 
-    const fetchAvailableOrders = () => {
-      fetch(`${config.server}/delivery/orders/available?deliveryPartnerId=${deliveryPartnerId}`)
-        .then(res => res.json())
-        .then(data => {
-          if (Array.isArray(data)) {
-            // Add default distance/time if not present in API, as UI expects it
-            const mappedOrders = data.map(order => ({
-              ...order, // keep original data
-              id: order.orderId,
-              restaurant: order.restaurantName,
-              distance: '2 km', // Mock distance
-              time: '20 min',   // Mock time
-              payout: order.totalAmount,
-              itemCount: order.items?.length || 0
-            }));
-            setAvailableOrders(mappedOrders.slice(0, 5));
-          }
-        })
-        .catch(err => console.error("Error fetching available orders:", err));
-    };
-
-    // Initial fetch
+    // Initial fetch of available orders
     fetchAvailableOrders();
 
-    // Auto-refresh every 30 seconds
-    const intervalId = setInterval(fetchAvailableOrders, 30000);
-
-    // Cleanup interval on unmount
-    return () => clearInterval(intervalId);
+    // Removed auto-refresh setInterval as per requirement
   }, []);
 
   return (
@@ -240,12 +242,22 @@ export function Dashboard({ navigateTo }) {
       <div className="px-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg text-gray-900">Available Orders</h3>
-          <button
-            onClick={() => navigateTo('orders')}
-            className="text-orange-500 text-sm"
-          >
-            View All
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={fetchAvailableOrders}
+              disabled={refreshing}
+              className={`p-2 rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors ${refreshing ? 'opacity-50' : ''}`}
+              title="Refresh Orders"
+            >
+              <Clock className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+            </button>
+            <button
+              onClick={() => navigateTo('orders')}
+              className="text-orange-500 text-sm"
+            >
+              View All
+            </button>
+          </div>
         </div>
 
         <div className="space-y-3">
@@ -272,7 +284,6 @@ export function Dashboard({ navigateTo }) {
                 </div>
                 <div className="text-right">
                   <div className="flex items-center gap-1 text-green-600">
-                    <DollarSign className="w-4 h-4" />
                     <span className="text-lg">₹{order.payout}</span>
                   </div>
                   <p className="text-xs text-gray-500">

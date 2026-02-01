@@ -181,3 +181,46 @@ create table delivery_logs(
     foreign key (delivery_partner_id) references delivery_partners(delivery_partner_id),
     foreign key (order_id) references orders(order_id)
 );
+
+-- triggers
+DELIMITER $$
+
+-- 1. trigger to update the delivery logs table 
+CREATE TRIGGER trg_delivery_log_on_order_update
+AFTER UPDATE ON orders
+FOR EACH ROW
+BEGIN
+ 
+    IF OLD.order_status <> 'ACCEPTED' 
+       AND NEW.order_status = 'ASSIGNED'
+       AND NEW.delivery_partner_id IS NOT NULL THEN
+
+        INSERT INTO delivery_logs (
+            delivery_partner_id,
+            order_id,
+            delivery_status,
+            notes,
+            created_at
+        )
+        VALUES (
+            NEW.delivery_partner_id,
+            NEW.order_id,
+            'ASSIGNED',
+            'Order assigned to delivery partner',
+            CURDATE()
+        );
+    END IF;
+
+   
+    IF OLD.order_status <> 'DELIVERED'
+       AND NEW.order_status = 'DELIVERED' THEN
+
+        UPDATE delivery_logs
+        SET delivery_status = 'DELIVERED',
+            notes = 'Order delivered successfully'
+        WHERE order_id = NEW.order_id;
+    END IF;
+END$$
+
+
+DELIMITER ;

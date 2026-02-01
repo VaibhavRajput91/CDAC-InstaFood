@@ -17,7 +17,7 @@ export function EditProfile({ navigateTo }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:8080/delivery/details?deliveryPartnerId=17')
+    fetch('http://localhost:8080/delivery/details?deliveryPartnerId=' + sessionStorage.getItem('deliveryPartnerId'))
       .then(res => res.json())
       .then(data => {
         setFormData({
@@ -47,7 +47,7 @@ export function EditProfile({ navigateTo }) {
     setError('');
     setSuccess(false);
     try {
-      const res = await fetch('http://localhost:8080/delivery/edit-details?deliveryPartnerId=17', {
+      const res = await fetch('http://localhost:8080/delivery/edit-details?deliveryPartnerId=' + sessionStorage.getItem('deliveryPartnerId'), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -168,7 +168,7 @@ export function EditProfile({ navigateTo }) {
                   <button
                     type="button"
                     className="px-6 py-3 bg-red-600 text-white rounded-lg shadow hover:bg-red-400 transition"
-                    onClick={() => window.history.back()}
+                    onClick={() => navigateTo ? navigateTo('profile') : window.history.back()}
                   >
                     Cancel
                   </button>
