@@ -32,6 +32,17 @@ export default function AdminApprove() {
 
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+            <div className="absolute right-6 top-6 z-50">
+                <button
+                    onClick={() => {
+                        sessionStorage.clear();
+                        navigate('/');
+                    }}
+                    className="px-4 py-2 bg-white border border-orange-400 text-orange-600 rounded-lg shadow-sm hover:bg-orange-50"
+                >
+                    Logout
+                </button>
+            </div>
             <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-12 text-center max-w-md">
                 <div className={`w-20 h-20 ${isApproved ? 'bg-green-50' : isRejected ? 'bg-red-50' : 'bg-yellow-50'} rounded-full flex items-center justify-center mx-auto mb-6`}>
                     {(isApproved && !isRejected) ? (

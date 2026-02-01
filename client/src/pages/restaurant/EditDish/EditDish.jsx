@@ -141,15 +141,6 @@ export default function EditDish() {
     }
   };
 
-  // if (loading) {
-  //   return (
-  //     <div className="space-y-6">
-  //       <h2 className="font-bold text-2xl text-gray-900">Edit Dish</h2>
-  //       <LoadingSkeleton type="card" count={1} />
-  //     </div>
-  //   );
-  // }
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-8 px-4">
       <div className="w-full max-w-2xl space-y-6">
@@ -224,22 +215,6 @@ export default function EditDish() {
                   <p className="mt-1 text-sm text-red-600">{errors.price}</p>
                 )}
               </div>
-            </div>
-
-            {/* Availability */}
-            <div className="text-left">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="isAvailable"
-                  checked={formData.isAvailable}
-                  onChange={handleChange}
-                  className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
-                />
-                <span className="font-medium text-gray-700">
-                  Dish is available for ordering
-                </span>
-              </label>
             </div>
 
             {/* Actions */}

@@ -1,6 +1,5 @@
-import React from 'react'
-import Navbar from '../../components/common/Navbar/Navbar';
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes, Navigate, useLocation } from 'react-router-dom';
+import RestaurantNavbar from '../../components/restaurant/RestaurantNavbar/RestaurantNavbar';
 import RestaurantDashboard from './RestaurantDashboard/RestaurantDashboard';
 import Apply from './Apply/Apply';
 import RestaurantOrderDetails from './RestaurantOrderDetails/RestaurantOrderDetails';
@@ -14,8 +13,13 @@ import EditDish from './EditDish/EditDish';
 import AdminApprove from './Apply/AdminApprove/AdminApprove';
 
 function Restaurant() {
+  const location = useLocation();
+  const hideNavbarRoutes = ['/restaurant/apply', '/restaurant/apply/approve'];
+  const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
+
   return (
     <div>
+      {shouldShowNavbar && <RestaurantNavbar />}
       <Routes>
         <Route
           path="/"

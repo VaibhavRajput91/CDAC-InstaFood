@@ -6,7 +6,10 @@ import com.backend.dto.*;
 
 public interface RestaurantService {
 	
+	
 	String getRestaurantId(Long userId);
+	
+	String RestaurantAvailability(Long restaurantId);
 	
 	RestaurantApiResponseDTO restaurantApply(RestaurantApplyDTO applyDTO);
 	String adminApproval(Long restaurantId);
@@ -28,9 +31,13 @@ public interface RestaurantService {
 	
 	DishDetailsDTO getDishDetailsById(Long menuId,Long dishId);
 	
+	List<RestaurantDishCategoryDTO> getDishCategories();
 	
 	String updateDishDetails(Long menuId,Long dishId, DishUpdateDTO updatedDishDetails);
 	
 	List<RestaurantListDTO> getAllRestaurants();
 	List<RestaurantListDTO> getRestaurantsByPincode(String pincode);
+	
+	String addNewDish(Long menuId,RestaurantAddDishDTO dishDTO);
+	
 }

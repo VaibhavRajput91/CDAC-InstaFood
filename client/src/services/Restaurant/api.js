@@ -56,9 +56,21 @@ export const restaurantAPI = {
   updateDish: (menuId, dishId, data) =>
     api.patch(`/restaurant/menu/dishes/edit?menuId=${menuId}&dishid=${dishId}`, data),
 
+  // Add new dish
+  addDish: (menuId, data) =>
+    api.post(`/restaurant/menu/dishes/add?menuId=${menuId}`, data),
+
+  // Get categories (for dishes)
+  getCategories: () =>
+    api.get('/restaurant/menu/dishes/add/categories'),
+
   // Get orders
   getOrders: (size = 10) =>
     api.get(`/restaurant/orders?size=${size}`),
+
+  // Toggle restaurant availability
+  toggleRestaurantAvailability: (restaurantId) =>
+    api.put(`/restaurant/availability?restaurantId=${restaurantId}`),
 };
 
 // Response interceptor for error handling

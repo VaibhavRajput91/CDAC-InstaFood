@@ -3,7 +3,6 @@ import { IndianRupee, ShoppingBag, TrendingUp } from 'lucide-react';
 import LoadingSkeleton from '../../../components/restaurant/UI/LoadingSkeleton';
 import Toast from '../../../components/restaurant/UI/Toast';
 import { restaurantAPI } from '../../../services/Restaurant/api';
-import RestaurantNavbar from '../../../components/restaurant/RestaurantNavbar/RestaurantNavbar';
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -47,7 +46,6 @@ export default function Dashboard() {
 
   return (
     <>
-      <RestaurantNavbar />
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
         <div className="flex items-center justify-between">
           <div>
