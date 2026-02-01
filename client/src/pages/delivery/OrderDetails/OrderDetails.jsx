@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useDelivery } from '../../../context/DeliveryContext';
 import { ArrowLeft, MapPin, Phone, Navigation, Clock, Package } from 'lucide-react';
 import { config } from '../../../services/config';
 
@@ -7,50 +8,8 @@ export function OrderDetails({ navigateTo, orderId }) {
   const [orderDetails, setOrderDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [accepting, setAccepting] = useState(false);
-  const [hasActiveOrder, setHasActiveOrder] = useState(false);
 
-  useEffect(() => {
-    checkActiveOrders();
-  }, []);
-
-  const checkActiveOrders = async () => {
-    const deliveryPartnerId = sessionStorage.getItem('deliveryPartnerId');
-    if (!deliveryPartnerId) return;
-
-    try {
-      // Check for ongoing orders to enforce single order constraint
-      // Assuming we can search for orders with status not DELIVERED/CANCELLED or specifically ACCEPTED/OUT_FOR_DELIVERY
-      // Using the generic orders endpoint filtering for ongoing statuses
-      const ongoingStatuses = ['ASSIGNED', 'OUT_FOR_DELIVERY', 'PICKED_UP'];
-
-      // We might need to make multiple calls or one if API supports list of statuses
-      // For now, let's fetch 'ACCEPTED' (ongoing) which seems to be the main status after accept
-      // Inspecting OrdersList usage: url = `${config.server}/delivery/orders`; params.status = ...
-
-      // Let's try to fetch all orders for the partner and filter client side if API is limited,
-      // OR assumme if we can fetch by status.
-      // Based on Dashboard summary, "todayOrderStats" exists. 
-      // Safest: Fetch ongoing orders.
-
-      const response = await axios.get(`${config.server}/delivery/orders`, {
-        params: { deliveryPartnerId, status: 'ACCEPTED' } // Check for ACCEPTED first
-      });
-
-      const ongoing = response.data.filter(o =>
-        ['ACCEPTED', 'OUT_FOR_DELIVERY', 'PICKED_UP'].includes(o.orderStatus)
-      );
-
-      if (ongoing.length > 0) {
-        // If the current order is NOT the ongoing one, then we have an active order constraint
-        // If orderId matches, it's just this order, not a constraint to block interaction with THIS order.
-        if (ongoing.some(o => o.orderId !== orderId)) {
-          setHasActiveOrder(true);
-        }
-      }
-    } catch (error) {
-      console.error("Error checking active orders:", error);
-    }
-  };
+  const { activeOrderId, setActiveOrderId, checkActiveOrder, loadingContext } = useDelivery();
 
   useEffect(() => {
     if (orderId) {
@@ -81,7 +40,6 @@ export function OrderDetails({ navigateTo, orderId }) {
 
     setAccepting(true);
     try {
-      // PATCH: ${config.server}/delivery/orders/accept?orderId=${from order key}&deliveryPartnerId=${from session storage}
       const response = await axios.patch(
         `${config.server}/delivery/orders/accept`,
         {},
@@ -91,8 +49,8 @@ export function OrderDetails({ navigateTo, orderId }) {
       );
 
       if (response.data.status === "SUCCESS") {
-        // Refresh details to update status and UI
-        await fetchOrderDetails();
+        await checkActiveOrder(); // Update context
+        await fetchOrderDetails(); // Update local details
       } else {
         alert("Failed to accept order: " + (response.data.message || "Unknown error"));
       }
@@ -105,11 +63,17 @@ export function OrderDetails({ navigateTo, orderId }) {
   };
 
   const handleDeliveredOrder = async () => {
-    setAccepting(true); // Reuse accepting state for loading
+    const deliveryPartnerId = sessionStorage.getItem('deliveryPartnerId');
+    setAccepting(true);
     try {
-      const response = await axios.patch(`${config.server}/delivery/orders/delivered/${orderId}`);
+      // API request as per user instruction: ${config.server}/delivery/orders/delivered/${deliveryPartnerId}/${orderId}
+      // Note: User specified path param /delivered/${deliveryPartnerId}/${orderId}
+      const response = await axios.patch(`${config.server}/delivery/orders/delivered/${deliveryPartnerId}/${orderId}`);
 
       if (response.data.status === "SUCCESS") {
+        // Clear active order in context since it's delivered
+        setActiveOrderId(null);
+        await checkActiveOrder(); // Double check
         await fetchOrderDetails();
       } else {
         alert("Failed to mark delivered: " + (response.data.message || "Unknown error"));
@@ -122,7 +86,7 @@ export function OrderDetails({ navigateTo, orderId }) {
     }
   };
 
-  if (loading) {
+  if (loading || loadingContext) {
     return <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-500">Loading details...</div>;
   }
 
@@ -134,9 +98,17 @@ export function OrderDetails({ navigateTo, orderId }) {
 
   // Calculate totals
   const itemTotal = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const deliveryFee = 30; // Fixed fee for now as API doesn't provide it
-  const taxes = Math.round(itemTotal * 0.05); // Assume 5% tax
+  const deliveryFee = 30;
+  const taxes = Math.round(itemTotal * 0.05);
   const total = itemTotal + deliveryFee + taxes;
+
+  // Logic for buttons
+  // 1. If this order is the active one -> Show Deliver (if status allows)
+  // 2. If this order is NOT the active one, but we have an active one -> Show Warning/Disabled Accept
+  // 3. If no active order -> Show Accept
+
+  const isActiveOrder = activeOrderId === orderId || (activeOrderId && activeOrderId.toString() === orderId.toString());
+  const isOtherOrderActive = activeOrderId && !isActiveOrder;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -261,40 +233,9 @@ export function OrderDetails({ navigateTo, orderId }) {
 
         {/* Action Buttons */}
         <div className="flex gap-3 pb-4">
-          {/* <button className="flex-1 bg-white border-2 border-orange-500 text-orange-500 py-4 rounded-2xl hover:bg-orange-50 transition-colors">
-            Reject
-          </button> */}
-          {/* 
-            Button Logic:
-            1. New Order (AVAILABLE/PLACED):
-               - If hasActiveOrder -> Show "Finish current order first" (Disabled)
-               - Else -> Show "Accept Order"
-            2. Ongoing Order (ACCEPTED/OUT_FOR_DELIVERY/PICKED_UP):
-               - Show "Delivered"
-          */}
 
-          {(!orderStatus || orderStatus === 'AVAILABLE' || orderStatus === 'PLACED') && (
-            hasActiveOrder ? (
-              <button
-                disabled
-                className="flex-1 bg-gray-300 text-gray-500 py-4 rounded-2xl cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                <Package className="w-5 h-5" />
-                Finish Active Order First
-              </button>
-            ) : (
-              <button
-                onClick={handleAcceptOrder}
-                disabled={accepting}
-                className={`flex-1 bg-orange-500 text-white py-4 rounded-2xl hover:bg-orange-600 transition-colors flex items-center justify-center gap-2 ${accepting ? 'opacity-70 cursor-not-allowed' : ''}`}
-              >
-                <Navigation className="w-5 h-5" />
-                {accepting ? 'Accepting...' : 'Accept Order'}
-              </button>
-            )
-          )}
-
-          {(orderStatus === 'ASSIGNED' || orderStatus === 'OUT_FOR_DELIVERY' || orderStatus === 'PICKED_UP') && (
+          {/* Case 1: Active Order owned by user - Show Deliver */}
+          {isActiveOrder && orderStatus !== 'DELIVERED' && orderStatus !== 'CANCELLED' && (
             <button
               onClick={handleDeliveredOrder}
               disabled={accepting}
@@ -304,6 +245,37 @@ export function OrderDetails({ navigateTo, orderId }) {
               {accepting ? 'Updating...' : 'Mark Delivered'}
             </button>
           )}
+
+          {/* Case 2: Other Order is Active - Prevent Accept */}
+          {isOtherOrderActive && (
+            <button
+              disabled
+              className="flex-1 bg-gray-300 text-gray-500 py-4 rounded-2xl cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              <Package className="w-5 h-5" />
+              Finish Active Order First
+            </button>
+          )}
+
+          {/* Case 3: No Active Order - Allow Accept (if status is appropriate) */}
+          {!activeOrderId && (orderStatus === 'AVAILABLE' || orderStatus === 'PLACED' || orderStatus === 'ACCEPTED') && (
+            <button
+              onClick={handleAcceptOrder}
+              disabled={accepting}
+              className={`flex-1 bg-orange-500 text-white py-4 rounded-2xl hover:bg-orange-600 transition-colors flex items-center justify-center gap-2 ${accepting ? 'opacity-70 cursor-not-allowed' : ''}`}
+            >
+              <Navigation className="w-5 h-5" />
+              {accepting ? 'Accepting...' : 'Accept Order'}
+            </button>
+          )}
+
+          {/* Fallback/Status display if delivered */}
+          {orderStatus === 'DELIVERED' && (
+            <div className="flex-1 bg-green-50 text-green-700 py-4 rounded-2xl flex items-center justify-center gap-2">
+              Order Delivered
+            </div>
+          )}
+
         </div>
       </div>
     </div>

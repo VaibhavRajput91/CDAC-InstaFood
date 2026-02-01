@@ -165,7 +165,6 @@ export function OrdersList({ navigateTo }) {
 
                 <div className="text-right">
                   <div className="flex items-center gap-1 text-green-600 mb-1">
-                    <DollarSign className="w-4 h-4" />
                     <span className="text-lg">
                       ₹{order.payout}
                     </span>

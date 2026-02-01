@@ -14,15 +14,6 @@ import {
 import axios from 'axios';
 import { config } from '../../../services/config'
 
-const transactions = [
-  { id: '1', type: 'credit', description: 'Order #ORD001 Completed', amount: 45, date: 'Today, 2:45 PM' },
-  { id: '2', type: 'credit', description: 'Order #ORD002 Completed', amount: 65, date: 'Today, 1:30 PM' },
-  { id: '3', type: 'debit', description: 'Withdrawal to Bank', amount: -500, date: 'Yesterday, 6:00 PM' },
-  { id: '4', type: 'credit', description: 'Order #ORD003 Completed', amount: 38, date: 'Yesterday, 8:15 PM' },
-  { id: '5', type: 'credit', description: 'Weekly Bonus', amount: 150, date: 'Dec 6, 10:00 AM' },
-  { id: '6', type: 'credit', description: 'Order #ORD004 Completed', amount: 78, date: 'Dec 6, 3:20 PM' }
-];
-
 export function Wallet({ navigateTo }) {
   const [walletSummary, setWalletSummary] = useState({
     todayCollection: 0.0,

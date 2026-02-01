@@ -16,7 +16,7 @@ export function Profile({ navigateTo }) {
   const navigate = useNavigate();
   const [details, setDetails] = useState(null);
   useEffect(() => {
-    fetch('http://localhost:8080/delivery/details?deliveryPartnerId=7')
+    fetch('http://localhost:8080/delivery/details?deliveryPartnerId=' + sessionStorage.getItem('deliveryPartnerId'))
       .then(res => res.json())
       .then(data => setDetails(data))
       .catch(() => setDetails(null));
@@ -52,7 +52,7 @@ export function Profile({ navigateTo }) {
           <button onClick={
             () => {
               handleLogout();
-              }} 
+            }}
             className="flex items-center gap-2 px-4 py-2 bg-white text-orange-600 rounded-lg hover:bg-gray-100 transition-colors font-medium">
             <LogOut className="w-5 h-5" />
             <span>Logout</span>
@@ -137,7 +137,7 @@ export function Profile({ navigateTo }) {
             <span className="text-gray-600">State</span>
             <span className="text-gray-900">{address?.state}</span>
           </div>
-          
+
         </div>
       </div>
 

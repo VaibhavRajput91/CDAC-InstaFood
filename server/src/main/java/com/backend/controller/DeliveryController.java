@@ -39,6 +39,7 @@ public class DeliveryController {
 	private final ApplyForDeliveryService applyForDeliveryService;
 	private final DeliveryDashboardService deliveryDashboardService;
 
+	// applying as a delivery partner
 	@PutMapping("/apply")
 	public ResponseEntity<?> addPartner(@RequestBody DeliveryPartnerApplyDto applyDto, @RequestParam Long userId) {
 		System.out.println("In put add-partner");
@@ -52,6 +53,7 @@ public class DeliveryController {
 		}
 	}
 
+	// get delivery partner id by user-id
 	@GetMapping("/delivery-id")
 	public ResponseEntity<?> getDeliveryPartnerId(@RequestParam Long userId) {
 		System.out.println("In Get delivery-id");
@@ -62,6 +64,7 @@ public class DeliveryController {
 		}
 	}
 
+	// the summary section of wallet page
 	@GetMapping("/wallet/summary")
 	public ResponseEntity<?> walletSummary(@RequestParam Long deliveryPartnerId) {
 		System.out.println("In Get wallet/summary");
@@ -75,6 +78,7 @@ public class DeliveryController {
 		}
 	}
 
+	// transactions on wallet page
 	@GetMapping("/wallet/transactions")
 	public ResponseEntity<?> walletTransactions(@RequestParam Long deliveryPartnerId, @RequestParam int size) {
 		System.out.println("In Get wallet/transactions?size");
@@ -85,18 +89,8 @@ public class DeliveryController {
 					.body("Error");
 		}
 	}
-
-	@PutMapping("/wallet/cash-out")
-	public ResponseEntity<?> walletCashOut(@RequestBody demo demo_dto_id_and_zerobalance) {
-		System.out.println("In Put wallet/cash-out");
-		try {
-			return ResponseEntity.ok("wallet balance 0 i.e. transferred to user account");
-		} catch (RuntimeException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("Error");
-		}
-	}
-
+	
+	// daily, weekly or monthly earnings trend for transactions page chart
 	@GetMapping("/wallet/earnings-trend")
 	public ResponseEntity<?> walletEarningsTrend(@RequestParam String range, @RequestParam Long deliveryPartnerId) {
 		System.out.println("In Get Wallet/Earinings-Trend");
@@ -109,6 +103,7 @@ public class DeliveryController {
 		}
 	}
 
+	// details of delivery partner based on delivery Partner id
 	@GetMapping("/details")
 	public ResponseEntity<?> profile(@RequestParam Long deliveryPartnerId) {
 		System.out.println("In Get details");
@@ -121,6 +116,7 @@ public class DeliveryController {
 		}
 	}
 
+	// modify the details of delivery partner
 	@PutMapping("/edit-details")
 	public ResponseEntity<?> editProfile(@RequestBody DeliveryProfileDto profileDto,
 			@RequestParam Long deliveryPartnerId) {
@@ -134,6 +130,7 @@ public class DeliveryController {
 		}
 	}
 
+	// get all the orders by delivery partner id and order status(delivered, cancelled, etc)
 	@GetMapping("/orders")
 	public ResponseEntity<?> orders(@RequestParam Long deliveryPartnerId, @RequestParam OrderStatus status) {
 		System.out.println("In Get Orders");
@@ -148,6 +145,7 @@ public class DeliveryController {
 		}
 	}
 
+	// order details for a particular order id.
 	@GetMapping("/orders/order-details")
 	public ResponseEntity<?> orderDetails(@RequestParam Long orderId) {
 		System.out.println("In Get Orders/order-details");
@@ -161,6 +159,7 @@ public class DeliveryController {
 		}
 	}
 
+	// get last n orders made by the delivery partner
 	@GetMapping("orders/history")
 	public ResponseEntity<?> orderHistory(@RequestParam Long id) {
 		System.out.print("In delivery order history");
@@ -174,6 +173,7 @@ public class DeliveryController {
 		}
 	}
 
+	// delivery dashboard summary
 	@GetMapping("/dashboard/summary")
 	public ResponseEntity<?> dashboardSummary(@RequestParam Long deliveryPartnerId) {
 		System.out.println("In Get dashboard/summary");
@@ -185,6 +185,7 @@ public class DeliveryController {
 		}
 	}
 
+	// get status of delivery partner
 	@GetMapping("/status")
 	public ResponseEntity<?> status(@RequestParam Long deliveryPartnerId) {
 		System.out.println("In Get status");
@@ -197,6 +198,7 @@ public class DeliveryController {
 		}
 	}
 
+	// change the status of the delivery partner
 	@PatchMapping("/status")
 	public ResponseEntity<?> statusUpadate(@RequestParam Long deliveryPartnerId) {
 		System.out.println("In Patch status update");
@@ -209,6 +211,7 @@ public class DeliveryController {
 		}
 	}
 
+	// get new orders for today that are placed by the customer and accepted by the restaurant.
 	@GetMapping("/orders/available")
 	public ResponseEntity<?> ordersAvailable(@RequestParam Long deliveryPartnerId) {
 		System.out.println("In Get orders-available");
@@ -222,6 +225,7 @@ public class DeliveryController {
 		}
 	}
 
+	// get orders with order status of a particular delivery partner
 	@GetMapping("/orders/{deliveryPartnerId}")
 	public ResponseEntity<?> getOrders(@PathVariable Long deliveryPartnerId, @RequestParam OrderStatus status) {
 		System.out.println("In get : orders by delivery partner id and status");
@@ -233,6 +237,7 @@ public class DeliveryController {
 		}
 	}
 
+	// accept order with order id by the delivery partner
 	@PatchMapping("/orders/accept")
 	public ResponseEntity<?> orderAccept(@RequestParam Long orderId, @RequestParam Long deliveryPartnerId) {
 		System.out.println("In Get order-accept");
@@ -244,9 +249,10 @@ public class DeliveryController {
 					.body("Error : " + e.getMessage());
 		}
 	}
-
-	@PatchMapping("/orders/delivered/{orderId}")
-	public ResponseEntity<?> orderDelivered(@PathVariable Long orderId) {
+	
+	// mark order delivered by the delivery partner
+	@PatchMapping("/orders/delivered/{deliveryPartnerId}/{orderId}")
+	public ResponseEntity<?> orderDelivered(@PathVariable Long orderId, @PathVariable Long deliveryPartnerId) {
 		System.out.println("In Patch : order delivered");
 		try {
 			return ResponseEntity.status(HttpStatus.OK)

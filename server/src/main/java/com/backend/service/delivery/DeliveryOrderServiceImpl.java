@@ -86,6 +86,7 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
 			}
 			
 			orderDetails.setOrderItems(items);
+			orderDetails.setOrderStatus(order.getOrderStatus());
 			return orderDetails;
 		}
 		else {

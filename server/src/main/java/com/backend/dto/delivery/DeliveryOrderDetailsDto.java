@@ -3,6 +3,7 @@ package com.backend.dto.delivery;
 import java.util.Set;
 
 import com.backend.entity.OrderItem;
+import com.backend.entity.OrderStatus;
 import com.backend.entity.Restaurant;
 import com.backend.entity.User;
 
@@ -29,6 +30,8 @@ public class DeliveryOrderDetailsDto {
 	private String customerPhone;
 	// order items
 	private Set<OrderItemDto> orderItems;
+	// order status
+	private OrderStatus orderStatus;
 	
 	
 	public double totalAmount() {
