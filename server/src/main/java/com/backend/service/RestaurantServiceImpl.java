@@ -129,40 +129,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 	}
 
 	
-	@Override
-	public List<RestaurantOrdersDTO> getAllCompletedOrders(Long restaurantId) {
-		List<Order> orders =orderRepository.findCompletedOrdersByRestaurant(restaurantId);
-	    return orders.stream().map(order -> {
-	        User customer = order.getCustomer();
-	        String customerName = customer.getFirstName() +(customer.getLastName() != null ? " " + customer.getLastName(): "");
-	        String address = formatAddress(customer.getAddress());
-	        Map<String, Integer> items = order.getOrderItems()
-	                .stream()
-	                .collect(Collectors.toMap(
-	                        oi -> oi.getDish().getName(),
-	                        oi -> oi.getQuantity()
-	                )); 
-	        String deliveryExecutiveName = null;
-	        if (order.getDeliveryPartner() != null) {
-	            User dpUser = order.getDeliveryPartner().getUser();
-	            deliveryExecutiveName = dpUser.getFirstName() +
-	                    (dpUser.getLastName() != null
-	                            ? " " + dpUser.getLastName()
-	                            : "");
-	        }
-	        return new RestaurantOrdersDTO(
-	                order.getId(),
-	                customerName,
-	                address,
-	                order.getCreatedOn(),
-	                items,
-	                order.getTotalAmount(),
-	                deliveryExecutiveName,
-	                order.getLastUpdated(),
-	                order.getOrderStatus()
-	        );
-	    }).toList();
-	}
+	
 
 	
 
@@ -381,39 +348,186 @@ public class RestaurantServiceImpl implements RestaurantService {
 	}
 
 	@Override
-	public List<RestaurantOrdersDTO> getNewPlacedOrders(Long restaurantId) {
-		List<Order> orders =
-	            orderRepository.findNewPlacedOrders(restaurantId);
-
+	public List<RestaurantOrdersDTO> getAllPlacedOrders(Long restaurantId) {
+		List<Order> orders =orderRepository.findAllPlacedOrders(restaurantId);
 	    return orders.stream().map(order -> {
-
 	        User customer = order.getCustomer();
-
 	        String customerName = customer.getFirstName() +
 	                (customer.getLastName() != null
 	                        ? " " + customer.getLastName()
 	                        : "");
-
 	        String address = formatAddress(customer.getAddress());
-
 	        Map<String, Integer> items = order.getOrderItems()
 	                .stream()
 	                .collect(Collectors.toMap(
 	                        oi -> oi.getDish().getName(),
-	                        oi -> oi.getQuantity()
+	                        oi -> oi.getQuantity(),
+	                        Integer::sum
 	                ));
-
 	        return new RestaurantOrdersDTO(
 	                order.getId(),
 	                customerName,
 	                address,
-	                order.getCreatedOn(),     // order time
+	                order.getCreatedOn(),     
 	                items,
 	                order.getTotalAmount(),
-	                null,                     // ❌ no delivery partner yet
-	                null,                     // ❌ not delivered yet
+	                null,                    
+	                null,                   
 	                order.getOrderStatus()
 	        );
 	    }).toList();
 	}
+
+	@Override
+	public List<RestaurantOrdersDTO> getAllAcceptedOrders(Long restaurantId) {
+		List<Order> orders =orderRepository.findAllAcceptedOrders(restaurantId);
+	    return orders.stream().map(order -> {
+	        User customer = order.getCustomer();
+	        String customerName = customer.getFirstName() +
+	                (customer.getLastName() != null
+	                        ? " " + customer.getLastName()
+	                        : "");
+	        String address = formatAddress(customer.getAddress());
+	        Map<String, Integer> items = order.getOrderItems()
+	                .stream()
+	                .collect(Collectors.toMap(
+	                        oi -> oi.getDish().getName(),
+	                        oi -> oi.getQuantity(),
+	                        Integer::sum
+	                ));
+	        return new RestaurantOrdersDTO(
+	                order.getId(),
+	                customerName,
+	                address,
+	                order.getCreatedOn(),     
+	                items,
+	                order.getTotalAmount(),
+	                null,                  
+	                null,                  
+	                order.getOrderStatus()
+	        );
+	    }).toList();
+	}
+	
+	@Override
+	public List<RestaurantOrdersDTO> getAllPreparingOrders(Long restaurantId) {
+		List<Order> orders =orderRepository.findAllPreparingOrders(restaurantId);
+	    return orders.stream().map(order -> {
+	        User customer = order.getCustomer();
+	        String customerName = customer.getFirstName() +
+	                (customer.getLastName() != null
+	                        ? " " + customer.getLastName()
+	                        : "");
+	        String address = formatAddress(customer.getAddress());
+	        Map<String, Integer> items = order.getOrderItems()
+	                .stream()
+	                .collect(Collectors.toMap(
+	                        oi -> oi.getDish().getName(),
+	                        oi -> oi.getQuantity(),
+	                        Integer::sum
+	                ));
+	        return new RestaurantOrdersDTO(
+	                order.getId(),
+	                customerName,
+	                address,
+	                order.getCreatedOn(),     
+	                items,
+	                order.getTotalAmount(),
+	                null,                  
+	                null,                  
+	                order.getOrderStatus()
+	        );
+	    }).toList();
+	}
+	
+	@Override
+	public List<RestaurantOrdersDTO> getAllAssignedOrders(Long restaurantId) {
+		List<Order> orders =orderRepository.findAllAssignedOrders(restaurantId);
+	    return orders.stream().map(order -> {
+	        User customer = order.getCustomer();
+	        String customerName = customer.getFirstName() +(customer.getLastName() != null ? " " + customer.getLastName(): "");
+	        String address = formatAddress(customer.getAddress());
+	        Map<String, Integer> items = order.getOrderItems()
+	                .stream()
+	                .collect(Collectors.toMap(
+	                        oi -> oi.getDish().getName(),
+	                        oi -> oi.getQuantity(),
+	                        Integer::sum
+	                )); 
+	        String deliveryExecutiveName = null;
+	        if (order.getDeliveryPartner() != null) {
+	            User dpUser = order.getDeliveryPartner().getUser();
+	            deliveryExecutiveName = dpUser.getFirstName() +
+	                    (dpUser.getLastName() != null
+	                            ? " " + dpUser.getLastName()
+	                            : "");
+	        }
+	        return new RestaurantOrdersDTO(
+	                order.getId(),
+	                customerName,
+	                address,
+	                order.getCreatedOn(),
+	                items,
+	                order.getTotalAmount(),
+	                deliveryExecutiveName,
+	                order.getLastUpdated(),
+	                order.getOrderStatus()
+	        );
+	    }).toList();
+	}
+	
+	@Override
+	public List<RestaurantOrdersDTO> getAllDeliveredOrders(Long restaurantId) {
+		List<Order> orders =orderRepository.findAllDeliveredOrders(restaurantId);
+	    return orders.stream().map(order -> {
+	        User customer = order.getCustomer();
+	        String customerName = customer.getFirstName() +(customer.getLastName() != null ? " " + customer.getLastName(): "");
+	        String address = formatAddress(customer.getAddress());
+	        Map<String, Integer> items = order.getOrderItems()
+	                .stream()
+	                .collect(Collectors.toMap(
+	                        oi -> oi.getDish().getName(),
+	                        oi -> oi.getQuantity(),
+	                        Integer::sum
+	                )); 
+	        String deliveryExecutiveName = null;
+	        if (order.getDeliveryPartner() != null) {
+	            User dpUser = order.getDeliveryPartner().getUser();
+	            deliveryExecutiveName = dpUser.getFirstName() +
+	                    (dpUser.getLastName() != null
+	                            ? " " + dpUser.getLastName()
+	                            : "");
+	        }
+	        return new RestaurantOrdersDTO(
+	                order.getId(),
+	                customerName,
+	                address,
+	                order.getCreatedOn(),
+	                items,
+	                order.getTotalAmount(),
+	                deliveryExecutiveName,
+	                order.getLastUpdated(),
+	                order.getOrderStatus()
+	        );
+	    }).toList();
+	}
+
+	@Override
+	public String acceptingOrderByOrderId(Long orderId) {
+		Order order=orderRepository.findById(orderId)
+				.orElseThrow(()->new RuntimeException("Order not found;"));
+		order.setOrderStatus(OrderStatus.ACCEPTED);
+		orderRepository.save(order);
+		return "Order Accepted";
+	}
+
+	@Override
+	public String preparingOrderByOrderId(Long orderId) {
+		Order order=orderRepository.findById(orderId)
+				.orElseThrow(()->new RuntimeException("Order not found;"));
+		order.setOrderStatus(OrderStatus.PREPARING);
+		orderRepository.save(order);
+		return "Preparing Order";
+	}
+	
 }

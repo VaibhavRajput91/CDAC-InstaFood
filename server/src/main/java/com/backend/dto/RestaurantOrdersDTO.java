@@ -18,7 +18,7 @@ import lombok.Setter;
 public class RestaurantOrdersDTO {
 	
 	private Long orderId;
-	private String CustomerName;
+	private String customerName;
 	private String Address;
 	private LocalDate orderDate;
 	

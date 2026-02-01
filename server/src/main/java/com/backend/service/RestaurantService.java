@@ -21,8 +21,15 @@ public interface RestaurantService {
 	String DishAvailability(long menuId,long dishId);
 	String deleteMenuDish(long menuId, long dishId);
 
-	List<RestaurantOrdersDTO> getAllCompletedOrders(Long restaurantId);
-	List<RestaurantOrdersDTO> getNewPlacedOrders(Long restaurantId);
+	List<RestaurantOrdersDTO> getAllPlacedOrders(Long restaurantId);
+	List<RestaurantOrdersDTO> getAllAcceptedOrders(Long restaurantId);
+	List<RestaurantOrdersDTO> getAllPreparingOrders(Long restaurantId);
+	List<RestaurantOrdersDTO> getAllAssignedOrders(Long restaurantId);
+	List<RestaurantOrdersDTO> getAllDeliveredOrders(Long restaurantId);
+	
+	String acceptingOrderByOrderId(Long orderId);
+	String preparingOrderByOrderId(Long orderId);
+	
 
 	
 	Long getMenuIdByRestaurantId(Long restaurantId);
