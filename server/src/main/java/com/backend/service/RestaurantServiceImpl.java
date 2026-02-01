@@ -104,33 +104,64 @@ public class RestaurantServiceImpl implements RestaurantService {
 		int rowsAffected=restaurantRepository.deleteDish(menuId, dishId);
 		return "Rows Affected : "+rowsAffected;
 	}
-
-
+	
+	private String formatAddress(Address address) {
+	    if (address == null) {
+	        return null;
+	    }
+	    StringBuilder sb = new StringBuilder();
+	    if (address.getLineOne() != null) {
+	        sb.append(address.getLineOne());
+	    }
+	    if (address.getLineTwo() != null && !address.getLineTwo().isBlank()) {
+	        sb.append(", ").append(address.getLineTwo());
+	    }
+	    if (address.getCity() != null) {
+	        sb.append(", ").append(address.getCity());
+	    }
+	    if (address.getState() != null) {
+	        sb.append(", ").append(address.getState());
+	    }
+	    if (address.getPostalCode() != null) {
+	        sb.append(" - ").append(address.getPostalCode());
+	    }
+	    return sb.toString();
+	}
 
 	
-
 	@Override
-	public List<RestaurantOrdersDTO> getAllOrdersByRestaurant(Long restaurantId) {
-		List<RestaurantOrdersDTO> restaurantOrders= new ArrayList<>();
-		Map<String, Integer> dishesWithQuantities = new HashMap<>();
-		List<Order> orders = orderRepository.findByRestaurantId(restaurantId)
-				.orElseThrow(()-> new RuntimeException("No Orders Found for this Restaurant"));
-		for(Order order : orders) {
-			RestaurantOrdersDTO dto = new RestaurantOrdersDTO();
-			dto.setOrderId(order.getId());
-			dto.setOrderDate(order.getCreatedOn());
-			dto.setCustomerName(order.getCustomer().getFirstName() + " " + order.getCustomer().getLastName());
-			dto.setOrderStatus(order.getOrderStatus());
-			dto.setTotalAmount(order.getTotalAmount());
-			// Assuming order has a method getOrderItems() that returns list of OrderItem
-			order.getOrderItems().forEach(item -> {
-				dishesWithQuantities.put(item.getDish().getName(), item.getQuantity());
-			});
-			dto.setItems(dishesWithQuantities);
-			restaurantOrders.add(dto);
-		}
-		return restaurantOrders;
-
+	public List<RestaurantOrdersDTO> getAllCompletedOrders(Long restaurantId) {
+		List<Order> orders =orderRepository.findCompletedOrdersByRestaurant(restaurantId);
+	    return orders.stream().map(order -> {
+	        User customer = order.getCustomer();
+	        String customerName = customer.getFirstName() +(customer.getLastName() != null ? " " + customer.getLastName(): "");
+	        String address = formatAddress(customer.getAddress());
+	        Map<String, Integer> items = order.getOrderItems()
+	                .stream()
+	                .collect(Collectors.toMap(
+	                        oi -> oi.getDish().getName(),
+	                        oi -> oi.getQuantity()
+	                )); 
+	        String deliveryExecutiveName = null;
+	        if (order.getDeliveryPartner() != null) {
+	            User dpUser = order.getDeliveryPartner().getUser();
+	            deliveryExecutiveName = dpUser.getFirstName() +
+	                    (dpUser.getLastName() != null
+	                            ? " " + dpUser.getLastName()
+	                            : "");
+	        }
+	        return new RestaurantOrdersDTO(
+	                order.getId(),
+	                customerName,
+	                address,
+	                order.getCreatedOn(),
+	                items,
+	                order.getTotalAmount(),
+	                deliveryExecutiveName,
+	                order.getLastUpdated(),
+	                order.getOrderStatus()
+	        );
+	    }).toList();
 	}
 
 	
@@ -347,5 +378,42 @@ public class RestaurantServiceImpl implements RestaurantService {
 	public String RestaurantAvailability(Long restaurantId) {
 		int rowsAffected=restaurantRepository.changeRestaurantAvailability(restaurantId);
 		return "Rows Affected : "+rowsAffected;
+	}
+
+	@Override
+	public List<RestaurantOrdersDTO> getNewPlacedOrders(Long restaurantId) {
+		List<Order> orders =
+	            orderRepository.findNewPlacedOrders(restaurantId);
+
+	    return orders.stream().map(order -> {
+
+	        User customer = order.getCustomer();
+
+	        String customerName = customer.getFirstName() +
+	                (customer.getLastName() != null
+	                        ? " " + customer.getLastName()
+	                        : "");
+
+	        String address = formatAddress(customer.getAddress());
+
+	        Map<String, Integer> items = order.getOrderItems()
+	                .stream()
+	                .collect(Collectors.toMap(
+	                        oi -> oi.getDish().getName(),
+	                        oi -> oi.getQuantity()
+	                ));
+
+	        return new RestaurantOrdersDTO(
+	                order.getId(),
+	                customerName,
+	                address,
+	                order.getCreatedOn(),     // order time
+	                items,
+	                order.getTotalAmount(),
+	                null,                     // ❌ no delivery partner yet
+	                null,                     // ❌ not delivered yet
+	                order.getOrderStatus()
+	        );
+	    }).toList();
 	}
 }
