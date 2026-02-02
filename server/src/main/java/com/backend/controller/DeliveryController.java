@@ -89,7 +89,7 @@ public class DeliveryController {
 					.body("Error");
 		}
 	}
-	
+
 	// daily, weekly or monthly earnings trend for transactions page chart
 	@GetMapping("/wallet/earnings-trend")
 	public ResponseEntity<?> walletEarningsTrend(@RequestParam String range, @RequestParam Long deliveryPartnerId) {
@@ -130,7 +130,8 @@ public class DeliveryController {
 		}
 	}
 
-	// get all the orders by delivery partner id and order status(delivered, cancelled, etc)
+	// get all the orders by delivery partner id and order status(delivered,
+	// cancelled, etc)
 	@GetMapping("/orders")
 	public ResponseEntity<?> orders(@RequestParam Long deliveryPartnerId, @RequestParam OrderStatus status) {
 		System.out.println("In Get Orders");
@@ -211,7 +212,8 @@ public class DeliveryController {
 		}
 	}
 
-	// get new orders for today that are placed by the customer and accepted by the restaurant.
+	// get new orders for today that are placed by the customer and accepted by the
+	// restaurant.
 	@GetMapping("/orders/available")
 	public ResponseEntity<?> ordersAvailable(@RequestParam Long deliveryPartnerId) {
 		System.out.println("In Get orders-available");
@@ -240,16 +242,16 @@ public class DeliveryController {
 	// accept order with order id by the delivery partner
 	@PatchMapping("/orders/accept")
 	public ResponseEntity<?> orderAccept(@RequestParam Long orderId, @RequestParam Long deliveryPartnerId) {
-		System.out.println("In Get order-accept");
+		System.out.println("In Patch order-accept");
 		try {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(deliveryDashboardService.acceptDeliveryRequest(deliveryPartnerId, orderId));
 		} catch (RuntimeException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body("Error : " + e.getMessage());
 		}
 	}
-	
+
 	// mark order delivered by the delivery partner
 	@PatchMapping("/orders/delivered/{deliveryPartnerId}/{orderId}")
 	public ResponseEntity<?> orderDelivered(@PathVariable Long orderId, @PathVariable Long deliveryPartnerId) {
@@ -258,7 +260,7 @@ public class DeliveryController {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(orderService.deliverOrder(orderId));
 		} catch (RuntimeException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body("Error : " + e.getMessage());
 		}
 	}

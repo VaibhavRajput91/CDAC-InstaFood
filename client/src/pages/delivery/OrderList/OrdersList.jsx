@@ -47,6 +47,31 @@ export function OrdersList({ navigateTo }) {
         ordersData = [ordersData[0]];
       }
 
+      const formatDateTime = (dateString) => {
+        if (!dateString) return 'N/A';
+        try {
+          const date = new Date(dateString);
+          if (isNaN(date.getTime())) return dateString;
+
+          const options = {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          };
+
+          const formatted = new Intl.DateTimeFormat('en-GB', options).format(date);
+          // Intl format for en-GB is dd/mm/yyyy, hh:mm
+          // We want hh:mm dd/mm/yyyy
+          const [datePart, timePart] = formatted.split(', ');
+          return `${timePart} ${datePart}`;
+        } catch (e) {
+          return dateString;
+        }
+      };
+
       const mappedOrders = ordersData.map(order => ({
         id: order.orderId,
         restaurant: order.restaurantName,
@@ -56,7 +81,7 @@ export function OrdersList({ navigateTo }) {
         distance: '2.5 km',
         time: '20 min',
         status: order.orderStatus,
-        completedAt: order.time
+        completedAt: formatDateTime(order.time)
       }));
 
       setOrders(mappedOrders);

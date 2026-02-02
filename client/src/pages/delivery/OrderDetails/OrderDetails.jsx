@@ -21,7 +21,7 @@ export function OrderDetails({ navigateTo, orderId }) {
     try {
       const response = await api.get(`/delivery/orders/order-details`, {
         params: { orderId },
-        
+
       });
       setOrderDetails(response.data);
     } catch (error) {
@@ -70,7 +70,7 @@ export function OrderDetails({ navigateTo, orderId }) {
 
       if (response.data.status === "SUCCESS") {
         setActiveOrderId(null);
-        await checkActiveOrder(); 
+        await checkActiveOrder();
         await fetchOrderDetails();
       } else {
         alert("Failed to mark delivered: " + (response.data.message || "Unknown error"));
@@ -255,7 +255,7 @@ export function OrderDetails({ navigateTo, orderId }) {
           )}
 
           {/* Case 3: No Active Order - Allow Accept (if status is appropriate) */}
-          {!activeOrderId && (orderStatus === 'AVAILABLE' || orderStatus === 'PLACED' || orderStatus === 'ACCEPTED') && (
+          {!activeOrderId && (orderStatus === 'AVAILABLE' || orderStatus === 'PLACED' || orderStatus === 'PREPARING') && (
             <button
               onClick={handleAcceptOrder}
               disabled={accepting}
