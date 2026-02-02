@@ -37,10 +37,10 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
 	public List<DeliveryOrderDto> getTodayOrdersList(Long deliveryPartnerId, OrderStatus status) {
 		LocalDate today = LocalDate.now();
 		List<Order> orders = new ArrayList<>();
-		if(status == OrderStatus.ACCEPTED) {
+		if(status == OrderStatus.PREPARING) {
 			orders = orderRepository.findTop5ByDeliveryPartnerIdAndCreatedOnAndOrderStatusOrderByLastUpdatedDesc(deliveryPartnerId, today, status);
 		}
-		else if(status == OrderStatus.OUT_FOR_DELIVERY){
+		else if(status == OrderStatus.ASSIGNED){
 			orders = orderRepository.findTopByDeliveryPartnerIdAndCreatedOnAndOrderStatusOrderByLastUpdatedDesc(deliveryPartnerId, today, status);
 		}
 		else if(status == OrderStatus.DELIVERED) {

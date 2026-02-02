@@ -1,8 +1,6 @@
 package com.backend.service.delivery;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -15,11 +13,8 @@ import com.backend.dto.delivery.DeliveryResponseDto;
 import com.backend.dto.delivery.DeliveryStatusDto;
 import com.backend.dto.delivery.OrderItemDto;
 import com.backend.entity.AvailabilityStatus;
-import com.backend.entity.DeliveryLog;
 import com.backend.entity.DeliveryPartner;
-import com.backend.entity.DeliveryStatus;
 import com.backend.entity.Order;
-import com.backend.entity.OrderItem;
 import com.backend.entity.OrderStatus;
 import com.backend.repository.delivery.DeliveryOrderRepository;
 import com.backend.repository.delivery.DeliveryProfileRepository;
@@ -65,7 +60,7 @@ public class DeliveryDashboardServiceImpl implements DeliveryDashboardService {
 	    LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
 
 	    List<Order> orders = deliveryOrderRepository.findAvailableOrders(
-	            OrderStatus.ACCEPTED,
+	            OrderStatus.PREPARING,
 	            oneHourAgo,
 	            postalCode
 	    );

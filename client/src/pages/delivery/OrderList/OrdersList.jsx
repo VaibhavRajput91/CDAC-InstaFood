@@ -26,7 +26,7 @@ export function OrdersList({ navigateTo }) {
       url = `/delivery/orders/${deliveryPartnerId}`;
 
       let status = 'ASSIGNED';
-      if (activeTab === 'ongoing') status = 'ASSIGNED' || 'PREPARING';
+      if (activeTab === 'ongoing') status = 'ASSIGNED';
       if (activeTab === 'completed') status = 'DELIVERED';
 
       params = { status };
