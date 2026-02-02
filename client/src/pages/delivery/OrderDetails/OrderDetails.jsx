@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../../services/api';
 import { useDelivery } from '../../../context/DeliveryContext';
 import { ArrowLeft, MapPin, Phone, Navigation, Clock, Package } from 'lucide-react';
-import { config } from '../../../services/config';
 
 export function OrderDetails({ navigateTo, orderId }) {
   const [orderDetails, setOrderDetails] = useState(null);
@@ -20,8 +19,9 @@ export function OrderDetails({ navigateTo, orderId }) {
   const fetchOrderDetails = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${config.server}/delivery/orders/order-details`, {
-        params: { orderId }
+      const response = await api.get(`/delivery/orders/order-details`, {
+        params: { orderId },
+        
       });
       setOrderDetails(response.data);
     } catch (error) {
@@ -40,8 +40,8 @@ export function OrderDetails({ navigateTo, orderId }) {
 
     setAccepting(true);
     try {
-      const response = await axios.patch(
-        `${config.server}/delivery/orders/accept`,
+      const response = await api.patch(
+        `/delivery/orders/accept`,
         {},
         {
           params: { orderId, deliveryPartnerId }
@@ -66,14 +66,11 @@ export function OrderDetails({ navigateTo, orderId }) {
     const deliveryPartnerId = sessionStorage.getItem('deliveryPartnerId');
     setAccepting(true);
     try {
-      // API request as per user instruction: ${config.server}/delivery/orders/delivered/${deliveryPartnerId}/${orderId}
-      // Note: User specified path param /delivered/${deliveryPartnerId}/${orderId}
-      const response = await axios.patch(`${config.server}/delivery/orders/delivered/${deliveryPartnerId}/${orderId}`);
+      const response = await api.patch(`/delivery/orders/delivered/${deliveryPartnerId}/${orderId}`);
 
       if (response.data.status === "SUCCESS") {
-        // Clear active order in context since it's delivered
         setActiveOrderId(null);
-        await checkActiveOrder(); // Double check
+        await checkActiveOrder(); 
         await fetchOrderDetails();
       } else {
         alert("Failed to mark delivered: " + (response.data.message || "Unknown error"));

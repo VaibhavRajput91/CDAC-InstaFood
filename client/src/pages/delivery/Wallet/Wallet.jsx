@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-  ArrowLeft
-} from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { BottomNav } from '../../../components/delivery/BottomNav';
 import {
   LineChart,
@@ -11,8 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer
 } from 'recharts';
-import axios from 'axios';
-import { config } from '../../../services/config'
+import api from '../../../services/api';
 
 export function Wallet({ navigateTo }) {
   const [walletSummary, setWalletSummary] = useState({
@@ -27,7 +24,7 @@ export function Wallet({ navigateTo }) {
     const deliveryPartnerId = sessionStorage.getItem("deliveryPartnerId");
     if (!deliveryPartnerId) return;
 
-    axios.get(`${config.server}/delivery/wallet/summary`, {
+    api.get(`/delivery/wallet/summary`, {
       params: { deliveryPartnerId }
     })
       .then(res => {
@@ -48,16 +45,18 @@ export function Wallet({ navigateTo }) {
   const [txnLoading, setTxnLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${config.server}/delivery/wallet/transactions?deliveryPartnerId=${sessionStorage.deliveryPartnerId}&size=10`)
-      .then(res => res.json())
-      .then(data => {
+    api.get(`/delivery/wallet/transactions`, {
+      params: { deliveryPartnerId: sessionStorage.deliveryPartnerId, size: 10 }
+    })
+      .then(res => {
+        const data = res.data;
         setTransactions(
           data.map(order => ({
             id: order.orderId,
-            type: 'credit', // Let us assume transactions are credits
+            type: 'credit', 
             description: `Order #${order.orderId} ${order.orderStatus}`,
             amount: order.earnings,
-            date: '—' // backend doesn’t provide date yet
+            date: '—'
           }))
         );
         setTxnLoading(false);
@@ -76,11 +75,10 @@ export function Wallet({ navigateTo }) {
         const dpId = sessionStorage.getItem("deliveryPartnerId");
         if (!dpId) return;
 
-        const res = await axios.get(`${config.server}/delivery/wallet/earnings-trend`, {
+        const res = await api.get(`/delivery/wallet/earnings-trend`, {
           params: { deliveryPartnerId: sessionStorage.deliveryPartnerId, range: period }
         });
 
-        // Backend returns: [today, yesterday, ..., 6-steps-ago]
         const rawData = res.data;
         const processedData = rawData.map((val, index) => {
           let name = '';

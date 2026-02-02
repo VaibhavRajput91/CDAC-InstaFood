@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { Clock, RefreshCw, AlertCircle } from 'lucide-react';
-import { config } from '../../services/config';
 
 export function ApprovalPending({ navigateTo }) {
     const [checking, setChecking] = useState(false);
@@ -10,7 +9,6 @@ export function ApprovalPending({ navigateTo }) {
     const checkStatus = async () => {
         const deliveryPartnerId = sessionStorage.getItem('deliveryPartnerId');
         if (!deliveryPartnerId) {
-            // Should theoretically not happen if we are on this screen, but handle safe
             navigateTo('apply');
             return;
         }
@@ -19,23 +17,17 @@ export function ApprovalPending({ navigateTo }) {
         setError('');
 
         try {
-            // API: ${config.server}/delivery/status?deliveryPartnerId=${id}
-            const response = await axios.get(`${config.server}/delivery/status`, {
+            const response = await api.get(`/delivery/status`, {
                 params: { deliveryPartnerId }
             });
 
-            // Response: { "status": "PENDING" | "AVAILABLE" | "UNAVAILABLE" }
             const status = response.data.status;
 
             if (status === 'REJECTED') {
                 navigateTo('register');
             } else if (status !== 'PENDING') {
-                // Approved!
                 navigateTo('dashboard');
             } else {
-                // Still pending
-                // Maybe show a toast or message, but for now just staying on screen is enough info?
-                // Let's make it clear.
                 setError('Status is still Pending. Please wait for admin approval.');
             }
         } catch (err) {
