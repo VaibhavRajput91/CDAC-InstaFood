@@ -67,8 +67,10 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	public List<RestaurantApplicationsDTO> getPendingRestaurantApplications() {
 		
+		//List<Restaurant> restaurants =
+			//	restaurantApprovalRepository.findByStatus(AvailabilityStatus.PENDING);
 		List<Restaurant> restaurants =
-				restaurantApprovalRepository.findByStatus(AvailabilityStatus.PENDING);
+				restaurantApprovalRepository.findByStatusOrderByCreatedOnAsc(AvailabilityStatus.PENDING);
 		
         // Convert Entity → DTO (USING FOR LOOP)
         List<RestaurantApplicationsDTO> dtoList = new ArrayList<>();
@@ -77,7 +79,8 @@ public class AdminServiceImpl implements AdminService{
             RestaurantApplicationsDTO restaurantdto = new RestaurantApplicationsDTO();
             restaurantdto.setId(restaurant.getId());
             restaurantdto.setRestaurantName(restaurant.getRestaurantName());
-
+            restaurantdto.setApplicationDate(restaurant.getCreatedOn());
+            if(restaurantdto.getApplicationDate()!=null)
             dtoList.add(restaurantdto);
         }
 
