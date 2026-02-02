@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import ProfileAvatar from "../../common/ProfileAvatar/ProfileAvatar";
+import adminLogo from "../../../images/admin-logo.png";
 import { getAdminProfile } from '../../../services/admin/adminProfile';
 
 function Profile() {
@@ -19,8 +19,9 @@ function Profile() {
         <div className="min-h-screen flex justify-center items-start pt-16 bg-gray-100">
             <div className="w-[90%] max-w-2xl bg-white rounded-2xl shadow-lg p-8">
                 <center>
-                    <ProfileAvatar />
-                    <br />
+                     <div className="w-32 h-32 rounded-full border-4 border-orange-200 overflow-hidden shadow-sm mb-4">
+                        <img src={adminLogo} alt="Admin Logo" className="w-full h-full object-cover" />
+                    </div>
                 </center>
                 {/* Admin Info */}
                 <div className="text-center">
