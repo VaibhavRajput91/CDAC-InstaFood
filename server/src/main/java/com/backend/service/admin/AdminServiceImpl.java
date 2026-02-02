@@ -129,9 +129,10 @@ public class AdminServiceImpl implements AdminService{
 
 	@Override
 	public List<DeliveryPartnerApplicationsDTO> getPendingDeliveryPartnerApplications() {
-		List<DeliveryPartner> applications =
-				deliveryPartnerApprovalRepository.findByStatus(AvailabilityStatus.PENDING);
-		
+		//List<DeliveryPartner> applications =
+			//	deliveryPartnerApprovalRepository.findByStatus(AvailabilityStatus.PENDING);
+		List<DeliveryPartner> applications =deliveryPartnerApprovalRepository.findByStatusOrderByCreatedOnAsc(AvailabilityStatus.PENDING);
+
         // Convert Entity → DTO (USING FOR LOOP)
         List<DeliveryPartnerApplicationsDTO> dtoList = new ArrayList<>();
 
@@ -139,7 +140,8 @@ public class AdminServiceImpl implements AdminService{
         	DeliveryPartnerApplicationsDTO deliveryPartnerdto = new DeliveryPartnerApplicationsDTO();
             deliveryPartnerdto.setId(delvieryPartner.getId());
             deliveryPartnerdto.setDeliveryPartnerName(delvieryPartner.getUser().getFirstName() +" "+delvieryPartner.getUser().getLastName());
-
+            deliveryPartnerdto.setApplicationDate(delvieryPartner.getCreatedOn());
+            if(deliveryPartnerdto.getApplicationDate()!=null)
             dtoList.add(deliveryPartnerdto);
         }
 

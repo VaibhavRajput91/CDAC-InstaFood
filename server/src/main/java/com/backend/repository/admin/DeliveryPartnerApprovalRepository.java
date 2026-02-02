@@ -11,7 +11,8 @@ import com.backend.entity.DeliveryPartner;
 
 public interface DeliveryPartnerApprovalRepository extends JpaRepository<DeliveryPartner, Long> {
 
-	List<DeliveryPartner> findByStatus(AvailabilityStatus inactive);
+	//List<DeliveryPartner> findByStatus(AvailabilityStatus inactive);
+	List<DeliveryPartner> findByStatusOrderByCreatedOnAsc(AvailabilityStatus inactive);
 
 	public Optional<DeliveryPartner> findByIdAndStatus(Long id, AvailabilityStatus inactive);
 
