@@ -115,8 +115,9 @@ public class DeliveryDashboardServiceImpl implements DeliveryDashboardService {
 
 		order.setDeliveryPartner(deliveryPartner);
 		order.setOrderStatus(OrderStatus.ASSIGNED);
-
 		deliveryOrderRepository.save(order);
+		deliveryOrderRepository.flush();
+		deliveryOrderRepository.updateOrderStatus(orderId, OrderStatus.ASSIGNED);
 
 		return new DeliveryResponseDto(
 				"SUCCESS",

@@ -3,6 +3,8 @@ package com.backend.entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -23,6 +25,7 @@ import lombok.ToString;
 @Entity
 @Table(name="orders")
 @AttributeOverride(name="id", column=@Column(name="order_id"))
+@DynamicUpdate
 
 @Getter
 @Setter
