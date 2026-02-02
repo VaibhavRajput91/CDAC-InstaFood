@@ -1,10 +1,8 @@
-import axios from 'axios'
-import { config } from '../config'
+import api from '../api'
 
 export async function getPendingDeliveryPartners() {
     try {
-        const url = `${config.server}/admin/approvals/delivery-partners/applications`
-        const response = await axios.get(url)
+        const response = await api.get('/admin/approvals/delivery-partners/applications')
         return response.data
     } catch (ex) {
         console.log(`exception: `, ex)
@@ -14,8 +12,7 @@ export async function getPendingDeliveryPartners() {
 
 export async function getDeliveryPartnerApplicationDetails(id) {
     try {
-        const url = `${config.server}/admin/approvals/delivery-partners/applications/${id}`
-        const response = await axios.get(url)
+        const response = await api.get(`/admin/approvals/delivery-partners/applications/${id}`)
         return response.data
     } catch (ex) {
         console.log(`exception: `, ex)
@@ -24,8 +21,7 @@ export async function getDeliveryPartnerApplicationDetails(id) {
 }
 export async function approveDeliveryPartner(id) {
     try {
-        const url = `${config.server}/admin/approvals/delivery-partners/${id}/approve`
-        const response = await axios.put(url)
+        const response = await api.put(`/admin/approvals/delivery-partners/${id}/approve`)
         return response.data
     } catch (ex) {
         console.log(`exception: `, ex)
@@ -35,8 +31,7 @@ export async function approveDeliveryPartner(id) {
 
 export async function rejectDeliveryPartner(id) {
     try {
-        const url = `${config.server}/admin/approvals/delivery-partners/${id}/reject`
-        const response = await axios.put(url)
+        const response = await api.put(`/admin/approvals/delivery-partners/${id}/reject`)
         return response.data
     } catch (ex) {
         console.log(`exception: `, ex)

@@ -8,7 +8,7 @@ function CustomerNavbar() {
     { name: 'Home', path: '/customer/' },
     { name: 'Orders', path: '/customer/orders' },
     { name: 'Profile', path: '/customer/profile' },
-    { name: 'ContactUS', path: '/contact-us' },
+    // { name: 'ContactUS', path: '/contact-us' },
   ];
 
   const handleLogout = () => {

@@ -114,10 +114,20 @@ public class SecurityConfig {
 		// 1. Disable CSRF protection
 		http.csrf(csrf -> csrf.disable());
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-		// 2. Authenticate any request
+//		// 2. Authenticate any request
+//		http.authorizeHttpRequests(request ->
+//		// 3.permit all - swagger , view all restaurants , user signin , sign up....
+//		request.anyRequest().permitAll());
 		http.authorizeHttpRequests(request ->
 		// 3.permit all - swagger , view all restaurants , user signin , sign up....
-		request.anyRequest().permitAll());
+		request.requestMatchers("/swagger-ui/**", "/v**/api-docs/**"
+				, "/user/sign-in", "/user/sign-up").permitAll()
+		//  /error - public
+			.requestMatchers("/error").permitAll()
+		//  Front end React In Flight requests - allowed
+		.requestMatchers(HttpMethod.OPTIONS).permitAll()
+				.anyRequest().authenticated());
+
 		
 		// 5. set session creation policy - stateless
 		http.sessionManagement(session -> 

@@ -1,10 +1,8 @@
-import axios from 'axios'
-import { config } from '../config'
+import api from '../api'
 
 export async function getPendingRestaurants() {
     try {
-        const url = `${config.server}/admin/approvals/restaurants`
-        const response = await axios.get(url)
+        const response = await api.get('/admin/approvals/restaurants')
         return response.data
     } catch (ex) {
         console.log(`exception: `, ex)
@@ -14,8 +12,7 @@ export async function getPendingRestaurants() {
 
 export async function getRestaurantApplicationDetails(id) {
     try {
-        const url = `${config.server}/admin/approvals/restaurants/${id}`
-        const response = await axios.get(url)
+        const response = await api.get(`/admin/approvals/restaurants/${id}`)
         return response.data
     } catch (ex) {
         console.log(`exception: `, ex)
@@ -24,8 +21,7 @@ export async function getRestaurantApplicationDetails(id) {
 }
 export async function approveRestaurant(id) {
     try {
-        const url = `${config.server}/admin/approvals/restaurants/${id}/approve`
-        const response = await axios.put(url)
+        const response = await api.put(`/admin/approvals/restaurants/${id}/approve`)
         return response.data
     } catch (ex) {
         console.log(`exception: `, ex)
@@ -35,8 +31,7 @@ export async function approveRestaurant(id) {
 
 export async function rejectRestaurant(id) {
     try {
-        const url = `${config.server}/admin/approvals/restaurants/${id}/reject`
-        const response = await axios.put(url)
+        const response = await api.put(`/admin/approvals/restaurants/${id}/reject`)
         return response.data
     } catch (ex) {
         console.log(`exception: `, ex)

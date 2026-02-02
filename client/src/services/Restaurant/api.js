@@ -8,6 +8,20 @@ const api = axios.create({
   },
 });
 
+// Request interceptor for adding authentication token
+api.interceptors.request.use(
+  (config) => {
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // Restaurant ID - In production, this would come from authentication
 // For now, using a mock restaurant ID
 export const RESTAURANT_ID = 1;

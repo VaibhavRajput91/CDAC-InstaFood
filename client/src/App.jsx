@@ -10,6 +10,7 @@ import Restaurant from './pages/restaurant/Restaurant'
 import Customer from './pages/customer/Customer'
 import ContactUs from './pages/common/ContactUs/ContactUs'
 import { DeliveryProvider } from './context/DeliveryContext'
+import ProtectedRoute from './components/common/ProtectedRoute'
 
 
 function App() {
@@ -19,14 +20,33 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/customer/*" element={<Customer />} />
-        <Route path="/admin/*" element={<Admin />} />
-        <Route path="/delivery/*" element={
-          <DeliveryProvider>
-            <Delivery />
-          </DeliveryProvider>
+        
+        <Route path="/customer/*" element={
+          <ProtectedRoute requiredRole="ROLE_CUSTOMER">
+            <Customer />
+          </ProtectedRoute>
         } />
-        <Route path="/restaurant/*" element={<Restaurant />} />
+        
+        <Route path="/admin/*" element={
+          <ProtectedRoute requiredRole="ROLE_ADMIN">
+            <Admin />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/delivery/*" element={
+          <ProtectedRoute requiredRole="ROLE_DELIVERY_PARTNER">
+            <DeliveryProvider>
+              <Delivery />
+            </DeliveryProvider>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/restaurant/*" element={
+          <ProtectedRoute requiredRole="ROLE_RESTAURANT">
+            <Restaurant />
+          </ProtectedRoute>
+        } />
+        
         <Route path="/contact-us" element={<ContactUs />} />
       </Routes>
       <ToastContainer />
