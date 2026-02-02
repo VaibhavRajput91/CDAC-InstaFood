@@ -51,9 +51,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 			OrdersByCustomerDTO singleOrder = new OrdersByCustomerDTO();
 			singleOrder.setOrderDate(order.getCreatedOn());
 			singleOrder.setRestaurantName(order.getRestaurant().getRestaurantName());
-			singleOrder.setDeliveryName(order.getDeliveryPartner().getUser().getFirstName() 
-				+ " " + 
-				order.getDeliveryPartner().getUser().getLastName());
+			if (order.getDeliveryPartner() != null && order.getDeliveryPartner().getUser() != null) {
+			    singleOrder.setDeliveryName(
+			        order.getDeliveryPartner().getUser().getFirstName() + " " +
+			        order.getDeliveryPartner().getUser().getLastName()
+			    );
+			} else {
+			    singleOrder.setDeliveryName("Not Assigned");
+			}
+
 			singleOrder.setOrderStatus(order.getOrderStatus());
 			singleOrder.setTotalAmount(order.getTotalAmount());
 			Map<String, Integer> dishesWithQuantities = new HashMap<>();
