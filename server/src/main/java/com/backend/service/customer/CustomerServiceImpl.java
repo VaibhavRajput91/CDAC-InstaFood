@@ -82,10 +82,10 @@ public class CustomerServiceImpl implements CustomerService {
 				HttpStatus.NOT_FOUND,
 				"Customer Not Found"
 			));
-		DeliveryPartner delivery = deliveryProfileRepository.findById((long) 1).orElseThrow(()->new ResponseStatusException(
-				HttpStatus.NOT_FOUND,
-				"Delivery Partner Not Found"
-			));
+//		DeliveryPartner delivery = deliveryProfileRepository.findById((long) 1).orElseThrow(()->new ResponseStatusException(
+//				HttpStatus.NOT_FOUND,
+//				"Delivery Partner Not Found"
+//			));
 		
 		Menu menu = menuRepository.findByRestaurant(restaurant).orElseThrow(()->new ResponseStatusException(
 				HttpStatus.NOT_FOUND,
@@ -93,7 +93,8 @@ public class CustomerServiceImpl implements CustomerService {
 			));
 		order.setRestaurant(restaurant);
 		order.setCustomer(customer);
-		order.setDeliveryPartner(delivery);
+//		order.setDeliveryPartner(delivery);
+		order.setDeliveryPartner(null);
 		order.setTotalAmount(placedOrdered.getTotalAmount());
 		order.setOrderStatus(OrderStatus.PLACED);
 		orderRepository.save(order);
