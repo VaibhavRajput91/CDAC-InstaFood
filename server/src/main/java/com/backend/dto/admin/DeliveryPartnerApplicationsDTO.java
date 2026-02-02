@@ -1,5 +1,7 @@
 package com.backend.dto.admin;
 
+import java.time.LocalDate;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,4 +15,6 @@ public class DeliveryPartnerApplicationsDTO {
 
 	private Long id;
     private String deliveryPartnerName;
+    private LocalDate applicationDate;
+
 }
