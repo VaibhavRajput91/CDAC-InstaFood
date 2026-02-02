@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../../services/api';
 import {
   Menu,
   Bell,
@@ -12,7 +12,6 @@ import {
   Navigation
 } from 'lucide-react';
 import { BottomNav } from '../../../components/delivery/BottomNav';
-import { config } from '../../../services/config';
 
 export function Dashboard({ navigateTo }) {
   const [isOnline, setIsOnline] = useState(false);
@@ -36,17 +35,16 @@ export function Dashboard({ navigateTo }) {
     if (!deliveryPartnerId) return;
 
     setRefreshing(true);
-    fetch(`${config.server}/delivery/orders/available?deliveryPartnerId=${deliveryPartnerId}`)
-      .then(res => res.json())
-      .then(data => {
+    api.get(`/delivery/orders/available`, { params: { deliveryPartnerId } })
+      .then(res => {
+        const data = res.data;
         if (Array.isArray(data)) {
-          // Add default distance/time if not present in API, as UI expects it
           const mappedOrders = data.map(order => ({
-            ...order, // keep original data
+            ...order,
             id: order.orderId,
             restaurant: order.restaurantName,
-            distance: '2 km', // Mock distance
-            time: '20 min',   // Mock time
+            distance: '2 km',
+            time: '20 min',
             payout: order.totalAmount,
             itemCount: order.items?.length || 0
           }));
@@ -65,17 +63,16 @@ export function Dashboard({ navigateTo }) {
     }
 
     // Fetch initial status
-    fetch(`${config.server}/delivery/status?deliveryPartnerId=${deliveryPartnerId}`)
-      .then(res => res.json())
-      .then(data => {
-        setIsOnline(data.status === 'AVAILABLE');
+    api.get(`/delivery/status`, { params: { deliveryPartnerId } })
+      .then(res => {
+        setIsOnline(res.data.status === 'AVAILABLE');
       })
       .catch(err => console.error("Error fetching status:", err));
 
     // Fetch dashboard summary
-    fetch(`${config.server}/delivery/dashboard/summary?deliveryPartnerId=${deliveryPartnerId}`)
-      .then(res => res.json())
-      .then(data => {
+    api.get(`/delivery/dashboard/summary`, { params: { deliveryPartnerId } })
+      .then(res => {
+        const data = res.data;
         setSummary({
           todayOrderStats: {
             todayEarnings: data.todayOrderStats?.todayEarnings ?? 0,
@@ -92,8 +89,6 @@ export function Dashboard({ navigateTo }) {
 
     // Initial fetch of available orders
     fetchAvailableOrders();
-
-    // Removed auto-refresh setInterval as per requirement
   }, []);
 
   return (
@@ -132,26 +127,12 @@ export function Dashboard({ navigateTo }) {
               setLoadingStatus(true);
               const deliveryPartnerId = sessionStorage.getItem('deliveryPartnerId');
               try {
-                // Using PATCH with query param as requested: patch : ${config.server}/delivery/status?deliveryPartnerId=${sessionStorage.getItem("deliveryPartnerId}
-                // The user request didn't specify body content for the toggle, it just said 'to toggle the status... use the api'.
-                // Usually PATCH toggles or sends new status. The previous code sent body. Use logic: current isOnline -> new is !isOnline?
-                // Wait, user instructions: "to toggle the status and persist into db use the api: patch : ${config.server}/delivery/status?deliveryPartnerId=..."
-                // It does NOT say send body. Perhaps the server toggles it automatically?
-                // I will try sending empty body or just the request. given "toggle", it implies server side toggle.
-                // But previously I saw code sending body. I'll adhere to user instruction which doesn't specify body.
-                // However, axios/fetch might require method.
-
-                const res = await fetch(`${config.server}/delivery/status?deliveryPartnerId=${deliveryPartnerId}`, {
-                  method: 'PATCH',
-                  headers: { 'Content-Type': 'application/json' }
+                const res = await api.patch(`/delivery/status`, null, {
+                  params: { deliveryPartnerId }
                 });
 
-                if (res.ok) {
-                  const data = await res.json();
-                  // Response is { "status": "AVAILABLE" or "UNAVAILABLE" }
-                  if (data.status) {
-                    setIsOnline(data.status === 'AVAILABLE');
-                  }
+                if (res.data.status) {
+                  setIsOnline(res.data.status === 'AVAILABLE');
                 }
               } catch (e) {
                 console.error("Error toggling status", e);

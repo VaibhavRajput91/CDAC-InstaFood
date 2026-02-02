@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import api from '../../../services/api';
 import ProfileAvatar from '../../../components/common/ProfileAvatar/ProfileAvatar';
 import { ArrowLeft } from 'lucide-react';
 
@@ -17,9 +18,11 @@ export function EditProfile({ navigateTo }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:8080/delivery/details?deliveryPartnerId=' + sessionStorage.getItem('deliveryPartnerId'))
-      .then(res => res.json())
-      .then(data => {
+    api.get('/delivery/details', {
+      params: { deliveryPartnerId: sessionStorage.getItem('deliveryPartnerId') }
+    })
+      .then(res => {
+        const data = res.data;
         setFormData({
           firstName: data.firstName || '',
           lastName: data.lastName || '',
@@ -47,18 +50,16 @@ export function EditProfile({ navigateTo }) {
     setError('');
     setSuccess(false);
     try {
-      const res = await fetch('http://localhost:8080/delivery/edit-details?deliveryPartnerId=' + sessionStorage.getItem('deliveryPartnerId'), {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          vehicleDetails: {
-            vehicleType: formData.vehicleType,
-            vehicleModel: formData.vehicleModel
-          }
-        })
+      const res = await api.put('/delivery/edit-details', {
+        ...formData,
+        vehicleDetails: {
+          vehicleType: formData.vehicleType,
+          vehicleModel: formData.vehicleModel
+        }
+      }, {
+        params: { deliveryPartnerId: sessionStorage.getItem('deliveryPartnerId') }
       });
-      if (!res.ok) throw new Error('Update failed');
+      if (res.status !== 200) throw new Error('Update failed');
       setSuccess(true);
     } catch (err) {
       setError('Failed to update profile');

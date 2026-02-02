@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../../services/api';
 import { ArrowLeft, Filter, DollarSign, MapPin, Clock, X } from 'lucide-react';
 import { BottomNav } from '../../../components/delivery/BottomNav';
-import { config } from '../../../services/config';
 
 export function OrderHistory({ navigateTo }) {
   const [filter, setFilter] = useState('all');
@@ -20,7 +19,7 @@ export function OrderHistory({ navigateTo }) {
 
     setLoading(true);
     try {
-      const response = await axios.get(`${config.server}/delivery/orders/history`, {
+      const response = await api.get(`/delivery/orders/history`, {
         params: { id: deliveryPartnerId }
       });
 

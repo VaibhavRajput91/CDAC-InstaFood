@@ -17,6 +17,9 @@ export async function getRestaurantMenu(restaurantId) {
         params:{
             id:restaurantId,
         },
+        headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('token')}`
+        }
     })
 
     // return response body

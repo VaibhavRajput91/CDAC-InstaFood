@@ -5,6 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { config } from '../../../services/config';
+import api from '../../../services/api';
 import { restaurantAPI } from '../../../services/Restaurant/api';
 
 function Login() {
@@ -108,7 +109,9 @@ function Login() {
           } else if (roles.includes('ROLE_DELIVERY_PARTNER')) {
             try {
               console.log("Fetching deliveryPartnerId for userId:", userId);
-              const deliveryIdResponse = await axios.get(`${config.server}/delivery/delivery-id?userId=${userId}`);
+              const deliveryIdResponse = await api.get(`/delivery/delivery-id`, {
+                params: { userId }
+              });
               const deliveryPartnerId = deliveryIdResponse.data?.data ? parseInt(deliveryIdResponse.data.data) : null;
 
               console.log("Delivery ID Response Data:", deliveryPartnerId);

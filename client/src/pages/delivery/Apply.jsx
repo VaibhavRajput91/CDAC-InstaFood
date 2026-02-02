@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { config } from '../../services/config';
+import api from '../../services/api';
 
 const vehicleTypes = [
   'BICYCLE',
@@ -33,12 +32,11 @@ export function Apply({ navigateTo }) {
     setSuccess(false);
     const userId = sessionStorage.getItem('userId');
     try {
-      const res = await axios.put(`${config.server}/delivery/apply?userId=${userId}`, form);
+      const res = await api.put(`/delivery/apply`, form, { params: { userId } });
 
       if (res.status === 200) {
-        // Fetch the deliveryPartnerId after successful application
         try {
-          const idRes = await axios.get(`${config.server}/delivery/delivery-id?userId=${userId}`);
+          const idRes = await api.get(`/delivery/delivery-id`, { params: { userId } });
           const deliveryPartnerId = idRes.data?.data ? parseInt(idRes.data.data) : null;
 
           if (deliveryPartnerId) {

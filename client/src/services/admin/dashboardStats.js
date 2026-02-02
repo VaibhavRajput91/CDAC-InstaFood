@@ -1,11 +1,8 @@
-
-import axios from 'axios'
-import { config } from '../config'
+import api from '../api'
 
 export async function getTotalOrdersDetails() {
     try {
-        const url = `${config.server}/admin/dashboard`
-        const response = await axios.get(url)
+        const response = await api.get('/admin/dashboard')
         return response.data
     } catch (ex) {
         console.log(`exception: `, ex)
@@ -14,8 +11,7 @@ export async function getTotalOrdersDetails() {
 }
 export async function getOrderStatusStats() {
     try {
-        const url = `${config.server}/admin/dashboard/order-status`
-        const response = await axios.get(url)
+        const response = await api.get('/admin/dashboard/order-status')
         return response.data
     } catch (ex) {
         console.log(`exception: `, ex)
@@ -25,8 +21,7 @@ export async function getOrderStatusStats() {
 
 export async function getOrdersPerDayStats() {
     try {
-        const url = `${config.server}/admin/dashboard/orders-per-day`
-        const response = await axios.get(url)
+        const response = await api.get('/admin/dashboard/orders-per-day')
         return response.data
     } catch (ex) {
         console.log(`exception: `, ex)
@@ -36,8 +31,7 @@ export async function getOrdersPerDayStats() {
 
 export async function getTopSellingItemsStats() {
     try {
-        const url = `${config.server}/admin/dashboard/top-items`
-        const response = await axios.get(url)
+        const response = await api.get('/admin/dashboard/top-items')
         return response.data
     } catch (ex) {
         console.log(`exception: `, ex)
