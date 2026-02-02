@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, LogOut, Home, ShoppingBag, UtensilsCrossed, User, Power } from 'lucide-react';
 import { restaurantAPI } from '../../../services/Restaurant/api';
 import Toast from '../UI/Toast';
 
 export default function RestaurantNavbar() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
     const [isAvailable, setIsAvailable] = useState(true);
     const [toggleLoading, setToggleLoading] = useState(false);
     const [toast, setToast] = useState(null);
+
+    const isActive = (path) => {
+        return location.pathname === path || location.pathname.startsWith(path + '/');
+    };
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
@@ -68,26 +73,38 @@ export default function RestaurantNavbar() {
                         {/* Desktop Menu */}
                         <ul className="hidden lg:flex items-center space-x-1">
                             <li>
-                                <Link to="/restaurant" className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors">
+                                <Link to="/restaurant" className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all border-b-2 font-medium ${isActive('/restaurant') && !location.pathname.includes('/orders') && !location.pathname.includes('/menu') && !location.pathname.includes('/profile')
+                                    ? 'bg-white bg-opacity-20 text-white border-b-white'
+                                    : 'text-white hover:bg-white hover:bg-opacity-20 border-b-transparent'
+                                    }`}>
                                     <Home className="w-5 h-5" />
                                     <span>Dashboard</span>
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/restaurant/orders" className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors">
+                                <Link to="/restaurant/orders" className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all border-b-2 font-medium ${isActive('/restaurant/orders')
+                                    ? 'bg-white bg-opacity-20 text-white border-b-white'
+                                    : 'text-white hover:bg-white hover:bg-opacity-20 border-b-transparent'
+                                    }`}>
                                     <ShoppingBag className="w-5 h-5" />
                                     <span>Orders</span>
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/restaurant/menu/dishes" className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors">
+                                <Link to="/restaurant/menu/dishes" className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all border-b-2 font-medium ${isActive('/restaurant/menu')
+                                    ? 'bg-white bg-opacity-20 text-white border-b-white'
+                                    : 'text-white hover:bg-white hover:bg-opacity-20 border-b-transparent'
+                                    }`}>
                                     <UtensilsCrossed className="w-5 h-5" />
                                     <span>Menu</span>
                                 </Link>
                             </li>
 
                             <li>
-                                <Link to="/restaurant/profile" className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors">
+                                <Link to="/restaurant/profile" className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all border-b-2 font-medium ${isActive('/restaurant/profile')
+                                    ? 'bg-white bg-opacity-20 text-white border-b-white'
+                                    : 'text-white hover:bg-white hover:bg-opacity-20 border-b-transparent'
+                                    }`}>
                                     <User className="w-5 h-5" />
                                     <span>Profile</span>
                                 </Link>
@@ -138,7 +155,10 @@ export default function RestaurantNavbar() {
                                 <li>
                                     <Link
                                         to="/restaurant"
-                                        className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
+                                        className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all font-medium border-l-4 ${isActive('/restaurant') && !location.pathname.includes('/orders') && !location.pathname.includes('/menu') && !location.pathname.includes('/profile')
+                                            ? 'bg-white bg-opacity-20 text-white border-l-white'
+                                            : 'text-white hover:bg-white hover:bg-opacity-20 border-l-transparent'
+                                            }`}
                                         onClick={() => setIsOpen(false)}
                                     >
                                         <Home className="w-5 h-5" />
@@ -148,7 +168,10 @@ export default function RestaurantNavbar() {
                                 <li>
                                     <Link
                                         to="/restaurant/orders"
-                                        className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
+                                        className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all font-medium border-l-4 ${isActive('/restaurant/orders')
+                                            ? 'bg-white bg-opacity-20 text-white border-l-white'
+                                            : 'text-white hover:bg-white hover:bg-opacity-20 border-l-transparent'
+                                            }`}
                                         onClick={() => setIsOpen(false)}
                                     >
                                         <ShoppingBag className="w-5 h-5" />
@@ -158,7 +181,10 @@ export default function RestaurantNavbar() {
                                 <li>
                                     <Link
                                         to="/restaurant/menu/dishes"
-                                        className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
+                                        className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all font-medium border-l-4 ${isActive('/restaurant/menu')
+                                            ? 'bg-white bg-opacity-20 text-white border-l-white'
+                                            : 'text-white hover:bg-white hover:bg-opacity-20 border-l-transparent'
+                                            }`}
                                         onClick={() => setIsOpen(false)}
                                     >
                                         <UtensilsCrossed className="w-5 h-5" />
@@ -169,7 +195,10 @@ export default function RestaurantNavbar() {
                                 <li>
                                     <Link
                                         to="/restaurant/profile"
-                                        className="flex items-center gap-2 px-3 py-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
+                                        className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all font-medium border-l-4 ${isActive('/restaurant/profile')
+                                            ? 'bg-white bg-opacity-20 text-white border-l-white'
+                                            : 'text-white hover:bg-white hover:bg-opacity-20 border-l-transparent'
+                                            }`}
                                         onClick={() => setIsOpen(false)}
                                     >
                                         <User className="w-5 h-5" />
@@ -184,8 +213,8 @@ export default function RestaurantNavbar() {
                                         }}
                                         disabled={toggleLoading}
                                         className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-colors font-medium ${isAvailable
-                                                ? 'bg-green-500 text-white hover:bg-green-600'
-                                                : 'bg-gray-500 text-white hover:bg-gray-600'
+                                            ? 'bg-green-500 text-white hover:bg-green-600'
+                                            : 'bg-gray-500 text-white hover:bg-gray-600'
                                             } disabled:opacity-50`}
                                     >
                                         <Power className="w-5 h-5" />

@@ -8,6 +8,20 @@ const api = axios.create({
   },
 });
 
+// Request interceptor for adding authentication token
+api.interceptors.request.use(
+  (config) => {
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // Restaurant ID - In production, this would come from authentication
 // For now, using a mock restaurant ID
 export const RESTAURANT_ID = 1;
@@ -68,9 +82,31 @@ export const restaurantAPI = {
   getOrders: (size = 10) =>
     api.get(`/restaurant/orders?size=${size}`),
 
+  // Get new placed orders for a restaurant
+  getAllPlacedOrdersList: (restaurantId) =>
+    api.get(`/restaurant/orders/placed?restaurantId=${restaurantId}`),
+
+  getAllAcceptedOrdersList: (restaurantId) =>
+    api.get(`/restaurant/orders/accepted?restaurantId=${restaurantId}`),
+
+  getAllPreparingOrdersList: (restaurantId) =>
+    api.get(`/restaurant/orders/preparing?restaurantId=${restaurantId}`),
+
+  getAllAssignedOrdersList: (restaurantId) =>
+    api.get(`/restaurant/orders/assigned?restaurantId=${restaurantId}`),
+
+  getAllDeliveredOrdersList: (restaurantId) =>
+    api.get(`/restaurant/orders/delivered?restaurantId=${restaurantId}`),
+
+  acceptingOrder: (orderId) =>
+    api.put(`/restaurant/orders/placed?orderId=${orderId}`),
+  preparingOrder: (orderId) =>
+    api.put(`/restaurant/orders/preparing?orderId=${orderId}`),
   // Toggle restaurant availability
   toggleRestaurantAvailability: (restaurantId) =>
     api.put(`/restaurant/availability?restaurantId=${restaurantId}`),
+
+
 };
 
 // Response interceptor for error handling

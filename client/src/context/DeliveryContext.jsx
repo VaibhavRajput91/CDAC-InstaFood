@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect } from 'react';
-import { config } from '../services/config';
+import api from '../services/api';
 
 const DeliveryContext = createContext();
 
@@ -16,12 +16,10 @@ export function DeliveryProvider({ children }) {
 
         try {
             // Fetch assigned orders to see if there is an active one
-            const response = await fetch(`${config.server}/delivery/orders/${deliveryPartnerId}?status=ASSIGNED`);
-            const data = await response.json();
-
-            // Assumes API returns { data: [...] } for this endpoint based on OrderList.jsx knowledge
-            // or check how OrderList handled it.
-            // OrderList: response.data.data || []
+            const response = await api.get(`/delivery/orders/${deliveryPartnerId}`, {
+                params: { status: 'ASSIGNED' }
+            });
+            const data = response.data;
 
             const orders = data.data || [];
             if (orders.length > 0) {

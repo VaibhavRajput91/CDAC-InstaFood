@@ -221,11 +221,35 @@ public class RestaurantController {
 	
 	// orders page
 	
-	@GetMapping("/orders")
-	public ResponseEntity<?> getOrdersList(@RequestParam Long size){
+	
+	
+	@GetMapping("/orders/placed")
+	public ResponseEntity<?> getAllNewPlacedOrdersList(@RequestParam Long restaurantId){
 		return ResponseEntity.status(HttpStatus.OK)
-				.body(restaurantService.getAllOrdersByRestaurant(size));
+				.body(restaurantService.getAllPlacedOrders(restaurantId));
 	}
+	@GetMapping("/orders/accepted")
+	public ResponseEntity<?> getAllAcceptedOrdersList(@RequestParam Long restaurantId){
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(restaurantService.getAllAcceptedOrders(restaurantId));
+	}
+	@GetMapping("/orders/preparing")
+	public ResponseEntity<?> getAllPreparingOrdersList(@RequestParam Long restaurantId){
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(restaurantService.getAllPreparingOrders(restaurantId));
+	}
+	@GetMapping("/orders/assigned")
+	public ResponseEntity<?> getAllAssignedOrdersList(@RequestParam Long restaurantId){
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(restaurantService.getAllAssignedOrders(restaurantId));
+	}
+	@GetMapping("/orders/delivered")
+	public ResponseEntity<?> getAllDeliveredOrdersList(@RequestParam Long restaurantId){
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(restaurantService.getAllDeliveredOrders(restaurantId));
+	}
+	
+	
 	@GetMapping("/list-restaurants")
 	public ResponseEntity<?> getRestaurantsList(@RequestParam(required = false) String postalCode){
 		if (postalCode != null && !postalCode.isEmpty()) {
@@ -234,6 +258,30 @@ public class RestaurantController {
 		}
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(restaurantService.getAllRestaurants());
+	}
+	
+	@PutMapping("/orders/placed")
+	public ResponseEntity<?> acceptingOrder(@RequestParam long orderId){
+		System.out.println("In Put of orders/placed");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(restaurantService.acceptingOrderByOrderId(orderId));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
+	}
+	
+	@PutMapping("/orders/preparing")
+	public ResponseEntity<?> preparingOrder(@RequestParam long orderId){
+		System.out.println("In Put of orders/placed");
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(restaurantService.preparingOrderByOrderId(orderId));
+		}
+		catch(RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestaurantApiResponseDTO("Failed", e.getMessage()));
+		}
 	}
 	
 }

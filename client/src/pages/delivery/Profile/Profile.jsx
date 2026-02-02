@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
+import api from '../../../services/api';
 import { BottomNav } from '../../../components/delivery/BottomNav'
 import { Navigate, useNavigate } from 'react-router-dom';
 
@@ -16,9 +17,10 @@ export function Profile({ navigateTo }) {
   const navigate = useNavigate();
   const [details, setDetails] = useState(null);
   useEffect(() => {
-    fetch('http://localhost:8080/delivery/details?deliveryPartnerId=' + sessionStorage.getItem('deliveryPartnerId'))
-      .then(res => res.json())
-      .then(data => setDetails(data))
+    api.get('/delivery/details', {
+      params: { deliveryPartnerId: sessionStorage.getItem('deliveryPartnerId') }
+    })
+      .then(res => setDetails(res.data))
       .catch(() => setDetails(null));
   }, []);
 

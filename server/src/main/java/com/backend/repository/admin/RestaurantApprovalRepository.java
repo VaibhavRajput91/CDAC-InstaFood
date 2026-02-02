@@ -11,7 +11,8 @@ import com.backend.entity.User;
 
 public interface RestaurantApprovalRepository extends JpaRepository<Restaurant, Long> {
 
-	List<Restaurant> findByStatus(AvailabilityStatus inactive);
+	//List<Restaurant> findByStatus(AvailabilityStatus inactive);
+	List<Restaurant> findByStatusOrderByCreatedOnAsc(AvailabilityStatus inactive);
 
 	Optional<Restaurant> findByIdAndStatus(Long id, AvailabilityStatus inactive);
 

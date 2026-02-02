@@ -1,11 +1,8 @@
-
-import axios from 'axios'
-import { config } from '../config'
+import api from '../api'
 
 export async function getCustomerStatsData() {
     try {
-        const url = `${config.server}/admin/statistics/customers`
-        const response = await axios.get(url)
+        const response = await api.get('/admin/statistics/customers')
         return response.data
     } catch (ex) {
         console.log(`exception: `, ex)

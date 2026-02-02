@@ -1,6 +1,7 @@
 package com.backend.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import com.backend.entity.OrderStatus;
@@ -17,11 +18,15 @@ import lombok.Setter;
 public class RestaurantOrdersDTO {
 	
 	private Long orderId;
-	private String CustomerName;
+	private String customerName;
+	private String Address;
 	private LocalDate orderDate;
-	Map<String, Integer> items; // item name and quantity
-	public Double totalAmount;
-	public OrderStatus orderStatus;
 	
-
+	Map<String, Integer> items;
+	public Double totalAmount;
+	
+	private String deliveryExecutiveName;
+	private LocalDateTime deliveryDateTime;
+	
+	public OrderStatus orderStatus;
 }

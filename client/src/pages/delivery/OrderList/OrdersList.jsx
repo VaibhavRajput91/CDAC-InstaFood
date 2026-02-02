@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../../services/api';
 import { ArrowLeft, MapPin, Clock, DollarSign, Package } from 'lucide-react';
 import { BottomNav } from '../../../components/delivery/BottomNav';
-import { config } from '../../../services/config';
 
 export function OrdersList({ navigateTo }) {
   const [activeTab, setActiveTab] = useState('new');
@@ -17,15 +16,14 @@ export function OrdersList({ navigateTo }) {
     const deliveryPartnerId = sessionStorage.getItem('deliveryPartnerId');
     if (!deliveryPartnerId) return;
 
-    let url = `${config.server}/delivery/orders`;
+    let url = `/delivery/orders`;
     let params = { deliveryPartnerId };
 
     if (activeTab === 'new') {
-      url = `${config.server}/delivery/orders/available?deliveryPartnerId=${deliveryPartnerId}`;
-      params = {};
+      url = `/delivery/orders/available`;
+      params = { deliveryPartnerId };
     } else {
-      // New API: ${config.server}/delivery/order/${deliveryPartnerId}?status=${...}
-      url = `${config.server}/delivery/orders/${deliveryPartnerId}`;
+      url = `/delivery/orders/${deliveryPartnerId}`;
 
       let status = 'ASSIGNED';
       if (activeTab === 'ongoing') status = 'ASSIGNED' || 'PREPARING';
@@ -36,18 +34,15 @@ export function OrdersList({ navigateTo }) {
 
     setLoading(true);
     try {
-      const response = await axios.get(url, { params });
+      const response = await api.get(url, { params });
 
       let ordersData = [];
       if (activeTab === 'new') {
-        // Assuming available API still returns array directly as per user instruction "only for the ongoing and completed orders only"
         ordersData = response.data;
       } else {
-        // New API returns { status: "...", data: [...] }
         ordersData = response.data.data || [];
       }
 
-      // Constraint: Show only one ongoing order
       if (activeTab === 'ongoing' && ordersData.length > 0) {
         ordersData = [ordersData[0]];
       }
@@ -58,10 +53,10 @@ export function OrdersList({ navigateTo }) {
         address: order.restaurantAddress,
         payout: order.totalAmount,
         itemsCount: order.items ? order.items.length : 0,
-        distance: '2.5 km', // Mock data
-        time: '20 min',     // Mock data
+        distance: '2.5 km',
+        time: '20 min',
         status: order.orderStatus,
-        completedAt: order.time // Mock data
+        completedAt: order.time
       }));
 
       setOrders(mappedOrders);

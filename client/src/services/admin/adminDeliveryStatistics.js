@@ -1,10 +1,8 @@
-import axios from 'axios'
-import { config } from '../config'
+import api from '../api'
 
 export async function getDeliveryStatsData() {
     try {
-        const url = `${config.server}/admin/statistics/delivery-partners`
-        const response = await axios.get(url)
+        const response = await api.get('/admin/statistics/delivery-partners')
         return response.data
     } catch (ex) {
         console.log(`exception: `, ex)

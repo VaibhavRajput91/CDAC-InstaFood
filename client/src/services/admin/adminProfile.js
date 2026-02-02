@@ -1,10 +1,8 @@
-import axios from 'axios'
-import { config } from '../config'
+import api from '../api'
 
 export async function getAdminProfile() {
     try {
-        const url = `${config.server}/admin/profile`
-        const response = await axios.get(url)
+        const response = await api.get('/admin/profile')
         return response.data
     } catch (ex) {
         console.log(`exception: `, ex)
