@@ -52,43 +52,40 @@ public class DeliveryDashboardServiceImpl implements DeliveryDashboardService {
 	@Override
 	public List<DeliveryOrderDto> getNewAvailableDeliveryRequests(Long deliveryPartnerId) {
 
-	    DeliveryPartner partner = deliveryProfileRepository.findById(deliveryPartnerId)
-	            .orElseThrow(() -> new RuntimeException("Delivery Partner not found"));
+		DeliveryPartner partner = deliveryProfileRepository.findById(deliveryPartnerId)
+				.orElseThrow(() -> new RuntimeException("Delivery Partner not found"));
 
-	    String postalCode = partner.getUser().getAddress().getPostalCode();
+		String postalCode = partner.getUser().getAddress().getPostalCode();
 
-	    LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
+		LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
 
-	    List<Order> orders = deliveryOrderRepository.findAvailableOrders(
-	            OrderStatus.PREPARING,
-	            oneHourAgo,
-	            postalCode
-	    );
+		List<Order> orders = deliveryOrderRepository.findAvailableOrders(
+				OrderStatus.PREPARING,
+				oneHourAgo,
+				postalCode);
 
-	    return orders.stream().map(order -> {
-	        DeliveryOrderDto dto = new DeliveryOrderDto();
-	        dto.setOrderId(order.getId());
-	        dto.setRestaurantName(order.getRestaurant().getRestaurantName());
-	        dto.setRestaurantAddress(
-	                order.getRestaurant().getUser().getAddress().getLineOne()
-	        );
-	        dto.setTotalAmount(order.getTotalAmount());
+		return orders.stream().map(order -> {
+			DeliveryOrderDto dto = new DeliveryOrderDto();
+			dto.setOrderId(order.getId());
+			dto.setRestaurantName(order.getRestaurant().getRestaurantName());
+			dto.setRestaurantAddress(
+					order.getRestaurant().getUser().getAddress().getLineOne());
+			dto.setTotalAmount(order.getTotalAmount());
 
-	        Set<OrderItemDto> items = order.getOrderItems().stream().map(item -> {
-	            OrderItemDto itemDto = new OrderItemDto();
-	            itemDto.setDishId(item.getDish().getId());
-	            itemDto.setDishName(item.getDish().getName());
-	            itemDto.setPrice(item.getPrice());
-	            itemDto.setQuantity(item.getQuantity());
-	            return itemDto;
-	        }).collect(Collectors.toSet());
+			Set<OrderItemDto> items = order.getOrderItems().stream().map(item -> {
+				OrderItemDto itemDto = new OrderItemDto();
+				itemDto.setDishId(item.getDish().getId());
+				itemDto.setDishName(item.getDish().getName());
+				itemDto.setPrice(item.getPrice());
+				itemDto.setQuantity(item.getQuantity());
+				return itemDto;
+			}).collect(Collectors.toSet());
 
-	        dto.setItems(items);
-	        dto.setOrderStatus(order.getOrderStatus());
-	        return dto;
-	    }).toList();
+			dto.setItems(items);
+			dto.setOrderStatus(order.getOrderStatus());
+			return dto;
+		}).toList();
 	}
-
 
 	@Override
 	@Transactional
@@ -111,8 +108,6 @@ public class DeliveryDashboardServiceImpl implements DeliveryDashboardService {
 		order.setDeliveryPartner(deliveryPartner);
 		order.setOrderStatus(OrderStatus.ASSIGNED);
 		deliveryOrderRepository.save(order);
-		deliveryOrderRepository.flush();
-		deliveryOrderRepository.updateOrderStatus(orderId, OrderStatus.ASSIGNED);
 
 		return new DeliveryResponseDto(
 				"SUCCESS",
