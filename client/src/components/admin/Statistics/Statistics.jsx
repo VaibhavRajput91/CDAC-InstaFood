@@ -6,11 +6,10 @@ function Statistics() {
     const navigate = useNavigate();
 
     return (
-        <div className="bg-gray-100 min-h-screen">
+       <div className="bg-gray-100 min-h-screen flex justify-center items-start pt-16">
+            <div className="w-[95%] max-w-3xl bg-white border shadow-lg rounded-2xl p-10 min-h-[70vh]">
 
-            <div className="max-w-3xl mx-auto bg-white border shadow-md rounded-lg p-10 min-h-[70vh] mt-10">
-
-                <div className="flex flex-col items-center justify-evenly h-[60vh]">
+             <div className="flex flex-col items-center justify-evenly h-[60vh]">
 
                     <button className="w-80 py-4 bg-red-500 text-white border rounded-xl shadow-sm hover:shadow-md transition"
                         onClick={() => navigate("customer-data")}>
