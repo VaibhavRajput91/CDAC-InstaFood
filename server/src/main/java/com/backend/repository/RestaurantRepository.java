@@ -12,6 +12,8 @@ import com.backend.dto.*;
 import com.backend.entity.*;
 
 import jakarta.transaction.Transactional;
+import com.backend.entity.AvailabilityStatus;
+
 
 @Repository
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
@@ -105,8 +107,9 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 	
 	
 	List<Restaurant> findAll();
+	List<Restaurant> findByStatus(AvailabilityStatus status);
 	
-	List<Restaurant> findByUserAddressPostalCode(String postalCode);
+	List<Restaurant> findByUserAddressPostalCodeAndStatus(String postalCode,AvailabilityStatus status);
 	
 	
 	

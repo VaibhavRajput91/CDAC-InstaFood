@@ -231,7 +231,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 	@Override
 	public List<RestaurantListDTO> getAllRestaurants() {
-		List<Restaurant> restaurants = restaurantRepository.findAll();
+		List<Restaurant> restaurants = restaurantRepository.findByStatus(AvailabilityStatus.AVAILABLE);
 		List<RestaurantListDTO> restaurantDTOs = new ArrayList<>();
 		for (Restaurant restaurant : restaurants) {
 			RestaurantListDTO dto = new RestaurantListDTO();
@@ -257,7 +257,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 	@Override
 	public List<RestaurantListDTO> getRestaurantsByPincode(String pincode) {
-		List<Restaurant> restaurants = restaurantRepository.findByUserAddressPostalCode(pincode);
+		List<Restaurant> restaurants = restaurantRepository.findByUserAddressPostalCodeAndStatus(pincode,AvailabilityStatus.AVAILABLE);
 		List<RestaurantListDTO> restaurantDTOs = new ArrayList<>();
 		for (Restaurant restaurant : restaurants) {
 			RestaurantListDTO dto = new RestaurantListDTO();
