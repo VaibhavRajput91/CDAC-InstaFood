@@ -11,9 +11,23 @@ import DeliveryPartnerApprovals from "../../components/admin/Approvals/DeliveryP
 import ViewRestaurantApplication from "../../components/admin/Approvals/Restuarnat/ViewApplication/ViewRestaurantApplication";
 import ViewDeliveryPartnerApplication from "../../components/admin/Approvals/DeliveryPartner/ViewApplication/ViewDeliveryPartnerApplication";
 import Profile from "../../components/admin/Profile/Profile"
+import { useEffect, useState } from "react";
+import { getAdminProfile } from "../../services/admin/adminProfile";
 
 function Admin() {
     const navigate = useNavigate();
+    const [adminProfile, setAdminProfile] = useState(null);
+
+    useEffect(() => {
+        loadProfile();
+    }, []);
+
+    const loadProfile = async () => {
+        const data = await getAdminProfile();
+        if (data) {
+            setAdminProfile(data);
+        }
+    };
     const handleLogout = () => {
         localStorage.removeItem("token");
         navigate("/");
@@ -37,13 +51,20 @@ function Admin() {
                         <li><Link to="/admin/profile" className="hover:text-gray-900">Profile</Link></li>
                     </ul>
 
-                    {/* Desktop Login Button */}
-                    <button
-            onClick={handleLogout}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 transition-colors duration-200 focus:outline-none shadow-sm"
-          >
-            Logout
-          </button>
+                     {/* Right Side: Admin Name + Logout */}
+                    <div className="flex items-center space-x-4">
+                        {adminProfile && (
+                            <span className="text-white font-medium hidden md:inline">
+                                {adminProfile.firstName} {adminProfile.lastName}
+                            </span>
+                        )}                   
+                         <button
+                            onClick={handleLogout}
+                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 transition-colors duration-200 focus:outline-none shadow-sm"
+                         >
+                           Logout
+                       </button>
+                     </div>
                 </div>
             </nav>
 
