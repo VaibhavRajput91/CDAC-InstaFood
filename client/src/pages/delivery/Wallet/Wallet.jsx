@@ -129,14 +129,14 @@ export function Wallet({ navigateTo }) {
           </div>
 
           <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-            <p className="text-sm text-gray-500 mb-1">Week</p>
+            <p className="text-sm text-gray-500 mb-1">This Week</p>
             <p className="text-2xl text-gray-900">₹{walletSummary.weekCollection}</p>
             <div className="flex items-center gap-1 text-green-600 text-sm mt-1">
             </div>
           </div>
 
           <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-            <p className="text-sm text-gray-500 mb-1">Month</p>
+            <p className="text-sm text-gray-500 mb-1">This Month</p>
             <p className="text-2xl text-gray-900">₹{walletSummary.monthCollection}</p>
             <div className="flex items-center gap-1 text-green-600 text-sm mt-1">
             </div>
