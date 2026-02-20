@@ -1,0 +1,22 @@
+Link - http://ec2-15-206-80-124.ap-south-1.compute.amazonaws.com/
+
+
+Project Admin
+-------------
+email - admin@gmail.com
+password - admin@123
+
+Project Customer
+----------------
+email - customer@gmail.com
+password - customer@123
+
+Project Restaurant
+----------------
+email - restaurant@gmail.com
+password - restaurant@123
+
+Project Delivery Executive
+----------------
+email - delivery@gmail.com
+password - delivery@123
