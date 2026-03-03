@@ -8,7 +8,7 @@ password - admin@123
 
 Project Customer
 ----------------
-email - customer@gmail.com
+email - customer01@gmail.com
 password - customer@123
 
 Project Restaurant
